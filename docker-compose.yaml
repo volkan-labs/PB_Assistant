@@ -1,0 +1,31 @@
+
+services:
+  db:
+      image: ankane/pgvector
+      container_name: pgvector_pb_assistant_db
+      environment:
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ports:
+        - "5432:5432"
+      volumes:
+        - pgdata:/var/lib/postgresql/data
+
+  grobid:
+    image: lfoppiano/grobid:0.7.1
+    container_name: grobid_container
+    ports:
+      - "8070:8070"
+    environment:
+      JAVA_OPTS: "-Xmx2G"        # adjust memory as needed
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - .\ollama_data:/root/.ollama
+
+volumes:
+  pgdata:

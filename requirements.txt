@@ -1,0 +1,8 @@
+psycopg2-binary
+pgvector
+python-dotenv
+sentence-transformers
+langchain_classic
+langchain_community
+bs4
+lxml
