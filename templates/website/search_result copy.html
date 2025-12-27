@@ -1,0 +1,139 @@
+{% extends "website/base.html" %}
+{% load json_filters %}
+{% block page_header %}
+<!-- <h2 class="page-head-title">Search Result</h2> -->
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel">
+            <div class="panel-heading panel-heading-divider">{{ query }}</div>
+            <div class="panel-body">
+                <p>{{ answer }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel">
+            <div class="panel-heading panel-heading-divider">
+                Relevant Papers
+                <span class="panel-subtitle">The documents retrieved from the literature collection are below. The bold content is selected by llm to generate the answer.</span>
+            </div>
+            {% if articles %}
+            <div class="panel-body">
+                <table class="table table-striped table-borderless">
+                    <thead>
+                        <tr>
+                            <th style="width:30%;">Title</th>
+                            <th class="number">Year</th>
+                            <th>Authors</th>
+                            <th>Source</th>
+                            <th class="actions">Homepage</th>
+                            <th>Retrieved Content</th>
+                        </tr>
+                    </thead>
+                    <tbody class="no-border-x">
+                        {% for article in articles %}
+
+                        <tr id="{{article.id}}">
+                            <td>{{ article.title }}</td>
+                            <td class="number">{{ article.year|default:"N/A" }}</td>
+                            <td>
+                                {{ article.authors_display }}
+                            </td>
+                            <td>{{ article.journal }}</td>
+                            <td class="actions">
+
+                                {% if article.url_source %}
+                                <a href="{{ article.url_source }}" target="_blank" class="icon"><i
+                                        class="mdi mdi-globe"></i></a>
+                                {% endif %}
+
+                            </td>
+                            <td>
+                                <span onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'>
+                                    Show content
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row" id="documentContentsPanel" style="display: none;">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading panel-heading-divider">
+                <span id="documentContentsTitle"></span>
+                <div class="tools" id="closePanelIcon">
+                </div>
+            </div>
+            <div class="panel-body" id="documentContents"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let selectedRowId = '';
+    function display_contents(id, title, page_contents, page_contents_not_used_by_llm) {
+
+        if(selectedRowId != '') {
+            $("#" + selectedRowId).removeClass('custom_success');
+        }
+        selectedRowId = id;
+
+        $("#" + id).addClass('custom_success');
+
+        clearDocumentContent();
+
+        if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm) )) {
+
+            $('#documentContentsPanel').show();
+            let formattedTitle = title.length > 80 ? `${title.substring(0,77)}...` : title;
+            $('#documentContentsTitle').html(formattedTitle);
+
+            $('#closePanelIcon').html('<span onclick="hideContentPanel(\'' + id + '\');" class="icon mdi mdi-close"></span>')
+
+            $.each(page_contents, function (index, value) {
+                $('#documentContents').append(`<p><strong>... ${value} ...</strong></p>`)
+            });
+            $.each(page_contents_not_used_by_llm, function (index, value) {
+                $('#documentContents').append(`<p>... ${value} ...</p>`)
+            });
+
+
+
+        } else {
+            hideContentPanel();
+        }
+    }
+
+    function hideContentPanel(id) {
+        clearDocumentContent();
+        $('#documentContentsPanel').hide();
+        $('#'+id).removeClass("custom_success");
+    }
+
+    function clearDocumentContent() {
+        $('#documentContents').empty();
+        $('#documentContentsTitle').empty();
+    }
+</script>
+
+{% endblock %}
+
+<style>
+
+</style>

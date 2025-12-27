@@ -1,139 +1,187 @@
 {% extends "website/base.html" %}
-{% load json_filters %}
-{% block page_header %}
-<!-- <h2 class="page-head-title">Search Result</h2> -->
-{% endblock %}
 
 {% block content %}
 
-<div class="row">
-    <div class="col-xs-12">
-        <div class="panel">
-            <div class="panel-heading panel-heading-divider">{{ query }}</div>
-            <div class="panel-body">
-                <p>{{ answer }}</p>
+<div class="flex-1 overflow-y-auto w-full">
+    <div class="max-w-[1000px] mx-auto px-4 py-8 pb-32 flex flex-col gap-8">
+        <!-- User Query Block -->
+        <div class="flex gap-4 justify-end">
+            <div class="bg-surface-highlight p-4 rounded-2xl rounded-tr-sm max-w-[80%]">
+                <p class="text-white text-base leading-relaxed">
+                    {{ query }}
+                </p>
+            </div>
+            <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0 self-start mt-1"
+                data-alt="User profile avatar image small">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
+                    width="40" height="40">
+                    <metadata xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
+                        <rdf:rdf>
+                            <rdf:description>
+                                <dc:title>Bottts</dc:title>
+                                <dc:creator>Pablo Stanley</dc:creator>
+                                <dc:source xsi:type="dcterms:URI">https://bottts.com/</dc:source>
+                                <dcterms:license xsi:type="dcterms:URI">https://bottts.com/</dcterms:license>
+                                <dc:rights>Remix of „Bottts” (https://bottts.com/) by „Pablo Stanley”, licensed
+                                    under „Free for personal and commercial use” (https://bottts.com/)
+                                </dc:rights>
+                            </rdf:description>
+                        </rdf:rdf>
+                    </metadata>
+                    <mask id="viewboxMask">
+                        <rect width="120" height="120" rx="0" ry="0" x="0" y="0" fill="#fff"></rect>
+                    </mask>
+                    <g mask="url(#viewboxMask)">
+                        <rect fill="#e53935" width="120" height="120" x="0" y="0"></rect>
+                        <g transform="translate(22 68)">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M18 10.22C18 21.78 24.47 28 38 28c13.52 0 20-6.34 20-17.78C58 9.5 57.17 8 55 8H21c-2.05 0-3 1.38-3 2.22Z"
+                                fill="#000" fill-opacity=".8"></path>
+                            <mask id="mouthSmile02-a" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="18"
+                                y="8" width="40" height="20">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18 10.22C18 21.78 24.47 28 38 28c13.52 0 20-6.34 20-17.78C58 9.5 57.17 8 55 8H21c-2.05 0-3 1.38-3 2.22Z"
+                                    fill="#fff"></path>
+                            </mask>
+                            <g mask="url(#mouthSmile02-a)">
+                                <rect x="30" y="2" width="16" height="14" rx="2" fill="#fff"></rect>
+                            </g>
+                        </g>
+                        <g transform="translate(8 20)">
+                            <circle cx="28" cy="24" r="18" fill="#000" fill-opacity=".2"></circle>
+                            <circle cx="74" cy="24" r="18" fill="#000" fill-opacity=".2"></circle>
+                            <circle cx="28" cy="24" r="15" fill="#F1EEDA"></circle>
+                            <circle cx="74" cy="24" r="15" fill="#F1EEDA"></circle>
+                            <rect x="26" y="15" width="10" height="10" rx="2" fill="#000" fill-opacity=".8"></rect>
+                            <rect x="74" y="15" width="10" height="10" rx="2" fill="#000" fill-opacity=".8"></rect>
+                        </g>
+                    </g>
+                </svg>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="panel">
-            <div class="panel-heading panel-heading-divider">
-                Relevant Papers
-                <span class="panel-subtitle">The documents retrieved from the literature collection are below. The bold content is selected by llm to generate the answer.</span>
+        <!-- AI Response Block -->
+        <div class="flex gap-4">
+            <div class="size-10 rounded-full bg-transparent flex items-center justify-center shrink-0 self-start mt-1">
+                <!-- <span class="material-symbols-outlined text-white">smart_toy</span> -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
+                    width="512" height="512">
+                    <metadata xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
+                        <rdf:rdf>
+                            <rdf:description>
+                                <dc:title>Bottts</dc:title>
+                                <dc:creator>Pablo Stanley</dc:creator>
+                                <dc:source xsi:type="dcterms:URI">https://bottts.com/</dc:source>
+                                <dcterms:license xsi:type="dcterms:URI">https://bottts.com/</dcterms:license>
+                                <dc:rights>Remix of „Bottts” (https://bottts.com/) by „Pablo Stanley”, licensed
+                                    under „Free for personal and commercial use” (https://bottts.com/)
+                                </dc:rights>
+                            </rdf:description>
+                        </rdf:rdf>
+                    </metadata>
+                    <mask id="viewboxMask">
+                        <rect width="120" height="120" rx="0" ry="0" x="0" y="0" fill="#fff"></rect>
+                    </mask>
+                    <g mask="url(#viewboxMask)">
+                        <rect fill="#fdd835" width="120" height="120" x="0" y="0"></rect>
+                        <g transform="translate(22 68)">
+                            <path
+                                d="M27.05 8.44a2 2 0 1 1 3.9-.88C31.72 10.96 34.4 13 38 13c3.6 0 6.28-2.04 7.05-5.44a2 2 0 1 1 3.9.88C47.75 13.7 43.43 17 38 17s-9.76-3.3-10.95-8.56Z"
+                                fill="#000" fill-opacity=".6"></path>
+                        </g>
+                        <g transform="translate(8 20)">
+                            <rect x="7" y="16" width="91" height="16" rx="4" fill="#000" fill-opacity=".8"></rect>
+                            <mask id="eyesRobocop-a" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="7" y="16"
+                                width="91" height="16">
+                                <rect x="7" y="16" width="91" height="16" rx="4" fill="#fff"></rect>
+                            </mask>
+                            <g mask="url(#eyesRobocop-a)" fill-rule="evenodd" clip-rule="evenodd" fill="#fff"
+                                fill-opacity=".8">
+                                <path d="M76 7h18L82 37H64L76 7ZM52 7h9L49 37h-9L52 7Z"></path>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
             </div>
-            {% if articles %}
-            <div class="panel-body">
-                <table class="table table-striped table-borderless">
-                    <thead>
-                        <tr>
-                            <th style="width:30%;">Title</th>
-                            <th class="number">Year</th>
-                            <th>Authors</th>
-                            <th>Source</th>
-                            <th class="actions">Homepage</th>
-                            <th>Retrieved Content</th>
-                        </tr>
-                    </thead>
-                    <tbody class="no-border-x">
-                        {% for article in articles %}
-
-                        <tr id="{{article.id}}">
-                            <td>{{ article.title }}</td>
-                            <td class="number">{{ article.year|default:"N/A" }}</td>
-                            <td>
-                                {{ article.authors_display }}
-                            </td>
-                            <td>{{ article.journal }}</td>
-                            <td class="actions">
-
-                                {% if article.url_source %}
-                                <a href="{{ article.url_source }}" target="_blank" class="icon"><i
-                                        class="mdi mdi-globe"></i></a>
-                                {% endif %}
-
-                            </td>
-                            <td>
-                                <span onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'>
-                                    Show content
-                                </span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<div class="row" id="documentContentsPanel" style="display: none;">
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading panel-heading-divider">
-                <span id="documentContentsTitle"></span>
-                <div class="tools" id="closePanelIcon">
+            <div class="flex-1 min-w-0">
+                <!-- Headline -->
+                <div class="mb-6">
+                    <h1 class="text-white tracking-tight text-2xl md:text-3xl font-bold leading-tight pb-2">
+                        Relevant Papers
+                    </h1>
+                    <p class="text-text-secondary text-base">The documents retrieved from the literature collection are
+                        below. The bold content is selected by LLM to generate the answer.</p>
                 </div>
+                <!-- Results Table -->
+                {% if articles %}
+                <div class="@container w-full">
+                    <div class="flex overflow-hidden rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-[#1c2127] border-b border-[#3b4754]">
+                                    <th
+                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[30%]">
+                                        Title</th>
+                                    <th
+                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[15%]">
+                                        Authors</th>
+                                    <th
+                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[10%]">
+                                        Year</th>
+                                    <th
+                                        class="hidden md:table-cell px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[35%]">
+                                        Source</th>
+                                    <th
+                                        class="hidden md:table-cell px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[35%]">
+                                        Homepage</th>
+                                    <th
+                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[10%]">
+                                        Content</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#3b4754]">
+                                {% for article in articles %}
+                                <tr class="group hover:bg-surface-highlight transition-colors">
+                                    <td class="px-4 py-4">
+                                        <p
+                                            class="text-white text-sm font-semibold leading-normal group-hover:text-primary transition-colors cursor-pointer">
+                                            {{ article.title }}</p>
+                                    </td>
+                                    <td class="px-4 py-4 text-text-secondary text-sm">{{ article.authors_display }}</td>
+                                    <td class="px-4 py-4 text-text-secondary text-sm">{{ article.year|default:"N/A" }}
+                                    </td>
+                                    <td class="hidden md:table-cell px-4 py-4 text-text-secondary text-sm">
+                                        {{ article.journal|default:"N/A" }}
+                                    </td>
+                                    <td class="hidden md:table-cell px-4 py-4 text-text-secondary text-sm">
+                                        {% if article.url_source %}
+                                        <a href="{{ article.url_source }}" target="_blank" class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                                            </svg>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <button
+                                            class="flex items-center justify-center rounded-md h-8 px-3 bg-surface-highlight border border-[#3b4754] hover:bg-[#3b4754] text-white text-xs font-medium w-full transition-all">
+                                            [Show]
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
             </div>
-            <div class="panel-body" id="documentContents"></div>
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    let selectedRowId = '';
-    function display_contents(id, title, page_contents, page_contents_not_used_by_llm) {
-
-        if(selectedRowId != '') {
-            $("#" + selectedRowId).removeClass('custom_success');
-        }
-        selectedRowId = id;
-
-        $("#" + id).addClass('custom_success');
-
-        clearDocumentContent();
-
-        if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm) )) {
-
-            $('#documentContentsPanel').show();
-            let formattedTitle = title.length > 80 ? `${title.substring(0,77)}...` : title;
-            $('#documentContentsTitle').html(formattedTitle);
-
-            $('#closePanelIcon').html('<span onclick="hideContentPanel(\'' + id + '\');" class="icon mdi mdi-close"></span>')
-
-            $.each(page_contents, function (index, value) {
-                $('#documentContents').append(`<p><strong>... ${value} ...</strong></p>`)
-            });
-            $.each(page_contents_not_used_by_llm, function (index, value) {
-                $('#documentContents').append(`<p>... ${value} ...</p>`)
-            });
-
-
-
-        } else {
-            hideContentPanel();
-        }
-    }
-
-    function hideContentPanel(id) {
-        clearDocumentContent();
-        $('#documentContentsPanel').hide();
-        $('#'+id).removeClass("custom_success");
-    }
-
-    function clearDocumentContent() {
-        $('#documentContents').empty();
-        $('#documentContentsTitle').empty();
-    }
-</script>
-
 {% endblock %}
-
-<style>
-
-</style>
