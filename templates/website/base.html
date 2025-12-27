@@ -185,10 +185,10 @@
             $.getJSON('/history/', function (historyItems) {
 
                 if (!jQuery.isEmptyObject(historyItems)) {
+                    $('#userPromptHistory').empty();
                     $.each(historyItems, function (index, value) {
                         $('#emptyHistory').hide();
                         $('#clearButton').show();
-                        $('#userPromptHistory').empty();
 
                         $('#userPromptHistory').append(
                             `
