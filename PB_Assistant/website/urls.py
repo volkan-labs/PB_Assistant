@@ -8,6 +8,7 @@ urlpatterns = [
     path('history/', views.history, name='history'),
     path('history-item/<int:id>', views.load_history_item, name='load_history_item'),
     path('delete-history/<int:id>', views.delete_history, name='delete_history'),
+    path('history/clear/', views.clear_history, name='clear_history'),
     path("api/ollama/models/", views.ollama_models, name="ollama_models"),
 
 ]

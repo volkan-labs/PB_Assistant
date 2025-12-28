@@ -62,6 +62,13 @@ class DatabaseHandler:
         except Exception as e:
             logger.error(f"Error deleting history item: {e}")
 
+    def clear_search_history_for_user(self, user_id):
+        try:
+            SearchHistory.objects.filter(user_id=user_id).delete()
+            logger.info(f"Cleared all search history for user {user_id}.")
+        except Exception as e:
+            logger.error(f"Error clearing search history for user {user_id}: {e}")
+
     def get_academicitem_ids_from_text_ids(self, text_ids: list[int]) -> list[int]:
         mapping = dict(
             AcademicPaperText.objects

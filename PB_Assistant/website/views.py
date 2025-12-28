@@ -82,6 +82,7 @@ def search(request):
         'query': user_query,
         'answer': answer,
         'articles': articles_as_dict,
+        'history_id': None,
     })
 
 @require_GET
@@ -111,14 +112,21 @@ def load_history_item(request, id):
     articles_as_dict = ArticleRenderer.render_articles_and_contents(
         articles, source_documents, chunk_ids
     )
-
+    
     return render(request, 'website/search_result.html', {
         'query': user_query,
         'answer': answer,
         'articles': articles_as_dict,
+        'history_id': id,
     })
 
 @require_http_methods(['DELETE'])
 def delete_history(request, id):
     db_handler.delete_search_history_item(history_id=id)
+    return JsonResponse({}, status=204)
+
+@require_http_methods(['DELETE'])
+def clear_history(request):
+    user_id = request.user.id if request.user.is_authenticated else 1
+    db_handler.clear_search_history_for_user(user_id=user_id)
     return JsonResponse({}, status=204)
