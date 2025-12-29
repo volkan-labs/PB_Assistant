@@ -58,6 +58,9 @@ $(document).ready(function () {
     $('#error-toast-close').click(function() {
         $('#error-toast').addClass('hidden');
     });
+
+    // Set dynamic copyright year
+    $('#copyright-year').text(new Date().getFullYear());
 });
 
 $(window).on('load', function () {
