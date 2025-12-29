@@ -108,7 +108,7 @@
 
         /* Optional background styling */
         .blockUI.blockOverlay {
-            background-color: rgba(0, 0, 0, 0.8) !important;
+            background-color: #0876e5 !important; /* Use background-dark from theme */
         }
     </style>
 
@@ -119,6 +119,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $.unblockUI(); // Ensure any persistent blockUI is cleared on new page load
 
             $('#userPromptForm').submit(function () {
                 $.blockUI({
@@ -128,8 +129,14 @@
                         </div>`,
                     css: {
                         border: 'none',
-                        backgroundColor: 'transparent',
-                        padding: '0'
+                        padding: '15px',
+                        backgroundColor: '#111418', // surface-dark
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        color: '#fff'
+                    },
+                    overlayCSS: {
+                        backgroundColor: '#111418', // Solid light blue (BBE0EF)
                     }
                 });
             });

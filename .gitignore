@@ -1,5 +1,4 @@
 .idea
 .venv
-ollama_data
 .env
-
+/.\ollama_data
