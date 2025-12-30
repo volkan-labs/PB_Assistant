@@ -66,46 +66,45 @@ $(document).ready(function () {
         hideContentPanel(selectedRowId);
     });
 
-    var themeToggleDarkIcon = $('#theme-toggle-dark-icon');
-    var themeToggleLightIcon = $('#theme-toggle-light-icon');
-    var themeToggleText = $('#theme-toggle-text');
+    // Theme toggle logic
+    const themeToggleCheckbox = $('#theme-toggle-checkbox');
+    const themeToggleDarkIcon = $('#theme-toggle-dark-icon');
+    const themeToggleLightIcon = $('#theme-toggle-light-icon');
+    const themeToggleThumb = $('#theme-toggle-thumb');
 
-    // Change the icons and text inside the button based on previous settings
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        themeToggleLightIcon.removeClass('hidden');
-        themeToggleText.text('Light');
-    } else {
-        themeToggleDarkIcon.removeClass('hidden');
-        themeToggleText.text('Dark');
+    // Function to set the theme state
+    function setTheme(isDark) {
+        if (isDark) {
+            $('html').addClass('dark');
+            themeToggleCheckbox.prop('checked', false);
+            themeToggleLightIcon.addClass('hidden');
+            themeToggleDarkIcon.removeClass('hidden');
+            themeToggleThumb.removeClass('translate-x-full');
+        } else {
+            $('html').removeClass('dark');
+            themeToggleCheckbox.prop('checked', true);
+            themeToggleDarkIcon.addClass('hidden');
+            themeToggleLightIcon.removeClass('hidden');
+            themeToggleThumb.addClass('translate-x-full');
+        }
     }
 
-    $('#theme-toggle').on('click', function() {
-        // toggle icons inside button
-        themeToggleDarkIcon.toggleClass('hidden');
-        themeToggleLightIcon.toggleClass('hidden');
+    // Set initial state of the toggle
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        setTheme(true);
+    } else {
+        setTheme(false);
+    }
 
-        // if set via local storage previously
-        if (localStorage.getItem('theme')) {
-            if (localStorage.getItem('theme') === 'light') {
-                $('html').addClass('dark');
-                themeToggleText.text('Light');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                $('html').removeClass('dark');
-                themeToggleText.text('Dark');
-                localStorage.setItem('theme', 'light');
-            }
-        // if NOT set via local storage previously
+    themeToggleCheckbox.on('change', function() {
+        if (themeToggleCheckbox.is(':checked')) {
+            // Light mode
+            setTheme(false);
+            localStorage.setItem('theme', 'light');
         } else {
-            if ($('html').hasClass('dark')) {
-                $('html').removeClass('dark');
-                themeToggleText.text('Dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                $('html').addClass('dark');
-                themeToggleText.text('Light');
-                localStorage.setItem('theme', 'dark');
-            }
+            // Dark mode
+            setTheme(true);
+            localStorage.setItem('theme', 'dark');
         }
     });
 });

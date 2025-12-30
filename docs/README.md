@@ -179,14 +179,6 @@ Open your browser to `http://127.0.0.1:8000/`.
 
 # Project Documentation
 
-## Testing
-
-This project currently lacks a comprehensive test suite. A foundational test has been added in `PB_Assistant/website/tests.py`, which you can run using:
-
-    python manage.py test
-
-Implementing a full test suite is a critical next step for ensuring code quality, preventing regressions, and facilitating future development.
-
 ## Contributing
 
 We welcome contributions to the PB Assistant project! To contribute:
