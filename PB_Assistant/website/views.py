@@ -1,22 +1,21 @@
 
 import logging
-import time
 import requests
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
 from django.conf import settings
 from django.shortcuts import render, redirect
+
 from .services.databasehandler import DatabaseHandler
 from .services.articlerenderer import ArticleRenderer
-from .services.qa_chain import build_llm_chain, build_custom_retrieval_qa_chain,  process_qa_response, serialize_documents
-from PB_Assistant.apps.textprocessing.embedder import TextEmbedder
+from .services.search_service import SearchService
 
 logger = logging.getLogger(__name__)
 db_handler = DatabaseHandler()
-embedder = TextEmbedder()
 
 OLLAMA_BASE_URL = settings.OLLAMA_BASE_URL
+
 def ollama_models(request):
     """
     Returns: {"models": ["llama3:latest", "mistral:7b", ...]}
@@ -33,6 +32,7 @@ def ollama_models(request):
     except requests.RequestException as e:
         # Friendly fallback for frontend; you can log e
         return JsonResponse({"models": [], "error": "Ollama unreachable"}, status=503)
+
 @require_GET
 def index(request):
     return render(request, 'website/index.html')
@@ -45,43 +45,17 @@ def search(request):
     if not user_query:
         return HttpResponseBadRequest("user_prompt is required")
 
-    # Enforce model selection (or relax this if you have a default)
     if not selected_model:
         messages.error(request, "Please select a model before running a search.")
-        return redirect('website/index.html')  # or render the same page
+        return redirect('website/index.html')
 
-    # Persist the last chosen model for convenience
     request.session['ollama_model'] = selected_model
 
-    query_vector = embedder.embed_text(user_query)
-    llm_chain = build_llm_chain(model_name=selected_model)
-    qa = build_custom_retrieval_qa_chain(llm_chain, query_vector)
-
-    start_time = time.time()
-    response = qa(user_query)
-    elapsed_time = time.time() - start_time
-    logger.info(f"Time for inference: {elapsed_time:.03f} seconds")
-
-    result = response.get('result', '')
-    retrieved_documents = response.get('source_documents', [])
-
-    answer, chunk_ids, doc_ids = process_qa_response(result, retrieved_documents)
-    serialized_docs = serialize_documents(retrieved_documents)
-
-    user_id = request.user.id if request.user.is_authenticated else 1
-    # Save and fetch new history ID if needed
-    db_handler.save_search_history(user_id, user_query, answer, chunk_ids, serialized_docs)
-
-    retrieved_doc_ids = [doc.metadata['id'] for doc in retrieved_documents]
-    articles = db_handler.retrieve_articles_by_doc_ids(retrieved_doc_ids)
-    articles_as_dict = ArticleRenderer.render_articles_and_contents(
-        articles, serialized_docs, chunk_ids
-    )
+    search_service = SearchService()
+    search_context = search_service.perform_search(user_query, selected_model, request.user)
 
     return render(request, 'website/search_result.html', {
-        'query': user_query,
-        'answer': answer,
-        'articles': articles_as_dict,
+        **search_context,
         'history_id': None,
     })
 
