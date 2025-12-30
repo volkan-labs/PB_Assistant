@@ -65,6 +65,49 @@ $(document).ready(function () {
     $('#closePanelIcon').click(function() {
         hideContentPanel(selectedRowId);
     });
+
+    var themeToggleDarkIcon = $('#theme-toggle-dark-icon');
+    var themeToggleLightIcon = $('#theme-toggle-light-icon');
+    var themeToggleText = $('#theme-toggle-text');
+
+    // Change the icons and text inside the button based on previous settings
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        themeToggleLightIcon.removeClass('hidden');
+        themeToggleText.text('Light');
+    } else {
+        themeToggleDarkIcon.removeClass('hidden');
+        themeToggleText.text('Dark');
+    }
+
+    $('#theme-toggle').on('click', function() {
+        // toggle icons inside button
+        themeToggleDarkIcon.toggleClass('hidden');
+        themeToggleLightIcon.toggleClass('hidden');
+
+        // if set via local storage previously
+        if (localStorage.getItem('theme')) {
+            if (localStorage.getItem('theme') === 'light') {
+                $('html').addClass('dark');
+                themeToggleText.text('Light');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                $('html').removeClass('dark');
+                themeToggleText.text('Dark');
+                localStorage.setItem('theme', 'light');
+            }
+        // if NOT set via local storage previously
+        } else {
+            if ($('html').hasClass('dark')) {
+                $('html').removeClass('dark');
+                themeToggleText.text('Dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                $('html').addClass('dark');
+                themeToggleText.text('Light');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    });
 });
 
 let selectedRowId = '';
