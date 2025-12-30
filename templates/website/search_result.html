@@ -19,8 +19,8 @@
     <div class="max-w-[1000px] mx-auto px-4 py-8 pb-32 flex flex-col gap-8">
         <!-- User Query Block -->
         <div class="flex gap-4 justify-end">
-            <div class="bg-surface-highlight p-4 rounded-2xl rounded-tr-sm max-w-[80%]">
-                <p class="text-white text-base leading-relaxed">
+            <div class="bg-gray-200 dark:bg-surface-highlight p-4 rounded-2xl rounded-tr-sm max-w-[80%]">
+                <p class="text-gray-800 dark:text-white text-base leading-relaxed">
                     {{ query }}
                 </p>
             </div>
@@ -120,66 +120,61 @@
                 </svg>
             </div>
 
-            <div class="bg-surface-highlight p-4 rounded-2xl rounded-tl-sm max-w-full mb-6">
-
+            <div class="bg-gray-200 dark:bg-surface-highlight p-4 rounded-2xl rounded-tl-sm max-w-full mb-6">
                 {% if answer %}
-                <div class="mb-6">
-                    <p class="text-text-secondary text-base">
-                        {{answer}}
-                    </p>
-                </div>
+                <div class="text-gray-800 dark:text-white text-base leading-relaxed mb-6">{{ answer }}</div>
                 {% endif %}
 
                 <!-- Results Table -->
                 {% if articles %}
                 <div class="mb-6">
-                    <h1 class="text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
+                    <h1 class="text-gray-900 dark:text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
                         Relevant Papers
                     </h1>
-                    <p class="text-text-secondary text-base">The documents retrieved from the literature collection are
+                    <p class="text-gray-600 dark:text-text-secondary text-base">The documents retrieved from the literature collection are
                         below. The bold content is selected by LLM to generate the answer.</p>
                 </div>
                 <div class="@container w-full">
-                    <div class="flex overflow-hidden rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl">
+                    <div class="flex overflow-hidden rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-surface-dark shadow-xl">
                         <table class="w-full">
                             <thead>
-                                <tr class="bg-[#1c2127] border-b border-[#3b4754]">
+                                <tr class="bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754]">
                                     <th
-                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[30%]">
+                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[30%]">
                                         Title</th>
                                     <th
-                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[15%]">
+                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[15%]">
                                         Authors</th>
                                     <th
-                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[10%]">
+                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
                                         Year</th>
                                     <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[35%]">
+                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
                                         Source</th>
                                     <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[35%]">
+                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
                                         Homepage</th>
                                     <th
-                                        class="px-4 py-4 text-left text-white text-xs uppercase tracking-wider font-bold w-[10%]">
+                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
                                         Content</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-[#3b4754]">
+                            <tbody class="divide-y divide-gray-200 dark:divide-[#3b4754]">
                                 {% for article in articles %}
-                                <tr class="group hover:bg-surface-highlight transition-colors"
+                                <tr class="group hover:bg-gray-100 dark:hover:bg-surface-highlight transition-colors"
                                     id="row-{{ article.id }}">
                                     <td class="px-4 py-4">
-                                        <p class="text-white text-sm font-semibold leading-normal transition-colors">
+                                        <p class="text-gray-900 dark:text-white text-sm font-semibold leading-normal transition-colors">
                                             {{ article.title }}
                                         </p>
                                     </td>
-                                    <td class="px-4 py-4 text-text-secondary text-sm">{{ article.authors_display }}</td>
-                                    <td class="px-4 py-4 text-text-secondary text-sm">{{ article.year|default:"N/A" }}
+                                    <td class="px-4 py-4 text-gray-600 dark:text-text-secondary text-sm">{{ article.authors_display }}</td>
+                                    <td class="px-4 py-4 text-gray-600 dark:text-text-secondary text-sm">{{ article.year|default:"N/A" }}
                                     </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-text-secondary text-sm">
+                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-text-secondary text-sm">
                                         {{ article.journal|default:"N/A" }}
                                     </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-text-secondary text-sm">
+                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-text-secondary text-sm">
                                         {% if article.url_source %}
                                         <a href="{{ article.url_source }}" target="_blank" class="icon">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -193,7 +188,7 @@
                                     <td class="px-4 py-4">
                                         <button title="Show content"
                                             onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
-                                            class="flex items-center justify-center rounded-md h-8 px-3 bg-surface-highlight border border-[#3b4754] hover:bg-[#3b4754] text-white text-xs font-medium w-full transition-all">
+                                            class="flex items-center justify-center rounded-md h-8 px-3 bg-gray-200 dark:bg-surface-highlight border border-gray-200 dark:border-[#3b4754] hover:bg-gray-200 dark:hover:bg-[#3b4754] text-gray-900 dark:text-white text-xs font-medium w-full transition-all">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="size-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -208,23 +203,23 @@
                     </div>
                 </div>
                 {% endif %}
-
-                <!-- Document Contents Panel -->
-                <div id="documentContentsPanel" class="hidden mt-8">
-                    <div class="flex rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl flex-col">
-                        <div class="p-4 bg-[#1c2127] border-b border-[#3b4754] flex justify-between items-center">
-                            <h2 id="documentContentsTitle" class="text-lg font-bold text-white"></h2>
-                            <button id="closePanelIcon" class="text-white hover:text-primary">
-                                <span class="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div id="documentContents" class="p-6 text-text-secondary leading-relaxed space-y-4">
-                            <!-- Content will be injected here -->
-                        </div>
+            </div>
+            
+            <!-- Document Contents Panel -->
+            <div id="documentContentsPanel" class="hidden mt-8">
+                <div class="flex rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-surface-dark shadow-xl flex-col">
+                    <div class="p-4 bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754] flex justify-between items-center">
+                        <h2 id="documentContentsTitle" class="text-lg font-bold text-gray-900 dark:text-white"></h2>
+                        <button id="closePanelIcon" class="text-gray-800 dark:text-white hover:text-primary">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div id="documentContents" class="p-6 text-gray-600 dark:text-text-secondary leading-relaxed space-y-4">
+                        <!-- Content will be injected here -->
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
 </div>
