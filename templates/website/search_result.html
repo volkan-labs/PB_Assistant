@@ -120,18 +120,25 @@
                 </svg>
             </div>
 
-            <div class="flex-1 min-w-0">
-                <!-- Headline -->
+            <div class="bg-surface-highlight p-4 rounded-2xl rounded-tl-sm max-w-full mb-6">
+
+                {% if answer %}
                 <div class="mb-6">
-                    <h1 class="text-white tracking-tight text-2xl md:text-3xl font-bold leading-tight pb-2">
+                    <p class="text-text-secondary text-base">
+                        {{answer}}
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Results Table -->
+                {% if articles %}
+                <div class="mb-6">
+                    <h1 class="text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
                         Relevant Papers
                     </h1>
-                    <p>{{answer}}</p> <br />
                     <p class="text-text-secondary text-base">The documents retrieved from the literature collection are
                         below. The bold content is selected by LLM to generate the answer.</p>
                 </div>
-                <!-- Results Table -->
-                {% if articles %}
                 <div class="@container w-full">
                     <div class="flex overflow-hidden rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl">
                         <table class="w-full">
@@ -159,10 +166,10 @@
                             </thead>
                             <tbody class="divide-y divide-[#3b4754]">
                                 {% for article in articles %}
-                                <tr class="group hover:bg-surface-highlight transition-colors" id="row-{{ article.id }}">
+                                <tr class="group hover:bg-surface-highlight transition-colors"
+                                    id="row-{{ article.id }}">
                                     <td class="px-4 py-4">
-                                        <p
-                                            class="text-white text-sm font-semibold leading-normal transition-colors">
+                                        <p class="text-white text-sm font-semibold leading-normal transition-colors">
                                             {{ article.title }}
                                         </p>
                                     </td>
@@ -204,7 +211,7 @@
 
                 <!-- Document Contents Panel -->
                 <div id="documentContentsPanel" class="hidden mt-8">
-                    <div class="flex overflow-hidden rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl flex-col">
+                    <div class="flex rounded-xl border border-[#3b4754] bg-surface-dark shadow-xl flex-col">
                         <div class="p-4 bg-[#1c2127] border-b border-[#3b4754] flex justify-between items-center">
                             <h2 id="documentContentsTitle" class="text-lg font-bold text-white"></h2>
                             <button id="closePanelIcon" class="text-white hover:text-primary">
