@@ -47,7 +47,7 @@ def search(request):
 
     if not selected_model:
         messages.error(request, "Please select a model before running a search.")
-        return redirect('website/index.html')
+        return redirect('index')
 
     request.session['ollama_model'] = selected_model
 

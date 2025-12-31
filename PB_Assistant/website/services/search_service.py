@@ -18,6 +18,10 @@ class SearchService:
         """
         query_vector = self.embedder.embed_text(user_query)
         llm_chain = build_llm_chain(model_name=selected_model)
+        
+        if llm_chain is None: # Added check
+            return None # Return early if llm_chain could not be built
+
         qa = build_custom_retrieval_qa_chain(llm_chain, query_vector)
 
         start_time = time.time()

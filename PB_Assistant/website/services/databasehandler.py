@@ -7,17 +7,11 @@ class DatabaseHandler:
 
     def retrieve_articles_by_doc_ids(self, doc_ids):
         try:
-            academicpapers = AcademicPaper.objects.filter(academicpaper_text__id__in=doc_ids).distinct()
-            results = []
-            for academicpaper in academicpapers:
-                article_dict = model_to_dict(academicpaper)
-                article_dict['academicpaper_text_id'] = academicpaper.academicpaper_text.id if academicpaper.academicpaper_text else None
-                article_dict['authors_string'] = ", ".join(a.get("name", "") for a in academicpaper.author_list if a.get("name"))
-                results.append(article_dict)
-            return results
+            academicpapers = AcademicPaper.objects.filter(paper_id__in=doc_ids).distinct()
+            return academicpapers # Return QuerySet directly
         except Exception as e:
-            logger.error(f"Error fetching articles: {e}")
-            return []
+            logger.error(f"{e}")
+            return AcademicPaper.objects.none() # Return empty QuerySet on error
 
     def save_search_history(self, user_id, query, answer, chunk_ids, serialized_docs):
         try:

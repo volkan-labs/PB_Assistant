@@ -148,7 +148,7 @@ def process_qa_response(result: str, retrieved_documents: list) -> tuple:
                 for d in retrieved_documents if d.metadata.get("chunk_id") in chunk_ids
             ]
             if pairs:
-                doc_ids, chunk_ids = zip(*pairs)
+                doc_ids, chunk_ids = [list(x) for x in zip(*pairs)]
     return answer, chunk_ids, doc_ids
 
 
