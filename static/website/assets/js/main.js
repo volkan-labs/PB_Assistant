@@ -1,7 +1,14 @@
 $(document).ready(function () {
     $.unblockUI(); // Ensure any persistent blockUI is cleared on new page load
 
-    $('#userPromptForm').submit(function () {
+    $('#userPromptForm').submit(function (event) {
+        const userPrompt = $('textarea[name="user_prompt"]').val().trim();
+        if (!userPrompt) {
+            showError('Please enter a query before searching.');
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
         $.blockUI({
             message: `<div class="custom-blockui">
                             <div class="spinner"></div>
