@@ -118,6 +118,10 @@
         .blockUI.blockOverlay {
             background-color: #0876e5 !important; /* Use background-dark from theme */
         }
+
+        #error-toast-loader {
+            transition: width 5s linear;
+        }
     </style>
 
     {% csrf_token %}
@@ -162,9 +166,12 @@
         <!-- Main Content Area -->
         <main class="flex flex-1 flex-col relative h-full">
             <!-- Error Toast -->
-            <div id="error-toast" class="hidden absolute top-4 right-4 z-50 bg-red-600 text-white p-4 rounded-lg shadow-lg flex items-center gap-4">
-                <span id="error-toast-message"></span>
-                <button id="error-toast-close" class="text-white">&times;</button>
+            <div id="error-toast" class="hidden absolute top-4 right-4 z-50 bg-red-600 text-white p-4 rounded-lg shadow-lg">
+                <div class="flex items-center gap-4">
+                    <span id="error-toast-message"></span>
+                    <button id="error-toast-close" class="text-white">&times;</button>
+                </div>
+                <div class="absolute bottom-0 left-0 h-1 bg-white/30" id="error-toast-loader" style="width: 100%;"></div>
             </div>
 
             <!-- Top Navigation (Minimal) -->

@@ -63,6 +63,7 @@ $(document).ready(function () {
 
     // Error toast close button
     $('#error-toast-close').click(function() {
+        clearTimeout(errorToastTimeout);
         $('#error-toast').addClass('hidden');
     });
 
@@ -161,9 +162,27 @@ $(window).on('load', function () {
     loadPromptHistory();
 });
 
+let errorToastTimeout; // Global variable for the timeout
+
 function showError(message) {
+    clearTimeout(errorToastTimeout); // Clear any existing timeouts
+
+    const toast = $('#error-toast');
+    const loader = $('#error-toast-loader');
+
     $('#error-toast-message').text(message);
-    $('#error-toast').removeClass('hidden');
+    toast.removeClass('hidden');
+
+    // Reset and start animation
+    loader.css('width', '100%');
+    // Force a reflow to restart the animation
+    loader.get(0).offsetHeight; 
+    loader.css('width', '0%');
+
+
+    errorToastTimeout = setTimeout(() => {
+        toast.addClass('hidden');
+    }, 5000);
 }
 
 function showConfirmationModal(title, body, confirmText, onConfirm) {
