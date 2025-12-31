@@ -2,3 +2,4 @@
 .venv
 .env
 /.\ollama_data
+__pycache__/
