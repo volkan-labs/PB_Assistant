@@ -18,15 +18,19 @@ from PB_Assistant.models import AcademicPaperTextEmbedding
 
 logger = logging.getLogger(__name__)
 
+_llm_cache = {}
+
 def get_ollama_llm(model_name:str):
-    llm = Ollama(
-        model=model_name,
-        base_url= settings.OLLAMA_BASE_URL,
-        temperature=0.0,
-        top_p=1.0,
-    )
-    llm = llm.bind(seed=42, min_p=0.0, keep_alive="100m")
-    return llm
+    if model_name not in _llm_cache:
+        llm = Ollama(
+            model=model_name,
+            base_url= settings.OLLAMA_BASE_URL,
+            temperature=0.0,
+            top_p=1.0,
+        )
+        llm = llm.bind(seed=42, min_p=0.0, keep_alive="100m")
+        _llm_cache[model_name] = llm
+    return _llm_cache[model_name]
 
 def normalize(d: dict) -> dict:
     resp = str(d.get("response", "")).strip()
