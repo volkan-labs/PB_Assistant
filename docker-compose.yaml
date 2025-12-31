@@ -21,7 +21,7 @@ services:
       JAVA_OPTS: "-Xmx2G"        # adjust memory as needed
 
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.1.32
     container_name: ollama_container
     ports:
       - "11434:11434"
