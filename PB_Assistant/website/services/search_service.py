@@ -31,8 +31,7 @@ class SearchService:
         answer, chunk_ids, doc_ids = process_qa_response(result, retrieved_documents)
         serialized_docs = serialize_documents(retrieved_documents)
 
-        user_id = user.id if user.is_authenticated else 1
-        self.db_handler.save_search_history(user_id, user_query, answer, chunk_ids, serialized_docs)
+        self.db_handler.save_search_history(user if user.is_authenticated else None, user_query, answer, chunk_ids, serialized_docs)
 
         retrieved_doc_ids = [doc.metadata['id'] for doc in retrieved_documents]
         articles = self.db_handler.retrieve_articles_by_doc_ids(retrieved_doc_ids)

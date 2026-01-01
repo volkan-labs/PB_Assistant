@@ -1,8 +1,11 @@
+from django.db import transaction
 import logging
 import dataclasses
 from typing import Iterable, List
 from django.utils.text import slugify
 from django.db.models import Q
+from django.conf import settings
+from fuzzywuzzy import fuzz
 from PB_Assistant.models import AcademicPaper, PlanetaryBoundary
 from PB_Assistant.data_models import AcademicPaperData, AcademicAuthorData
 
@@ -32,13 +35,12 @@ def find_duplicate(paper: AcademicPaperData, threshold: int = 90) -> AcademicPap
         if match:
             return match
 
-        # I comment out fuzzy duplicate check because if it is an annual report, only year changes in the title such as Indicators of Global Climate Change 2022, 2023 etc..
-        # which is treated as a duplicate
-
-        # for existing in AcademicPaper.objects.exclude(title__isnull=True).iterator():
-        #     score = fuzz.token_sort_ratio(paper.title.lower(), existing.title.lower())
-        #     if score >= threshold:
-        #         return existing
+        # Conditional fuzzy duplicate check
+        if settings.FUZZY_MATCHING_ENABLED: # Use the setting
+            for existing in AcademicPaper.objects.exclude(title__isnull=True).iterator():
+                score = fuzz.token_sort_ratio(paper.title.lower(), existing.title.lower())
+                if score >= threshold:
+                    return existing
 
     return None
 
@@ -115,13 +117,14 @@ def import_academic_papers(
     variant_count = 0
     skipped_empty_count = 0
 
-    for paper in new_papers:
-        status, paper = import_academic_paper(paper, planetary_boundary)
-        if status == 'skipped_empty':
-            skipped_empty_count += 1
-        elif status == 'new_record':
-            variant_count += 1
-            new_count += 1
+    with transaction.atomic():
+        for paper in new_papers:
+            status, paper = import_academic_paper(paper, planetary_boundary)
+            if status == 'skipped_empty':
+                skipped_empty_count += 1
+            elif status == 'new_record':
+                variant_count += 1
+                new_count += 1
 
     return {
         "empty_records_skipped": skipped_empty_count,

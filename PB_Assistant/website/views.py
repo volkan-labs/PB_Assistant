@@ -64,13 +64,13 @@ async def search(request):
 
 OLLAMA_BASE_URL = settings.OLLAMA_BASE_URL
 
-async def get_user_id_async(request):
-    return await sync_to_async(lambda: request.user.id if request.user.is_authenticated else 1, thread_sensitive=True)()
+async def get_user_object_async(request):
+    return await sync_to_async(lambda: request.user, thread_sensitive=True)()
 
 @require_GET
 async def history(request):
-    user_id = await get_user_id_async(request)
-    history_records = await sync_to_async(db_handler.retrieve_search_history_by_user, thread_sensitive=True)(user_id=user_id)
+    user = await get_user_object_async(request)
+    history_records = await sync_to_async(db_handler.retrieve_search_history_by_user, thread_sensitive=True)(user=user)
 
     user_prompt_history = [
         {"id": record["id"], "title": record["query"]}
@@ -110,6 +110,6 @@ async def delete_history(request, id):
 
 @require_http_methods(['DELETE'])
 async def clear_history(request):
-    user_id = await get_user_id_async(request)
-    await sync_to_async(db_handler.clear_search_history_for_user, thread_sensitive=True)(user_id=user_id)
+    user = await get_user_object_async(request)
+    await sync_to_async(db_handler.clear_search_history_for_user, thread_sensitive=True)(user=user)
     return JsonResponse({}, status=204)

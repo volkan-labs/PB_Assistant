@@ -1,5 +1,6 @@
 from django.forms.models import model_to_dict
 from PB_Assistant.models import SearchHistory, AcademicPaper, AcademicPaperText
+from django.db.models import Q
 import logging
 logger = logging.getLogger(__name__)
 
@@ -19,26 +20,33 @@ class DatabaseHandler:
             logger.error(f"Error fetching articles: {e}")
             return []
 
-    def save_search_history(self, user_id, query, answer, chunk_ids, serialized_docs):
+    def save_search_history(self, user, query, answer, chunk_ids, serialized_docs):
         try:
+            user_info = f"Authenticated User ID: {user.id}" if user and user.is_authenticated else "Anonymous User"
+            logger.info(f"Attempting to save search history for {user_info}. Query: '{query[:50]}'")
+
             history = SearchHistory.objects.create(
-                user_id=user_id,
+                user=user, # This will be None if user is not authenticated
                 query=query,
                 answer=answer,
                 source_documents=serialized_docs,
                 chunk_ids=chunk_ids
             )
-            logger.info("Search history saved successfully.")
+            logger.info(f"Search history saved successfully (ID: {history.id}) for {user_info}.")
             return history.id
         except Exception as e:
-            logger.error(f"Error saving search history: {e}")
+            logger.error(f"Error saving search history for {user_info}. Error: {e}")
             raise
 
-    def retrieve_search_history_by_user(self, user_id):
+    def retrieve_search_history_by_user(self, user):
         try:
+            if user.is_authenticated:
+                query_filter = Q(user=user)
+            else:
+                query_filter = Q(user__isnull=True)
             return list(
                 SearchHistory.objects
-                .filter(user_id=user_id)
+                .filter(query_filter)
                 .order_by('-timestamp')
                 .values('id', 'query', 'timestamp')
             )
@@ -62,12 +70,16 @@ class DatabaseHandler:
         except Exception as e:
             logger.error(f"Error deleting history item: {e}")
 
-    def clear_search_history_for_user(self, user_id):
+    def clear_search_history_for_user(self, user):
         try:
-            SearchHistory.objects.filter(user_id=user_id).delete()
-            logger.info(f"Cleared all search history for user {user_id}.")
+            if user.is_authenticated:
+                query_filter = Q(user=user)
+            else:
+                query_filter = Q(user__isnull=True)
+            SearchHistory.objects.filter(query_filter).delete()
+            logger.info(f"Cleared all search history for user {user.id if user.is_authenticated else 'anonymous'}.")
         except Exception as e:
-            logger.error(f"Error clearing search history for user {user_id}: {e}")
+            logger.error(f"Error clearing search history for user {user.id if user.is_authenticated else 'anonymous'}: {e}")
 
     def get_academicitem_ids_from_text_ids(self, text_ids: list[int]) -> list[int]:
         mapping = dict(

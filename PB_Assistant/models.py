@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from pgvector.django import VectorField
 from django.contrib.postgres.fields import ArrayField
@@ -16,7 +17,7 @@ class PlanetaryBoundary(models.Model):
         return self.name
 
 class SearchHistory(models.Model):
-    user_id = models.IntegerField()
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
     query = models.TextField()
     answer = models.TextField(blank=True, null=True)
 
@@ -29,13 +30,12 @@ class SearchHistory(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"SearchHistory(id={self.id}, user_id={self.user_id}, query='{self.query[:30]}...', answer_length={len(self.answer) if self.answer else 0})"
+        return f"SearchHistory(id={self.id}, user_id={self.user.id}, query='{self.query[:30]}...', answer_length={len(self.answer) if self.answer else 0})"
 
 class AcademicPaper(models.Model):
     paper_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     doi = models.CharField(max_length=255, null=True, blank=True, db_index=True)
     time_edited = models.DateTimeField(null=True, blank=True)
-    text = models.TextField(null=True, blank=True)
     title = models.CharField(max_length=512, null=True, blank=True)
     title_slug = models.SlugField(max_length=512, null=True, blank=True, db_index=True)
 
@@ -47,8 +47,9 @@ class AcademicPaper(models.Model):
     planetary_boundary = models.ManyToManyField(PlanetaryBoundary, through='AcademicPaperPlanetaryBoundary')
 
     def save(self, *args, **kwargs):
-        if self.title and not self.title_slug:
-            self.title_slug = slugify(self.title)
+        if self.title:
+            if self._state.adding or (self.pk and AcademicPaper.objects.filter(pk=self.pk).values('title').first()['title'] != self.title):
+                self.title_slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
