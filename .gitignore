@@ -1,5 +1,5 @@
 .idea
 .venv
 .env
-/.\ollama_data
+.\\ollama_data/
 __pycache__/
