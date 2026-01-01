@@ -33,13 +33,13 @@ class SearchHistory(models.Model):
 
 class AcademicPaper(models.Model):
     paper_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    doi = models.CharField(max_length=255, null=True, blank=True, db_index=True)
+    doi = models.CharField(max_length=255, null=True, blank=True)
     time_edited = models.DateTimeField(null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     title = models.CharField(max_length=512, null=True, blank=True)
-    title_slug = models.SlugField(max_length=512, null=True, blank=True, db_index=True)
+    title_slug = models.SlugField(max_length=512, null=True, blank=True)
 
-    publication_year = models.IntegerField(null=True, blank=True, db_index=True)
+    publication_year = models.IntegerField(null=True, blank=True)
     source = models.CharField(max_length=255, null=True, blank=True)
     keywords = models.JSONField(null=True, blank=True)
     author_list = models.JSONField(default=list, blank=True)
