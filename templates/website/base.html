@@ -301,14 +301,17 @@
                 }
             } else if (theme === 'dark') {
                 $('html').addClass('dark');
-            } else {
+            } else { // 'light'
                 $('html').removeClass('dark');
             }
         }
 
         function initializeTheme() {
             const storedTheme = localStorage.getItem('theme') || 'system';
-            $(`input[name="theme-toggle"][value="${storedTheme}"]`).prop('checked', true);
+            const targetRadio = $(`input[name="theme-toggle"][value="${storedTheme}"]`);
+            if (targetRadio.length) { // Check if element exists
+                targetRadio.prop('checked', true);
+            }
             applyTheme(storedTheme);
         }
 
