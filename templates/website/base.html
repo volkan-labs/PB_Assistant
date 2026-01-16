@@ -47,10 +47,13 @@
     </script>
     <script>
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark')
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (storedTheme === 'dark' || (storedTheme === 'system' && prefersDark) || (!storedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
         } else {
-          document.documentElement.classList.remove('dark')
+            document.documentElement.classList.remove('dark');
         }
     </script>
     <style>
@@ -162,6 +165,32 @@
                     </div>
                 </div>
             </div>
+            <!-- Section: user profile -->
+            <div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark">
+                <div
+                    class="group flex items-center gap-3 rounded-lg p-2 transition-colors mb-2">
+                    <div class="relative">
+                        <img alt="User Avatar Profile Picture"
+                            class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6PC61DCXq-y34ny1FbhnvT8K7wILY9FhtU5EHSVAKSJOmSx_O-QWM5yQWqvs5qpSmOqZRo31ITJ07X9Z1CUn-i_HPfUFQ7EKXTzSczShDN0tKuVUFnIjjgjkIBthGVb7wCXf3sriS5WywB_VG_BlJFFzUzRJ4Rdv9PFzhryIoRBWHjct_-pRQGkTtTvLRM_JT08CojFNRGXM-fDlNWwDHfQDyys8xdqKpMtMQxscveZaQww-2w-fZiOkHq5YbMQkR0Q_IJVpKhNIW">
+                    </div>
+                    <div class="flex flex-1 flex-col overflow-hidden">
+                        <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{% url 'settings' %}"
+                        class="flex items-center justify-center gap-2 rounded-lg bg-[#151b26] py-2 text-xs font-medium text-slate-300 hover:bg-[#1e293b] hover:text-white transition-all border border-[#1e293b]">
+                        <span class="material-symbols-outlined text-[16px]">settings</span>
+                        Settings
+                    </a>
+                    <button
+                        class="flex items-center justify-center gap-2 rounded-lg bg-[#151b26] py-2 text-xs font-medium text-slate-300 hover:bg-[#2d1b26] hover:text-red-400 transition-all border border-[#1e293b] hover:border-red-900/30">
+                        <span class="material-symbols-outlined text-[16px]">logout</span>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
         </aside>
         <!-- Main Content Area -->
         <main class="flex flex-1 flex-col relative h-full">
@@ -182,19 +211,31 @@
                     <span class="material-symbols-outlined">menu</span>
                 </button>
                 <div></div> <!-- Spacer -->
-                <label for="theme-toggle-checkbox" class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="" id="theme-toggle-checkbox" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800">
-                        <div id="theme-toggle-thumb" class="absolute top-0.5 left-[2px] bg-white border-gray-300 border rounded-full h-5 w-5 transition-all dark:border-gray-600 flex items-center justify-center">
-                            <span id="theme-toggle-light-icon" class="absolute transition-opacity">
-                                <span class="material-symbols-outlined text-sm text-blue-600">light_mode</span>
-                            </span>
-                            <span id="theme-toggle-dark-icon" class="absolute transition-opacity">
-                                <span class="material-symbols-outlined text-sm text-gray-900">dark_mode</span>
-                            </span>
-                        </div>
+                <!-- Theme Toggle -->
+                <div
+                    class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10">
+                    <input class="peer/light sr-only" id="theme-light" name="theme-toggle" type="radio" value="light">
+                    <input checked="" class="peer/dark sr-only" id="theme-dark" name="theme-toggle" type="radio" value="dark">
+                    <input class="peer/system sr-only" id="theme-system" name="theme-toggle" type="radio" value="system">
+                    <div
+                        class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
                     </div>
-                </label>
+                    <label
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-amber-500 peer-checked/light:dark:text-amber-400"
+                        for="theme-light">
+                        <span class="material-symbols-outlined text-[20px]">light_mode</span>
+                    </label>
+                    <label
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-blue-600 peer-checked/dark:dark:text-blue-400"
+                        for="theme-dark">
+                        <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+                    </label>
+                    <label
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-purple-600 peer-checked/system:dark:text-purple-400"
+                        for="theme-system">
+                        <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
+                    </label>
+                </div>
             </header>
             <!-- Center Content -->
             <div class="flex flex-1 flex-col items-center justify-center px-4 pb-20">
@@ -247,6 +288,51 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeRadios = document.querySelectorAll('input[name="theme-toggle"]');
+
+        function applyTheme(theme) {
+            if (theme === 'system') {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } else if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function initializeTheme() {
+            const storedTheme = localStorage.getItem('theme') || 'system';
+            const themeRadio = document.querySelector(`input[name="theme-toggle"][value="${storedTheme}"]`);
+            if (themeRadio) {
+                themeRadio.checked = true;
+            }
+            applyTheme(storedTheme);
+        }
+
+        initializeTheme();
+
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedTheme = this.value;
+                localStorage.setItem('theme', selectedTheme);
+                applyTheme(selectedTheme);
+            });
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            const storedTheme = localStorage.getItem('theme') || 'system';
+            if (storedTheme === 'system') {
+                applyTheme('system');
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

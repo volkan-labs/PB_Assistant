@@ -73,48 +73,6 @@ $(document).ready(function () {
     $('#closePanelIcon').click(function() {
         hideContentPanel(selectedRowId);
     });
-
-    // Theme toggle logic
-    const themeToggleCheckbox = $('#theme-toggle-checkbox');
-    const themeToggleDarkIcon = $('#theme-toggle-dark-icon');
-    const themeToggleLightIcon = $('#theme-toggle-light-icon');
-    const themeToggleThumb = $('#theme-toggle-thumb');
-
-    // Function to set the theme state
-    function setTheme(isDark) {
-        if (isDark) {
-            $('html').addClass('dark');
-            themeToggleCheckbox.prop('checked', false);
-            themeToggleLightIcon.addClass('hidden');
-            themeToggleDarkIcon.removeClass('hidden');
-            themeToggleThumb.removeClass('translate-x-full');
-        } else {
-            $('html').removeClass('dark');
-            themeToggleCheckbox.prop('checked', true);
-            themeToggleDarkIcon.addClass('hidden');
-            themeToggleLightIcon.removeClass('hidden');
-            themeToggleThumb.addClass('translate-x-full');
-        }
-    }
-
-    // Set initial state of the toggle
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        setTheme(true);
-    } else {
-        setTheme(false);
-    }
-
-    themeToggleCheckbox.on('change', function() {
-        if (themeToggleCheckbox.is(':checked')) {
-            // Light mode
-            setTheme(false);
-            localStorage.setItem('theme', 'light');
-        } else {
-            // Dark mode
-            setTheme(true);
-            localStorage.setItem('theme', 'dark');
-        }
-    });
 });
 
 let selectedRowId = '';

@@ -104,3 +104,8 @@ def clear_history(request):
     user_id = request.user.id if request.user.is_authenticated else 1
     db_handler.clear_search_history_for_user(user_id=user_id)
     return JsonResponse({}, status=204)
+
+@require_GET
+def settings_view(request):
+    return render(request, 'website/settings.html')
+

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Settings - AI Chat App</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                // extend: {
+                //     colors: {
+                //         "primary": "#135bec",
+                //         "background-light": "#f6f6f8",
+                //         "background-dark": "#101622",
+                //     },
+                //     fontFamily: {
+                //         "display": ["Inter", "sans-serif"]
+                //     },
+                //     borderRadius: {
+                //         "DEFAULT": "0.25rem",
+                //         "lg": "0.5rem",
+                //         "xl": "0.75rem",
+                //         "full": "9999px"
+                //     },
+                // },
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#111418",
+                        "surface-highlight": "#283039",
+                        "text-secondary": "#9dabb9",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", // Bootstrap rounded-md approx
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #tab-documents:checked ~ .tab-content-documents { display: flex; }
+        #tab-preferences:checked ~ .tab-content-preferences { display: flex; }
+        #tab-documents:checked ~ .tabs-container #label-documents,
+        #tab-preferences:checked ~ .tabs-container #label-preferences {
+            border-color: #135bec; /* primary color */
+            color: #111418;
+        }
+        .dark #tab-documents:checked ~ .tabs-container #label-documents,
+        .dark #tab-preferences:checked ~ .tabs-container #label-preferences {
+            color: white;
+        }
+        .tab-content { display: none; }
+        .drop-zone:hover {
+            border-color: #135bec;
+            background-color: rgba(19, 91, 236, 0.04);
+        }
+        .dark .drop-zone:hover {
+            background-color: rgba(19, 91, 236, 0.08);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white min-h-screen">
+    <div class="flex flex-col min-h-screen">
+        <header
+            class="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e7eb] dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/80 backdrop-blur-md px-6 py-4">
+            <div class="flex items-center gap-3">
+                <div
+                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                </div>
+                <h1 class="text-xl font-bold leading-tight tracking-tight">Settings</h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <a class="text-sm font-semibold leading-normal text-primary hover:text-blue-600 transition-colors flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/5 border border-primary/20"
+                    href="/">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    <span>Back to Chat</span>
+                </a>
+            </div>
+        </header>
+        <main class="flex-1 max-w-3xl w-full mx-auto py-12 px-6">
+            <div class="flex flex-col gap-8 pb-32">
+                <section
+                    class="bg-white dark:bg-[#1a2230] rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                    <div class="flex flex-col items-center p-8 gap-5">
+                        <div class="relative group cursor-pointer">
+                            <div class="bg-center bg-no-repeat bg-cover rounded-full h-24 w-24 ring-4 ring-background-light dark:ring-background-dark shadow-xl"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z");'>
+                            </div>
+                            <div
+                                class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-white text-2xl">photo_camera</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center text-center">
+                            <h3 class="text-[#111418] dark:text-white text-xl font-bold tracking-tight">Alex Johnson
+                            </h3>
+                            <p class="text-[#637588] dark:text-[#94a3b8] text-sm font-medium mt-1">alex@example.com</p>
+                            <!-- <div class="mt-3 flex items-center gap-2">
+                                <span
+                                    class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary ring-1 ring-inset ring-primary/20 uppercase tracking-wider">Pro
+                                    Plan</span>
+                                <span
+                                    class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-bold text-green-500 ring-1 ring-inset ring-green-500/20 uppercase tracking-wider">Active</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </section>
+                <div class="relative flex flex-col gap-8">
+                    <input checked="" class="hidden" id="tab-documents" name="settings-tabs" type="radio" />
+                    <input class="hidden" id="tab-preferences" name="settings-tabs" type="radio" />
+                    <div class="tabs-container flex border-b border-[#e5e7eb] dark:border-[#2a3447]">
+                        <label id="label-documents"
+                            class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
+                            for="tab-documents">
+                            Documents
+                        </label>
+                        <label id="label-preferences"
+                            class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
+                            for="tab-preferences">
+                            Preferences
+                        </label>
+                    </div>
+                    <div class="tab-content tab-content-documents flex-col gap-8 peer-checked/docs:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">Document Analysis</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Manage pending uploads and
+                                    configure environmental analysis settings.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                <div class="p-8 flex flex-col gap-8">
+                                    <div>
+                                        <div
+                                            class="drop-zone border-2 border-dashed border-[#e5e7eb] dark:border-[#3e4a61] rounded-2xl p-12 flex flex-col items-center justify-center text-center transition-all cursor-pointer group bg-gray-50/30 dark:bg-transparent">
+                                            <div
+                                                class="w-16 h-16 bg-white dark:bg-[#232d3f] shadow-sm rounded-full flex items-center justify-center mb-6 text-[#637588] dark:text-[#94a3b8] group-hover:text-primary group-hover:scale-110 transition-all border border-[#e5e7eb] dark:border-[#3e4a61]">
+                                                <span class="material-symbols-outlined text-[36px]">upload_file</span>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-[#111418] dark:text-white mb-2">Drag
+                                                and drop documents</h3>
+                                            <p class="text-sm text-[#637588] dark:text-[#94a3b8] mb-8">Files are staged
+                                                for upload. Max 50MB per PDF.</p>
+                                            <label
+                                                class="cursor-pointer px-8 py-3 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/25 transition-all active:scale-95 inline-flex items-center gap-2">
+                                                <span class="material-symbols-outlined text-lg">add</span>
+                                                Select Files
+                                                <input accept=".pdf" class="hidden" multiple="" type="file" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-3">
+                                        <div class="flex items-center justify-between px-1 mb-1">
+                                            <h4
+                                                class="text-xs font-bold text-[#637588] dark:text-[#94a3b8] uppercase tracking-wider">
+                                                Pending Uploads</h4>
+                                            <span
+                                                class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">3
+                                                Items Ready</span>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div
+                                                class="flex items-center gap-4 p-4 rounded-xl border border-primary/30 bg-primary/[0.02] dark:bg-primary/[0.04] transition-all hover:bg-primary/[0.05] group">
+                                                <div
+                                                    class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <span class="material-symbols-outlined">description</span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <p
+                                                            class="text-sm font-semibold text-[#111418] dark:text-white truncate">
+                                                            Impact_Assessment_2024.pdf</p>
+                                                        <span
+                                                            class="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
+                                                            <span
+                                                                class="material-symbols-outlined text-[12px]">schedule</span>
+                                                            Ready to upload
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[11px] text-[#637588] dark:text-[#94a3b8]">4.2 MB •
+                                                        PDF Document</p>
+                                                </div>
+                                                <button
+                                                    class="p-2 text-[#637588] dark:text-[#94a3b8] hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                    title="Remove file">
+                                                    <span class="material-symbols-outlined text-xl">delete</span>
+                                                </button>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-4 p-4 rounded-xl border border-primary/30 bg-primary/[0.02] dark:bg-primary/[0.04] transition-all hover:bg-primary/[0.05] group">
+                                                <div
+                                                    class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <span class="material-symbols-outlined">description</span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <p
+                                                            class="text-sm font-semibold text-[#111418] dark:text-white truncate">
+                                                            Supply_Chain_Transparency.pdf</p>
+                                                        <span
+                                                            class="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
+                                                            <span
+                                                                class="material-symbols-outlined text-[12px]">schedule</span>
+                                                            Ready to upload
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[11px] text-[#637588] dark:text-[#94a3b8]">12.8 MB •
+                                                        PDF Document</p>
+                                                </div>
+                                                <button
+                                                    class="p-2 text-[#637588] dark:text-[#94a3b8] hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                    title="Remove file">
+                                                    <span class="material-symbols-outlined text-xl">delete</span>
+                                                </button>
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-4 p-4 rounded-xl border border-primary/30 bg-primary/[0.02] dark:bg-primary/[0.04] transition-all hover:bg-primary/[0.05] group">
+                                                <div
+                                                    class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                                    <span class="material-symbols-outlined">description</span>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between mb-1">
+                                                        <p
+                                                            class="text-sm font-semibold text-[#111418] dark:text-white truncate">
+                                                            Renewable_Energy_Grid_Map.pdf</p>
+                                                        <span
+                                                            class="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
+                                                            <span
+                                                                class="material-symbols-outlined text-[12px]">schedule</span>
+                                                            Ready to upload
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-[11px] text-[#637588] dark:text-[#94a3b8]">8.1 MB •
+                                                        PDF Document</p>
+                                                </div>
+                                                <button
+                                                    class="p-2 text-[#637588] dark:text-[#94a3b8] hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                    title="Remove file">
+                                                    <span class="material-symbols-outlined text-xl">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]">
+                                        <div class="flex items-center gap-2 mb-5">
+                                            <span class="material-symbols-outlined text-primary text-xl">language</span>
+                                            <h4
+                                                class="text-sm font-bold text-[#111418] dark:text-white uppercase tracking-wide">
+                                                Planetary Boundaries Analysis
+                                            </h4>
+                                        </div>
+                                        <p class="text-sm text-[#637588] dark:text-[#94a3b8] mb-6">Select dimensions to
+                                            evaluate for the pending documents above:</p>
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <label class="relative cursor-pointer">
+                                                <input checked="" class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Climate Change</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input checked="" class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Biodiversity Loss</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Nitrogen Cycle</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Ocean Acidification</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+
+                                            <!-- // new below -->
+                                            <label class="relative cursor-pointer">
+                                                <input checked="" class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Climate Change</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input checked="" class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Biodiversity Loss</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Nitrogen Cycle</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Ocean Acidification</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input class="peer sr-only" type="checkbox" />
+                                                <div
+                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                                                    <span>Ocean Acidification</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
+                                        <button
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                                            <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+                                            Save Changes &amp; Upload
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content tab-content-preferences flex-col gap-10 peer-checked/pref:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">General Preferences</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Manage your default chat
+                                    configurations and appearance.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                <div class="p-6 border-b border-[#e5e7eb] dark:border-[#2a3447]">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                            <span class="material-symbols-outlined text-2xl">smart_toy</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-[#111418] dark:text-white font-semibold text-base">Default
+                                                LLM Model</h3>
+                                            <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Choose the engine for
+                                                your conversations</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <label class="cursor-pointer group">
+                                            <input checked="" class="sr-only peer" name="llm-model" type="radio"
+                                                value="gpt-4o" />
+                                            <div
+                                                class="flex flex-col h-full gap-3 p-5 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-[#111418] dark:peer-checked:text-white">
+                                                <div class="flex items-center justify-between">
+                                                    <span
+                                                        class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">bolt</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-sm">GPT-4o</p>
+                                                    <p class="text-[11px] leading-tight mt-1 opacity-80">Most capable
+                                                        and fastest flagship model for complex tasks.</p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer group">
+                                            <input class="sr-only peer" name="llm-model" type="radio" value="gpt-3.5" />
+                                            <div
+                                                class="flex flex-col h-full gap-3 p-5 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-[#111418] dark:peer-checked:text-white">
+                                                <div class="flex items-center justify-between">
+                                                    <span
+                                                        class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">auto_awesome</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-sm">GPT-3.5</p>
+                                                    <p class="text-[11px] leading-tight mt-1 opacity-80">Efficient and
+                                                        reliable for everyday basic conversational needs.</p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer group">
+                                            <input class="sr-only peer" name="llm-model" type="radio"
+                                                value="claude-3" />
+                                            <div
+                                                class="flex flex-col h-full gap-3 p-5 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-[#111418] dark:peer-checked:text-white">
+                                                <div class="flex items-center justify-between">
+                                                    <span
+                                                        class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">neurology</span>
+                                                    <span
+                                                        class="material-symbols-outlined text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-sm">Claude 3</p>
+                                                    <p class="text-[11px] leading-tight mt-1 opacity-80">Balanced
+                                                        performance with exceptional reasoning capabilities.</p>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                            <span class="material-symbols-outlined text-2xl">palette</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-[#111418] dark:text-white font-semibold text-base">Interface
+                                                Theme</h3>
+                                            <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Customize how the
+                                                application looks</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <label class="cursor-pointer group">
+                                            <input class="sr-only peer" name="theme-option" type="radio" value="light" />
+                                            <div
+                                                class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                <span
+                                                    class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
+                                                <span class="text-xs font-semibold">Light</span>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer group">
+                                            <input checked="" class="sr-only peer" name="theme-option" type="radio" value="dark" />
+                                            <div
+                                                class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                <span
+                                                    class="material-symbols-outlined group-hover:scale-110 transition-transform">dark_mode</span>
+                                                <span class="text-xs font-semibold">Dark</span>
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer group">
+                                            <input class="sr-only peer" name="theme-option" type="radio" value="system" />
+                                            <div
+                                                class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                <span
+                                                    class="material-symbols-outlined group-hover:scale-110 transition-transform">settings_system_daydream</span>
+                                                <span class="text-xs font-semibold">System</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="mt-4 pt-10 border-t border-[#e5e7eb] dark:border-[#2a3447]">
+                        <div
+                            class="flex items-center justify-between p-6 bg-red-500/5 dark:bg-red-500/10 rounded-2xl border border-red-200 dark:border-red-900/30">
+                            <div>
+                                <h3 class="text-red-600 dark:text-red-400 font-bold text-lg">Sign Out</h3>
+                                <p class="text-red-500/80 dark:text-red-400/80 text-sm mt-1">Securely log out of
+                                    your session on this device.</p>
+                            </div>
+                            <button
+                                class="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition-colors shadow-lg shadow-red-600/20">
+                                <span class="material-symbols-outlined text-[20px]">logout</span>
+                                Sign Out
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Settings page theme script loaded.");
+
+        const themeRadios = document.querySelectorAll('input[name="theme-option"]');
+
+        function applyTheme(theme) {
+            console.log("Applying theme:", theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                console.log("Added 'dark' class to html element.");
+            } else if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                console.log("Removed 'dark' class from html element.");
+            } else if (theme === 'system') {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                    console.log("System preference is dark. Added 'dark' class.");
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    console.log("System preference is light. Removed 'dark' class.");
+                }
+            }
+        }
+
+        // Initialize theme selection on page load
+        const storedTheme = localStorage.getItem('theme');
+        console.log("Stored theme from localStorage:", storedTheme);
+        if (storedTheme) {
+            document.querySelector(`input[name="theme-option"][value="${storedTheme}"]`).checked = true;
+            applyTheme(storedTheme);
+        } else { // No stored theme, default to system preference
+            console.log("No theme in localStorage. Defaulting to system preference.");
+            document.querySelector('input[name="theme-option"][value="system"]').checked = true;
+            applyTheme('system');
+        }
+
+        // Add event listeners for theme changes
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedTheme = this.value;
+                console.log("Theme changed to:", selectedTheme);
+                applyTheme(selectedTheme);
+                localStorage.setItem('theme', selectedTheme);
+                console.log("Stored theme in localStorage:", selectedTheme);
+            });
+        });
+
+        // Listen for system theme changes if 'system' is selected
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (document.querySelector('input[name="theme-option"][value="system"]').checked) {
+                console.log("System theme changed. Re-applying system theme.");
+                applyTheme('system');
+            }
+        });
+    });
+</script>
+
+</html>

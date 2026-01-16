@@ -10,5 +10,5 @@ urlpatterns = [
     path('delete-history/<int:id>', views.delete_history, name='delete_history'),
     path('history/clear/', views.clear_history, name='clear_history'),
     path("api/ollama/models/", views.ollama_models, name="ollama_models"),
-
+    path('settings/', views.settings_view, name='settings'),
 ]
