@@ -289,40 +289,35 @@
         </div>
     </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const themeRadios = document.querySelectorAll('input[name="theme-toggle"]');
+    $(document).ready(function() {
+        const themeRadios = $('input[name="theme-toggle"]');
 
         function applyTheme(theme) {
             if (theme === 'system') {
                 if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.classList.add('dark');
+                    $('html').addClass('dark');
                 } else {
-                    document.documentElement.classList.remove('dark');
+                    $('html').removeClass('dark');
                 }
             } else if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
+                $('html').addClass('dark');
             } else {
-                document.documentElement.classList.remove('dark');
+                $('html').removeClass('dark');
             }
         }
 
         function initializeTheme() {
             const storedTheme = localStorage.getItem('theme') || 'system';
-            const themeRadio = document.querySelector(`input[name="theme-toggle"][value="${storedTheme}"]`);
-            if (themeRadio) {
-                themeRadio.checked = true;
-            }
+            $(`input[name="theme-toggle"][value="${storedTheme}"]`).prop('checked', true);
             applyTheme(storedTheme);
         }
 
         initializeTheme();
 
-        themeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                const selectedTheme = this.value;
-                localStorage.setItem('theme', selectedTheme);
-                applyTheme(selectedTheme);
-            });
+        themeRadios.on('change', function() {
+            const selectedTheme = $(this).val();
+            localStorage.setItem('theme', selectedTheme);
+            applyTheme(selectedTheme);
         });
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
