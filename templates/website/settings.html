@@ -1,10 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html class="dark" lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Settings - AI Chat App</title>
+    <title>Settings - Earth System Science AI Assistant</title>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
@@ -94,8 +96,8 @@
             class="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e7eb] dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/80 backdrop-blur-md px-6 py-4">
             <div class="flex items-center gap-3">
                 <div
-                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white shadow-lg shadow-primary/20">
-                    <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white shadow-lg shadow-primary/20">
+                    <img src="{% static '/website/assets/images/logo.png' %}" alt="Logo" />
                 </div>
                 <h1 class="text-xl font-bold leading-tight tracking-tight">Settings</h1>
             </div>
@@ -122,16 +124,9 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-center text-center">
-                            <h3 class="text-[#111418] dark:text-white text-xl font-bold tracking-tight">Alex Johnson
+                            <h3 class="text-[#111418] dark:text-white text-xl font-bold tracking-tight">Alexander Smith
                             </h3>
                             <p class="text-[#637588] dark:text-[#94a3b8] text-sm font-medium mt-1">alex@example.com</p>
-                            <!-- <div class="mt-3 flex items-center gap-2">
-                                <span
-                                    class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary ring-1 ring-inset ring-primary/20 uppercase tracking-wider">Pro
-                                    Plan</span>
-                                <span
-                                    class="inline-flex items-center rounded-full bg-green-500/10 px-3 py-1 text-[10px] font-bold text-green-500 ring-1 ring-inset ring-green-500/20 uppercase tracking-wider">Active</span>
-                            </div> -->
                         </div>
                     </div>
                 </section>
@@ -526,57 +521,46 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("Settings page theme script loaded.");
-
         const themeRadios = document.querySelectorAll('input[name="theme-option"]');
 
         function applyTheme(theme) {
-            console.log("Applying theme:", theme);
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
-                console.log("Added 'dark' class to html element.");
             } else if (theme === 'light') {
                 document.documentElement.classList.remove('dark');
-                console.log("Removed 'dark' class from html element.");
             } else if (theme === 'system') {
                 if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     document.documentElement.classList.add('dark');
-                    console.log("System preference is dark. Added 'dark' class.");
                 } else {
                     document.documentElement.classList.remove('dark');
-                    console.log("System preference is light. Removed 'dark' class.");
                 }
             }
         }
 
         // Initialize theme selection on page load
         const storedTheme = localStorage.getItem('theme');
-        console.log("Stored theme from localStorage:", storedTheme);
         if (storedTheme) {
             document.querySelector(`input[name="theme-option"][value="${storedTheme}"]`).checked = true;
             applyTheme(storedTheme);
         } else { // No stored theme, default to system preference
-            console.log("No theme in localStorage. Defaulting to system preference.");
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.querySelector('input[name="theme-option"][value="system"]').checked = true;
-            applyTheme('system');
+            applyTheme(prefersDark ? 'dark' : 'light');
         }
 
         // Add event listeners for theme changes
         themeRadios.forEach(radio => {
             radio.addEventListener('change', function() {
                 const selectedTheme = this.value;
-                console.log("Theme changed to:", selectedTheme);
-                applyTheme(selectedTheme);
-                localStorage.setItem('theme', selectedTheme);
-                console.log("Stored theme in localStorage:", selectedTheme);
+                applyTheme(selectedTheme); // Now applyTheme handles 'system'
+                localStorage.setItem('theme', selectedTheme); // Always store the selected value
             });
         });
 
         // Listen for system theme changes if 'system' is selected
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
             if (document.querySelector('input[name="theme-option"][value="system"]').checked) {
-                console.log("System theme changed. Re-applying system theme.");
-                applyTheme('system');
+                applyTheme('system'); // Re-evaluate system theme
             }
         });
     });
