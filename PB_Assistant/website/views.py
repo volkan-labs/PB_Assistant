@@ -1,6 +1,7 @@
 
 import logging
 import requests
+import os 
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
@@ -130,4 +131,30 @@ def save_preferences(request):
         return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+@require_POST
+def upload_documents(request):
+    upload_dir = '/upload_test'
+    os.makedirs(upload_dir, exist_ok=True)
+
+    boundaries = request.POST.getlist('boundaries[]')
+    print("Selected Planetary Boundaries:", boundaries)
+
+    files = request.FILES.getlist('documents')
+    if not files:
+        return JsonResponse({"error": "No documents provided"}, status=400)
+
+    saved_files = []
+    for file in files:
+        file_path = os.path.join(upload_dir, file.name)
+        with open(file_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        saved_files.append(file.name)
+
+    return JsonResponse({
+        "message": f"{len(saved_files)} documents uploaded successfully.",
+        "saved_files": saved_files
+    })
 
