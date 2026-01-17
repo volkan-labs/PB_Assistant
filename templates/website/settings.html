@@ -418,15 +418,12 @@
                     <span class="material-symbols-outlined">description</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between mb-1">
-                        <p class="text-sm font-semibold text-[#111418] dark:text-white truncate">${file.name}</p>
-                        <span class="text-[10px] font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
-                            <span class="material-symbols-outlined text-[12px]">schedule</span>
-                            Ready to upload
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-[#637588] dark:text-[#94a3b8]">${fileSize} • PDF Document</p>
+                    <p class="text-sm font-semibold text-[#111418] dark:text-white truncate">${file.name}</p>
+                    <p class="text-[11px] text-[#637588] dark:text-[#94a3b8] mt-1">${fileSize} • PDF Document</p>
                 </div>
+                <span class="flex items-center justify-center p-2 rounded-full bg-orange-500/10 whitespace-nowrap flex-shrink-0" title="Ready to upload">
+                    <span class="material-symbols-outlined text-orange-500 text-xl">schedule</span>
+                </span>
                 <button data-index="${index}" class="delete-upload-button p-2 text-[#637588] dark:text-[#94a3b8] hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Remove file">
                     <span class="material-symbols-outlined text-xl pointer-events-none">delete</span>
                 </button>
