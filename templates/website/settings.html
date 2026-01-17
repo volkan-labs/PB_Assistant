@@ -1,4 +1,5 @@
 {% load static %}
+{% csrf_token %}
 
 <!DOCTYPE html>
 <html class="dark" lang="en">
@@ -681,10 +682,36 @@
 
         const savePreferencesButton = document.getElementById('save-preferences-button');
         if (savePreferencesButton) {
-            savePreferencesButton.addEventListener('click', function() {
-                // Since LLM and theme changes are saved immediately to localStorage,
-                // this button primarily provides visual confirmation.
-                showError("Preferences saved successfully!"); // Reusing showError for a success message
+            savePreferencesButton.addEventListener('click', async function() {
+                const defaultLlm = localStorage.getItem('selectedLlmModel');
+                const interfaceTheme = localStorage.getItem('theme');
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                try {
+                    const response = await fetch('/api/preferences/save/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({
+                            default_llm: defaultLlm,
+                            interface_theme: interfaceTheme
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showError("Preferences saved successfully!"); // Reusing showError for a success message
+                        console.log("Backend response:", data);
+                    } else {
+                        showError(`Error saving preferences: ${data.error || response.statusText}`);
+                        console.error("Backend error response:", data);
+                    }
+                } catch (error) {
+                    showError(`Network error saving preferences: ${error.message}`);
+                    console.error("Network error:", error);
+                }
             });
         }
     });

@@ -5,6 +5,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
 from django.conf import settings
+import json
 from django.shortcuts import render, redirect
 
 from .services.databasehandler import DatabaseHandler
@@ -105,7 +106,28 @@ def clear_history(request):
     db_handler.clear_search_history_for_user(user_id=user_id)
     return JsonResponse({}, status=204)
 
+
 @require_GET
 def settings_view(request):
     return render(request, 'website/settings.html')
+
+@require_POST
+def save_preferences(request):
+    try:
+        data = json.loads(request.body)
+        default_llm = data.get('default_llm')
+        interface_theme = data.get('interface_theme')
+
+        print(f"Endpoint /api/preferences/save/ hit!")
+        print(f"Received default_llm: {default_llm}")
+        print(f"Received interface_theme: {interface_theme}")
+
+        # In a real application, you would save these preferences to the user's profile
+        # For now, we just log and return a success message.
+
+        return JsonResponse({"message": "Preferences received successfully (not actually saved yet)."})
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
