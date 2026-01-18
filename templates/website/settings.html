@@ -95,7 +95,16 @@
                 </a>
             </div>
         </header>
-        <main class="flex-1 max-w-3xl w-full mx-auto py-12 px-6">
+        <main class="flex-1 max-w-3xl w-full mx-auto py-12 px-6 relative">
+            <!-- Error Toast -->
+            <div id="error-toast" class="hidden absolute top-4 right-4 z-60 bg-red-600 text-white p-4 rounded-lg shadow-lg">
+                <div class="flex items-center gap-4">
+                    <span id="error-toast-message"></span>
+                    <button id="error-toast-close" class="text-white">&times;</button>
+                </div>
+                <div class="absolute bottom-0 left-0 h-1 bg-white/30" id="error-toast-loader" style="width: 100%;"></div>
+            </div>
+
             <div class="flex flex-col gap-8 pb-32">
                 <div class="relative flex flex-col gap-8">
                     <input class="hidden" id="tab-documents" name="settings-tabs" type="radio" />
@@ -374,36 +383,47 @@
 
     // Helper function to show toast messages
     function showToast(message, type = 'error') { // type can be 'success' or 'error'
+        console.log(`Showing toast: message="${message}", type="${type}"`);
         clearTimeout(errorToastTimeout);
-        const toast = document.getElementById('error-toast'); // Reusing the same toast element
+        const toast = document.getElementById('error-toast');
         const loader = document.getElementById('error-toast-loader');
         const messageElement = document.getElementById('error-toast-message');
         const closeButton = document.getElementById('error-toast-close');
         
-        if (!toast || !loader || !messageElement || !closeButton) return;
+        if (!toast || !loader || !messageElement || !closeButton) {
+            console.error("Toast elements not found!");
+            return;
+        }
 
         messageElement.textContent = message;
 
         // Reset classes
-        toast.classList.remove('hidden', 'bg-red-600', 'bg-green-600');
-        loader.classList.remove('bg-white/30', 'bg-white/50'); // Assuming different loader colors for different types
+        toast.classList.remove('bg-red-600', 'bg-green-600');
+        loader.classList.remove('bg-white/30', 'bg-white/50');
 
         if (type === 'success') {
+            console.log("Applying success styles.");
             toast.classList.add('bg-green-600');
-            loader.classList.add('bg-white/50'); // Brighter loader for success
+            loader.classList.add('bg-white/50');
         } else { // default to error
+            console.log("Applying error styles.");
             toast.classList.add('bg-red-600');
             loader.classList.add('bg-white/30');
         }
         
         // Display toast and start loader animation
         toast.classList.remove('hidden');
-        loader.style.width = '100%'; // Ensure it starts from full width for the animation
+        console.log("Toast should be visible now.");
+
+        loader.style.width = '100%';
         loader.offsetWidth; // Trigger reflow
-        loader.style.width = '0%'; // Animate to 0%
+        loader.style.width = '0%';
 
         // Hide after 5 seconds
-        errorToastTimeout = setTimeout(() => toast.classList.add('hidden'), 5000);
+        errorToastTimeout = setTimeout(() => {
+            console.log("Hiding toast.");
+            toast.classList.add('hidden');
+        }, 5000);
     }
 
     function showConfirmationModal(title, body, confirmText, onConfirm) {
