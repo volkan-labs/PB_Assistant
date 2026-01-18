@@ -618,6 +618,9 @@
                             if (response.ok) {
                                 showToast(data.message || "Documents uploaded successfully!", 'success');
                                 selectedFiles = []; // Clear files after successful upload
+                                document.querySelectorAll('input[name="boundary"]').forEach(checkbox => {
+                                    checkbox.checked = false;
+                                });
                                 renderPendingUploads();
                             } else {
                                 throw new Error(data.error || 'Upload failed');
