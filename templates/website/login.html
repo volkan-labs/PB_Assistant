@@ -143,17 +143,23 @@
                                     your intelligence dashboard</p>
                             </div>
                         </div>
-                        <button onclick="window.location.href='/'"
+                        <button onclick="window.location.href='{% url 'index' %}'"
                             class="relative group flex items-center justify-center gap-3 w-full h-12 bg-[#171321] hover:bg-[#201a2e] border border-gray-700 hover:border-[#FC6D26]/50 text-white rounded-lg transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-[#FC6D26]/10">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.13-.94l2.03-6.26h17.5l2.03 6.26a.84.84 0 0 1-.13.94z"
-                                    fill="#E24329"></path>
-                                <path d="M12 22.13L6.65 16.56l2.03-6.26 3.32 11.83z" fill="#FC6D26"></path>
-                                <path d="M12 22.13l5.35-5.57-2.03-6.26-3.32 11.83z" fill="#FC6D26"></path>
-                                <path d="M2.03 8.3L1.35 6.26a.84.84 0 0 1 .13-.94L3.5 8.3h-1.47z" fill="#FCA326"></path>
-                                <path d="M22.65 6.26l-.68 2.04h-1.47l2.02-2.98a.84.84 0 0 1 .13.94z" fill="#FCA326">
-                                </path>
+                            <svg width="20px" height="20px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <title>file_type_gitlab</title>
+                                    <polygon points="16 28.896 16 28.896 21.156 13.029 10.844 13.029 16 28.896" style="fill:#e24329"></polygon>
+                                    <polygon points="16 28.896 10.844 13.029 3.619 13.029 16 28.896" style="fill:#fc6d26"></polygon>
+                                    <path d="M3.619,13.029h0L2.052,17.851a1.067,1.067,0,0,0,.388,1.193L16,28.9,3.619,13.029Z" style="fill:#fca326">
+                                    </path>
+                                    <path d="M3.619,13.029h7.225L7.739,3.473a.534.534,0,0,0-1.015,0L3.619,13.029Z" style="fill:#e24329"></path>
+                                    <polygon points="16 28.896 21.156 13.029 28.381 13.029 16 28.896" style="fill:#fc6d26"></polygon>
+                                    <path d="M28.381,13.029h0l1.567,4.822a1.067,1.067,0,0,1-.388,1.193L16,28.9,28.381,13.029Z" style="fill:#fca326">
+                                    </path>
+                                    <path d="M28.381,13.029H21.156l3.105-9.557a.534.534,0,0,1,1.015,0l3.105,9.557Z" style="fill:#e24329"></path>
+                                </g>
                             </svg>
                             <span class="font-medium tracking-wide">Login with GitLab</span>
                             <div class="absolute inset-0 rounded-lg ring-1 ring-white/5 group-hover:ring-white/10">
