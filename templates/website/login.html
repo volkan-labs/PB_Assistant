@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Earth System Science AI Assistant</title>
+    <script src="{% static '/website/assets/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#111418",
+                        "surface-highlight": "#283039",
+                        "text-secondary": "#9dabb9",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", // Bootstrap rounded-md approx
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+</head>
+<body
+    class="bg-slate-900 dark:bg-background-dark text-slate-900 dark:text-white antialiased font-display min-h-screen flex flex-col items-center justify-center relative selection:bg-primary/30">
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#1a2333] via-[#0d1117] to-black opacity-80"></div>
+        <div
+            class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] mix-blend-screen">
+        </div>
+        <div
+            class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-900/20 rounded-full blur-[100px] mix-blend-screen">
+        </div>
+    </div>
+    <main class="w-full flex items-center justify-center p-4 md:p-6 z-10">
+        <div class="layout-content-container flex flex-col max-w-[1000px] w-full">
+            <div
+                class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-[#2a3649] rounded-2xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col lg:flex-row min-h-[600px]">
+                <div
+                    class="relative w-full lg:w-1/2 bg-slate-100 dark:bg-[#0b0e14] overflow-hidden flex items-center justify-center min-h-[400px] lg:min-h-auto group order-2 lg:order-1">
+                    <div class="absolute inset-0 opacity-20 dark:opacity-10"
+                        style="background-image: radial-gradient(#6366f1 1px, transparent 1px); background-size: 24px 24px;">
+                    </div>
+                    <div class="relative z-10 w-full h-full flex items-center justify-center p-12">
+                        <div
+                            class="w-full aspect-square max-w-[340px] rounded-full bg-gradient-to-tr from-primary/30 to-transparent p-px z-10">
+                            <div
+                                class="w-full h-full rounded-full overflow-hidden relative shadow-[0_0_80px_rgba(19,91,236,0.2)]">
+                                <div class="w-full h-full bg-cover bg-center transition-transform duration-[30s] ease-linear transform group-hover:scale-110 opacity-90"
+                                    data-alt="Abstract wireframe globe visualizing planetary boundaries"
+                                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCEQKw3ON_pQvZm_sCjN947H58koeFrmUDhSGsnn8EGPWbefXIxMOG264BuKih1zm4E3pSpfYW4e1GNJrSK3gH0TeCn2k98avZT3qgpPzce5YR7BKLMdag2cf_LmjoVsj6NnawUvLOa06b1Wvbp4izOr08T-a8Wct7omqIDFnDKeIdT281ZNb2uDLsn598B11WRIsskM0TWQ-4Dtdw_IllIu_xHa_epQ-10tA5IO8SwbVpFPMpDNZeF9iGT5IrGa-iFQn1Epv0Wz3Fr");'>
+                                </div>
+                                <div class="absolute inset-0 bg-primary/20 mix-blend-overlay"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#0b0e14]/50 to-transparent"></div>
+                            </div>
+                        </div>
+                        <div
+                            class="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-red-500/50 cursor-help">
+                            <span class="material-symbols-outlined text-red-500 text-xs">thermostat</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Climate Change</span>
+                        </div>
+                        <div
+                            class="absolute top-[18%] right-[8%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-emerald-500/50 cursor-help">
+                            <span class="material-symbols-outlined text-emerald-500 text-xs">emoji_nature</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Biosphere
+                                Integrity</span>
+                        </div>
+                        <div
+                            class="absolute top-[45%] right-[2%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-amber-600/50 cursor-help">
+                            <span class="material-symbols-outlined text-amber-600 text-xs">landscape</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Land-System
+                                Change</span>
+                        </div>
+                        <div
+                            class="absolute bottom-[20%] right-[8%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-blue-400/50 cursor-help">
+                            <span class="material-symbols-outlined text-blue-400 text-xs">water_drop</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Freshwater Use</span>
+                        </div>
+                        <div
+                            class="absolute bottom-[8%] left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-purple-500/50 cursor-help">
+                            <span class="material-symbols-outlined text-purple-500 text-xs">science</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Biogeochemical
+                                Flows</span>
+                        </div>
+                        <div
+                            class="absolute bottom-[20%] left-[8%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-cyan-400/50 cursor-help">
+                            <span class="material-symbols-outlined text-cyan-400 text-xs">waves</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Ocean
+                                Acidification</span>
+                        </div>
+                        <div
+                            class="absolute bottom-[40%] left-[2%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-pink-500/50 cursor-help">
+                            <span class="material-symbols-outlined text-pink-500 text-xs">biotech</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Novel Entities</span>
+                        </div>
+                        <div
+                            class="absolute top-[35%] left-[2%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-gray-400/50 cursor-help">
+                            <span class="material-symbols-outlined text-gray-400 text-xs">blur_on</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Atmospheric Aerosol
+                                Loading</span>
+                        </div>
+                        <div
+                            class="absolute top-[18%] left-[8%] z-20 hidden sm:flex items-center gap-2 bg-surface-dark/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full shadow-xl hover:scale-105 transition-transform hover:border-yellow-300/50 cursor-help">
+                            <span class="material-symbols-outlined text-yellow-300 text-xs">wb_sunny</span>
+                            <span class="text-[10px] font-bold text-white tracking-wide uppercase">Stratospheric Ozone
+                                Depletion</span>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="w-full lg:w-1/2 flex flex-col p-8 lg:p-12 justify-center bg-white dark:bg-[#151b26] order-1 lg:order-2">
+                    <div class="max-w-sm mx-auto w-full flex flex-col gap-8">
+                        <div class="flex flex-col items-center gap-4 mb-2">
+                            <div class="text-center">
+                                <h1
+                                    class="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+                                    PB Analayzer</h1>
+                                <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 font-body">Log in to access
+                                    your intelligence dashboard</p>
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='/'"
+                            class="relative group flex items-center justify-center gap-3 w-full h-12 bg-[#171321] hover:bg-[#201a2e] border border-gray-700 hover:border-[#FC6D26]/50 text-white rounded-lg transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-[#FC6D26]/10">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.13-.94l2.03-6.26h17.5l2.03 6.26a.84.84 0 0 1-.13.94z"
+                                    fill="#E24329"></path>
+                                <path d="M12 22.13L6.65 16.56l2.03-6.26 3.32 11.83z" fill="#FC6D26"></path>
+                                <path d="M12 22.13l5.35-5.57-2.03-6.26-3.32 11.83z" fill="#FC6D26"></path>
+                                <path d="M2.03 8.3L1.35 6.26a.84.84 0 0 1 .13-.94L3.5 8.3h-1.47z" fill="#FCA326"></path>
+                                <path d="M22.65 6.26l-.68 2.04h-1.47l2.02-2.98a.84.84 0 0 1 .13.94z" fill="#FCA326">
+                                </path>
+                            </svg>
+                            <span class="font-medium tracking-wide">Login with GitLab</span>
+                            <div class="absolute inset-0 rounded-lg ring-1 ring-white/5 group-hover:ring-white/10">
+                            </div>
+                        </button>
+                        <div
+                            class="rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-5 mt-2">
+                            <h3
+                                class="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">public</span>
+                                About Planetary Boundaries
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Our platform analyzes environmental limits like <span
+                                    class="text-slate-900 dark:text-slate-200 font-medium">Climate Change</span> and
+                                <span class="text-slate-900 dark:text-slate-200 font-medium">Biosphere Integrity</span>
+                                to guide sustainable intelligence.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 flex justify-center gap-6 text-xs text-slate-500 dark:text-slate-600">
+                <a class="hover:text-slate-400 transition-colors" href="#">© <span id="copyright-year">2026</span> Earth
+                    System Science AI Assistant. All rights reserved.</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>
