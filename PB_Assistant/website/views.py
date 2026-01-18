@@ -39,6 +39,9 @@ def ollama_models(request):
 def index(request):
     return render(request, 'website/index.html')
 
+def login_view(request):
+    return render(request, 'website/login.html')
+
 @require_POST
 def search(request):
     user_query = (request.POST.get('user_prompt') or '').strip()
