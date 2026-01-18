@@ -357,6 +357,12 @@
         </main>
     </div>
 
+    <div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin"></div>
+            <p class="text-white mt-4">Saving...</p>
+        </div>
+    </div>
 </body>
 
 <script>
@@ -366,17 +372,37 @@
 
     // --- Helper Functions (globally accessible) ---
 
-    function showError(message) {
+    // Helper function to show toast messages
+    function showToast(message, type = 'error') { // type can be 'success' or 'error'
         clearTimeout(errorToastTimeout);
-        const toast = document.getElementById('error-toast');
+        const toast = document.getElementById('error-toast'); // Reusing the same toast element
         const loader = document.getElementById('error-toast-loader');
-        if (!toast || !loader) return;
+        const messageElement = document.getElementById('error-toast-message');
+        const closeButton = document.getElementById('error-toast-close');
+        
+        if (!toast || !loader || !messageElement || !closeButton) return;
 
-        document.getElementById('error-toast-message').textContent = message;
+        messageElement.textContent = message;
+
+        // Reset classes
+        toast.classList.remove('hidden', 'bg-red-600', 'bg-green-600');
+        loader.classList.remove('bg-white/30', 'bg-white/50'); // Assuming different loader colors for different types
+
+        if (type === 'success') {
+            toast.classList.add('bg-green-600');
+            loader.classList.add('bg-white/50'); // Brighter loader for success
+        } else { // default to error
+            toast.classList.add('bg-red-600');
+            loader.classList.add('bg-white/30');
+        }
+        
+        // Display toast and start loader animation
         toast.classList.remove('hidden');
-        loader.style.width = '100%';
-        loader.offsetWidth; // Force a reflow
-        loader.style.width = '0%';
+        loader.style.width = '100%'; // Ensure it starts from full width for the animation
+        loader.offsetWidth; // Trigger reflow
+        loader.style.width = '0%'; // Animate to 0%
+
+        // Hide after 5 seconds
         errorToastTimeout = setTimeout(() => toast.classList.add('hidden'), 5000);
     }
 
@@ -462,10 +488,12 @@
                 function() {
                     selectedFiles.splice(index, 1);
                     renderPendingUploads();
+                    showToast("File removed from pending uploads.", 'success'); // Added success toast
                 }
             );
         } else {
             console.error("Invalid index for deletePendingUpload:", index);
+            showToast("Error: Could not remove file.", 'error'); // Added error toast
         }
     }
 
@@ -532,13 +560,13 @@
         if (uploadDocumentsButton) {
             uploadDocumentsButton.addEventListener('click', async function() {
                 if (selectedFiles.length === 0) {
-                    showError("No files selected for upload.");
+                    showToast("No files selected for upload.");
                     return;
                 }
 
                 const boundaries = Array.from(document.querySelectorAll('input[name="boundary"]:checked')).map(cb => cb.value);
                 if (boundaries.length === 0) {
-                    showError("Please select at least one Planetary Boundary.");
+                    showToast("Please select at least one Planetary Boundary.");
                     return;
                 }
 
@@ -547,6 +575,9 @@
                     `Are you sure you want to upload ${selectedFiles.length} file(s) and analyze them for ${boundaries.length} selected boundaries?`,
                     'Upload',
                     async function() {
+                        const loadingOverlay = document.getElementById('loading-overlay');
+                        loadingOverlay.classList.remove('hidden'); // Show overlay
+                        
                         const formData = new FormData();
                         selectedFiles.forEach(file => {
                             formData.append('documents', file);
@@ -565,14 +596,16 @@
 
                             const data = await response.json();
                             if (response.ok) {
-                                showError(data.message || "Documents uploaded successfully!");
+                                showToast(data.message || "Documents uploaded successfully!", 'success');
                                 selectedFiles = []; // Clear files after successful upload
                                 renderPendingUploads();
                             } else {
                                 throw new Error(data.error || 'Upload failed');
                             }
                         } catch (error) {
-                            showError(error.message);
+                            showToast(error.message);
+                        } finally {
+                            loadingOverlay.classList.add('hidden'); // Hide overlay
                         }
                     }
                 );
@@ -711,11 +744,16 @@
         document.body.addEventListener('change', handleLlmModelChange);
 
         const savePreferencesButton = document.getElementById('save-preferences-button');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
         if (savePreferencesButton) {
             savePreferencesButton.addEventListener('click', async function() {
                 const defaultLlm = localStorage.getItem('selectedLlmModel');
                 const interfaceTheme = localStorage.getItem('theme');
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                loadingOverlay.classList.remove('hidden'); // Show overlay
+
                 try {
                     const response = await fetch('/api/preferences/save/', {
                         method: 'POST',
@@ -732,15 +770,17 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        showError("Preferences saved successfully!"); // Reusing showError for a success message
+                        showToast("Preferences saved successfully!", 'success');
                         console.log("Backend response:", data);
                     } else {
-                        showError(`Error saving preferences: ${data.error || response.statusText}`);
+                        showToast(`Error saving preferences: ${data.error || response.statusText}`);
                         console.error("Backend error response:", data);
                     }
                 } catch (error) {
-                    showError(`Network error saving preferences: ${error.message}`);
+                    showToast(`Network error saving preferences: ${error.message}`);
                     console.error("Network error:", error);
+                } finally {
+                    loadingOverlay.classList.add('hidden'); // Hide overlay
                 }
             });
         }
