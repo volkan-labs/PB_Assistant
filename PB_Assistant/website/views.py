@@ -69,7 +69,7 @@ def history(request):
     history_records = db_handler.retrieve_search_history_by_user(user_id=request.user.id if request.user.is_authenticated else 1)
 
     user_prompt_history = [
-        {"id": record["id"], "title": record["query"]}
+        {"id": record["id"], "title": record["query"], "timestamp": record["timestamp"].isoformat()}
         for record in history_records
     ] if history_records else []
 

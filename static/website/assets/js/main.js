@@ -210,6 +210,26 @@ function deletePrompt(promptId) {
 }
 
 
+function timeAgo(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const seconds = Math.round((now - date) / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+    const weeks = Math.round(days / 7);
+    const months = Math.round(days / 30.44);
+    const years = Math.round(days / 365.25);
+
+    if (seconds < 60) return `Just now`;
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    if (weeks < 5) return `${weeks}w ago`;
+    if (months < 12) return `${months}mo ago`;
+    return `${years}y ago`;
+}
+
 function loadPromptHistory() {
     const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
     $.getJSON('/history/', function (historyItems) {
@@ -231,11 +251,14 @@ function loadPromptHistory() {
                 $('#userPromptHistory').append(
                     `
                         <div class="${classes}">
-                            <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-3 text-left min-w-0">
+                            <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
                                 <span
                                     class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
-                                <span
-                                    class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
+                                    <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
+                                </div>
                             </a>
                             <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
                                 class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
@@ -255,8 +278,8 @@ function loadPromptHistory() {
 }
 
 function formatTitle(title) {
-    if (title.length > 18) {
-        return title.substr(0, 15) + '...';
+    if (title.length > 25) {
+        return title.substr(0, 22) + '...';
     }
     return title;
 }
