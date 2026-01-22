@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    $.unblockUI(); // Ensure any persistent blockUI is cleared on new page load
+    // Make sure the overlay is hidden on page load
+    $('#loading-overlay').addClass('hidden');
 
     $('#userPromptForm').submit(function (event) {
         const userPrompt = $('textarea[name="user_prompt"]').val().trim();
@@ -9,23 +10,8 @@ $(document).ready(function () {
             return;
         }
 
-        $.blockUI({
-            message: `<div class="custom-blockui">
-                            <div class="spinner"></div>
-                            <h1>Loading, please wait...</h1>
-                        </div>`,
-            css: {
-                border: 'none',
-                padding: '15px',
-                backgroundColor: '#111418', // surface-dark
-                '-webkit-border-radius': '10px',
-                '-moz-border-radius': '10px',
-                color: '#fff'
-            },
-            overlayCSS: {
-                backgroundColor: '#BBE0EF', // Solid light blue (BBE0EF)
-            }
-        });
+        $('#loading-overlay-text').text('Loading, please wait...');
+        $('#loading-overlay').removeClass('hidden');
     });
 
     $('#clearButton').click(function () {
