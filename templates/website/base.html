@@ -269,6 +269,7 @@
                         <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
                             <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
                             <p class="font-medium">No new alerts.</p>
+                        <p class="text-xs mt-1"><a href="{% url 'settings' %}" class="text-primary hover:underline">Set up alerts in settings.</a></p>
                         </div>
                     </div>
                 </div>
@@ -413,7 +414,8 @@
                     throw new Error(data.error);
                 }
                 if (data.length === 0) {
-                    list.html('<li class="text-xs text-text-secondary">No publications found.</li>');
+                    const settingsUrl = "{% url 'settings' %}";
+                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:underline">Configure RSS feeds in settings.</a></li>');
                 } else {
                     data.forEach(item => {
                         const listItem = `
