@@ -231,7 +231,7 @@
                 </div>
             </header>
             <!-- Center Content -->
-            <div class="flex flex-1 flex-col items-center justify-center px-4 pb-20">
+            <div class="flex flex-1 flex-col items-center justify-center px-4">
                 {% block content %}{% endblock %}
             </div>
             <!-- Footer Links -->
@@ -240,6 +240,35 @@
                 <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ The Potsdam Institute for Climate Impact Research (PIK)</p>
             </footer>
         </main>
+
+        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
+            
+            <div class="flex-1 overflow-y-auto">
+
+
+                <div class="border-t border-slate-100 dark:border-slate-800/50"></div>
+
+                <div class="px-6 py-4">
+                    <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Latest Publications</h3>
+                </div>
+                <div class="px-6 pb-4">
+                    <ul id="latest-publications-list">
+                    </ul>
+                </div>
+
+                <div class="border-t border-slate-100 dark:border-slate-800/50"></div>
+
+                <div class="px-6 py-4">
+                    <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Alerts</h3>
+                </div>
+                 <div class="px-6 pb-4">
+                    <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
+                        <p class="font-medium">No new alerts.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <!-- Confirmation Modal -->
@@ -364,6 +393,38 @@
                 applyTheme('system');
             }
         });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        const list = $('#latest-publications-list');
+        list.html('<li class="text-xs text-text-secondary">Loading publications...</li>'); // Loading indicator
+
+        fetch("{% url 'rss_feed' %}")
+            .then(response => response.json())
+            .then(data => {
+                list.empty();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                if (data.length === 0) {
+                    list.html('<li class="text-xs text-text-secondary">No publications found.</li>');
+                } else {
+                    data.forEach(item => {
+                        const listItem = `
+                            <li class="mb-4">
+                                <a href="${item.link}" target="_blank" class="text-sm text-primary hover:underline">${item.title}</a>
+                                <p class="text-xs text-text-secondary">${item.description}</p>
+                            </li>
+                        `;
+                        list.append(listItem);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load RSS feed:', err);
+                list.html('<li class="text-xs text-text-secondary">Failed to load publications.</li>');
+            });
     });
 </script>
 </body>
