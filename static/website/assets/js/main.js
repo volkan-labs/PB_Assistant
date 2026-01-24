@@ -88,7 +88,6 @@ $(document).ready(function () {
         }
     });
 
-    restoreFolderState();
 
     $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
         const header = $(this);
@@ -97,7 +96,7 @@ $(document).ready(function () {
             const isVisible = $(this).is(':visible');
             const folderElement = $(this).closest('[id^="folder-"]');
             const folderId = folderElement.attr('id');
-            const icon = header.find('.material-symbols-outlined');
+            const icon = header.find('.folder-expand-icon');
             if (isVisible) {
                 icon.text('expand_less');
                 addOpenFolder(folderId);
@@ -288,7 +287,12 @@ function loadPromptHistory() {
                             <span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${color};"></span>
                             ${folder.name}
                         </h4>
-                        <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined folder-expand-icon text-slate-400 text-lg">expand_more</span>
+                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="flex flex-col gap-1 ml-4" style="display: none;">
                         <div class="folder-empty text-sm text-slate-400 dark:text-slate-500 italic px-3 py-2">No items in this folder.</div>
@@ -365,7 +369,7 @@ function loadPromptHistory() {
                 const isVisible = $(this).is(':visible');
                 const folderElement = $(this).closest('[id^="folder-"]');
                 const folderId = folderElement.attr('id');
-                const icon = header.find('.material-symbols-outlined');
+                const icon = header.find('.folder-expand-icon');
                 if (isVisible) {
                     icon.text('expand_less');
                     addOpenFolder(folderId);
@@ -374,6 +378,34 @@ function loadPromptHistory() {
                     removeOpenFolder(folderId);
                 }
             });
+        });
+
+        // Attach direct click handlers to folder delete buttons so stopPropagation runs
+        // before any ancestor click handlers (prevents toggling when clicking delete)
+        $('#folderList').find('.folder-delete-btn').off('click').on('click', function(e) {
+            e.stopPropagation();
+            const folderNumericId = $(this).data('folder-id');
+            showConfirmationModal(
+                'Delete Folder',
+                'Are you sure you want to delete this folder? All items will be moved back to Recent Searches.',
+                'Delete',
+                function() {
+                    $.ajax({
+                        url: `/api/folders/${folderNumericId}/delete/`,
+                        type: 'DELETE',
+                        headers: { 'X-CSRFToken': csrftoken },
+                        success: function() {
+                            // Ensure any saved open state for this folder is removed
+                            removeOpenFolder('folder-' + folderNumericId);
+                            // Reload lists so items reappear in recent history
+                            loadPromptHistory();
+                        },
+                        error: function() {
+                            showError('Failed to delete folder.');
+                        }
+                    });
+                }
+            );
         });
 
         // Drag and drop functionality
@@ -418,16 +450,16 @@ function loadPromptHistory() {
         if (activeItem.length > 0) {
             const parentFolderContent = activeItem.closest('.flex-col.gap-1.ml-4');
             if (parentFolderContent.length > 0) {
-                parentFolderContent.show();
+                parentFolderContent.css('display', 'flex');
                 const parentFolder = parentFolderContent.parent();
-                const leftIcon = parentFolder.find('.material-symbols-outlined').first();
-                const rightIcon = parentFolder.find('.material-symbols-outlined').last();
-                leftIcon.text('expand_more'); // Ensure folder expand icon remains unchanged
-                rightIcon.text('delete'); // Right icon
+                const leftIcon = parentFolder.find('.folder-expand-icon');
+                const rightIcon = parentFolder.find('.folder-delete-btn .material-symbols-outlined');
+                leftIcon.text('expand_less'); // show expanded state for expand icon
+                rightIcon.text('delete'); // ensure delete icon remains delete
             }
         }
-        // After building folders, restore any previously saved open folders
-        restoreFolderState();
+        // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
+        setTimeout(restoreFolderState, 50);
     });
 }
 
@@ -467,27 +499,47 @@ function removeOpenFolder(folderId) {
 
 function restoreFolderState() {
     const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
-    openFolders.forEach(folderId => {
-        const folderElement = $(`#${folderId}`);
+    console.debug('[restoreFolderState] openFolders:', openFolders);
+    openFolders.forEach(rawId => {
+        // Support stored formats: "folder-123", "123", or numeric 123
+        let folderSelector = null;
+        if (typeof rawId === 'number') {
+            folderSelector = `#folder-${rawId}`;
+        } else if (typeof rawId === 'string') {
+            if (rawId.startsWith('folder-')) {
+                folderSelector = `#${rawId}`;
+            } else if (/^\d+$/.test(rawId)) {
+                folderSelector = `#folder-${rawId}`;
+            } else {
+                // Unexpected format: try to use as-is
+                folderSelector = `#${rawId}`;
+            }
+        }
+
+        if (!folderSelector) return;
+
+        const folderElement = $(folderSelector);
+        console.debug('[restoreFolderState] trying selector', folderSelector, 'found:', folderElement.length);
+        if (folderElement.length === 0) return;
+
         const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
+        console.debug('[restoreFolderState] folderContent length for', folderSelector, folderContent.length);
         if (folderContent.length > 0) {
-            folderContent.show();
-            const icon = folderElement.find('.material-symbols-outlined').first();
-            icon.text('expand_less');
+            folderContent.css('display', 'flex');
+            const icon = folderElement.find('.folder-expand-icon');
+            if (icon.length) icon.text('expand_less');
         }
     });
 }
 
 $(document).ready(function () {
-    restoreFolderState();
-
     $('#folderList > .flex').off('click').on('click', function() {
         const folderElement = $(this);
         const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
         folderContent.slideToggle(200, function() {
             const isVisible = $(this).is(':visible');
             const folderId = folderElement.attr('id');
-            const icon = folderElement.find('.material-symbols-outlined').first();
+            const icon = folderElement.find('.folder-expand-icon');
             if (isVisible) {
                 icon.text('expand_less');
                 addOpenFolder(folderId);
