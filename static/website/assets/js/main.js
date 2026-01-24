@@ -29,7 +29,6 @@ $(document).ready(function () {
                     },
                     error: function (xhr, status, error) {
                         showError('Failed to clear history.');
-                        console.error('Error:', error);
                     }
                 });
             }
@@ -59,6 +58,113 @@ $(document).ready(function () {
     $('#closePanelIcon').click(function() {
         hideContentPanel(selectedRowId);
     });
+
+    $('#newFolderButton').click(function() {
+        $('#newFolderModal').removeClass('hidden');
+    });
+
+    $('#cancelNewFolderButton').click(function() {
+        $('#newFolderModal').addClass('hidden');
+    });
+
+    $('#createFolderButton').click(function() {
+        const folderName = $('#newFolderName').val().trim();
+        if (folderName) {
+            $.ajax({
+                url: '/api/folders/create/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                contentType: 'application/json',
+                data: JSON.stringify({ name: folderName }),
+                success: function() {
+                    $('#newFolderModal').addClass('hidden');
+                    $('#newFolderName').val('');
+                    loadPromptHistory();
+                },
+                error: function() {
+                    showError('Failed to create folder.');
+                }
+            });
+        }
+    });
+
+    // Sidebar filter: debounced input that filters folders and history items
+    function debounce(fn, delay) {
+        let timer = null;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
+    function applySidebarFilter(query) {
+        const q = query.trim().toLowerCase();
+        // Reset when empty: show all and restore persisted open state
+        if (!q) {
+            $('#folderList > .flex').show().each(function() {
+                const f = $(this);
+                const content = f.find('.flex-col.gap-1.ml-4');
+                content.css('display', 'none');
+                f.find('.folder-expand-icon').text('expand_more');
+            });
+            $('#userPromptHistory').children().show();
+            // restore the open folders the user had before filtering
+            setTimeout(restoreFolderState, 50);
+            $('#sidebarFilterClear').addClass('hidden');
+            return;
+        }
+
+        // Show clear button
+        $('#sidebarFilterClear').removeClass('hidden');
+
+        // Filter top-level history items
+        $('#userPromptHistory').children().each(function() {
+            const el = $(this);
+            const title = el.find('.truncate').first().text().toLowerCase();
+            if (title.indexOf(q) !== -1) el.show(); else el.hide();
+        });
+
+        // Filter folders: show folder if folder name matches OR any child item matches
+        $('#folderList > .flex').each(function() {
+            const folder = $(this);
+            const name = folder.find('.folder-name-text').text().toLowerCase();
+            let matches = name.indexOf(q) !== -1;
+
+            // Check items inside the folder
+            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function() {
+                const t = $(this).text().toLowerCase();
+                if (t.indexOf(q) !== -1) matches = true;
+            });
+
+            if (matches) {
+                folder.show();
+                // expand folder to reveal matching items
+                const content = folder.find('.flex-col.gap-1.ml-4');
+                content.css('display', 'flex');
+                folder.find('.folder-expand-icon').text('expand_less');
+            } else {
+                folder.hide();
+            }
+        });
+
+        // Hide empty message while filtering
+        $('#emptyHistory').hide();
+    }
+
+    const debouncedFilter = debounce(function() {
+        applySidebarFilter($('#sidebarFilter').val() || '');
+    }, 180);
+
+    $('#sidebarFilter').on('input', debouncedFilter);
+    $('#sidebarFilterClear').on('click', function() {
+        $('#sidebarFilter').val('');
+        $(this).addClass('hidden');
+        $('#sidebarFilter').trigger('input');
+        $('#sidebarFilter').focus();
+    });
+
+
+    // Folder header toggles are bound after folder list is built (see loadPromptHistory)
 });
 
 let selectedRowId = '';
@@ -188,7 +294,6 @@ function deletePrompt(promptId) {
                 },
                 error: function (xhr, status, error) {
                     showError('Failed to delete the resource.');
-                    console.error('Error:', error);
                 }
             });
         }
@@ -216,16 +321,57 @@ function timeAgo(isoString) {
     return `${years}y ago`;
 }
 
+
 function loadPromptHistory() {
     const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
-    $.getJSON('/history/', function (historyItems) {
+    
+    $.when(
+        $.getJSON('/api/folders/'),
+        $.getJSON('/history/')
+    ).done(function(foldersResponse, historyResponse) {
+        const folders = foldersResponse[0];
+        const historyItems = historyResponse[0];
+
+        $('#folderList').empty();
+        $('#userPromptHistory').empty();
+
+        const folderMap = new Map();
+        const folderColors = ['#f97316', '#06b6d4', '#8b5cf6', '#ef4444', '#10b981', '#f59e0b'];
+        folders.forEach(folder => {
+            const color = folderColors[folder.id % folderColors.length];
+            folderMap.set(folder.id, $(
+                `<div class="flex flex-col gap-1" id="folder-${folder.id}">
+                    <div class="flex items-center justify-between px-2 group folder-header">
+                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <span class="material-symbols-outlined folder-toggle folder-expand-icon text-slate-400 text-lg cursor-pointer">expand_more</span>
+                            <span class="w-3 h-3 rounded-full mr-0 shrink-0" style="background-color: ${color};"></span>
+                            <span class="folder-name-text truncate cursor-pointer">${folder.name}</span>
+                        </h4>
+                        <div class="flex items-center gap-2">
+                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-opacity transition-colors focus:outline-none">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 ml-4" style="display: none;">
+                        <div class="folder-empty text-sm text-slate-400 dark:text-slate-500 italic px-3 py-2">No items in this folder.</div>
+                    </div>
+                </div>`
+            ));
+            $('#folderList').append(folderMap.get(folder.id));
+        });
+
+        // Show placeholder when there are no folders
+        if (!folders || folders.length === 0) {
+            $('#folderList').hide();
+            $('#emptyFolders').show();
+        } else {
+            $('#folderList').show();
+            $('#emptyFolders').hide();
+        }
 
         if (!jQuery.isEmptyObject(historyItems)) {
-            $('#userPromptHistory').empty();
-            $.each(historyItems, function (index, value) {
-                $('#emptyHistory').hide();
-                $('#clearButton').show();
-
+            historyItems.forEach(function (value) {
                 const isActive = value.id === activeHistoryId;
                 let classes = "group flex items-center justify-between rounded-lg pl-3 pr-2 transition-colors";
                 if (isActive) {
@@ -234,34 +380,176 @@ function loadPromptHistory() {
                     classes += " hover:bg-slate-100 dark:hover:bg-slate-800/50"; // Non-active hover state
                 }
 
-                $('#userPromptHistory').append(
-                    `
-                        <div class="${classes}">
-                            <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
+                const historyElement = `
+                    <div class="${classes}" draggable="true" data-history-id="${value.id}">
+                        <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
+                            <span
+                                class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
+                            <div class="flex flex-col min-w-0">
                                 <span
-                                    class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
-                                <div class="flex flex-col min-w-0">
-                                    <span
-                                        class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
-                                    <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
-                                </div>
-                            </a>
-                            <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
-                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
-                                <span class="material-symbols-outlined text-[18px]">close</span>
-                            </button>
-                        </div>
-                        `
-                );
+                                    class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
+                            </div>
+                        </a>
+                        <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                    `;
+                
+                if (value.folder_id && folderMap.has(value.folder_id)) {
+                    const folderContent = folderMap.get(value.folder_id).find('.flex-col.gap-1.ml-4');
+                    // remove the empty indicator when adding items
+                    folderContent.find('.folder-empty').remove();
+                    folderContent.append(historyElement);
+                } else {
+                    $('#userPromptHistory').append(historyElement);
+                }
             });
 
+            // If no items were added to the top-level history list (all moved into folders),
+            // show the empty indicator inside the history card.
+            if ($('#userPromptHistory').children().length === 0) {
+                $('#userPromptHistory').hide();
+                $('#emptyHistory').show();
+            } else {
+                $('#userPromptHistory').show();
+                $('#emptyHistory').hide();
+            }
+
+            // Show clear button when there are any history items overall
+            if (historyItems.length > 0) {
+                $('#clearButton').show();
+            } else {
+                $('#clearButton').hide();
+            }
         } else {
             $('#userPromptHistory').hide();
             $('#emptyHistory').show();
             $('#clearButton').hide();
         }
+
+        $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
+            const header = $(this);
+            const folderContent = header.next('.flex-col.gap-1.ml-4');
+            folderContent.slideToggle(200, function() {
+                const isVisible = $(this).is(':visible');
+                const folderElement = $(this).closest('[id^="folder-"]');
+                const folderId = folderElement.attr('id');
+                const icon = header.find('.folder-expand-icon');
+                if (isVisible) {
+                    icon.text('expand_less');
+                    addOpenFolder(folderId);
+                } else {
+                    icon.text('expand_more');
+                    removeOpenFolder(folderId);
+                }
+            });
+        });
+            // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
+            $('#folderList').off('click', '.folder-header .folder-toggle, .folder-header .folder-name-text').on('click', '.folder-header .folder-toggle, .folder-header .folder-name-text', function(e) {
+                const clicked = $(this);
+                const header = clicked.closest('.folder-header');
+                const folderContent = header.next('.flex-col.gap-1.ml-4');
+                folderContent.slideToggle(200, function() {
+                    const isVisible = $(this).is(':visible');
+                    const folderElement = $(this).closest('[id^="folder-"]');
+                    const folderId = folderElement.attr('id');
+                    const icon = header.find('.folder-expand-icon');
+                    if (isVisible) {
+                        icon.text('expand_less');
+                        addOpenFolder(folderId);
+                    } else {
+                        icon.text('expand_more');
+                        removeOpenFolder(folderId);
+                    }
+                });
+            });
+
+        // Attach direct click handlers to folder delete buttons so stopPropagation runs
+        // before any ancestor click handlers (prevents toggling when clicking delete)
+        $('#folderList').find('.folder-delete-btn').off('click').on('click', function(e) {
+            e.stopPropagation();
+            const folderNumericId = $(this).data('folder-id');
+            showConfirmationModal(
+                'Delete Folder',
+                'Are you sure you want to delete this folder? All items will be moved back to Recent Searches.',
+                'Delete',
+                function() {
+                    $.ajax({
+                        url: `/api/folders/${folderNumericId}/delete/`,
+                        type: 'DELETE',
+                        headers: { 'X-CSRFToken': csrftoken },
+                        success: function() {
+                            // Ensure any saved open state for this folder is removed
+                            removeOpenFolder('folder-' + folderNumericId);
+                            // Reload lists so items reappear in recent history
+                            loadPromptHistory();
+                        },
+                        error: function() {
+                            showError('Failed to delete folder.');
+                        }
+                    });
+                }
+            );
+        });
+
+        // Drag and drop functionality
+        let draggedItem = null;
+
+        $('[draggable="true"]').on('dragstart', function(e) {
+            draggedItem = this;
+            e.originalEvent.dataTransfer.effectAllowed = 'move';
+            e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
+        });
+
+        $('#folderList > div').on('dragover', function(e) {
+            e.preventDefault();
+            $(this).addClass('bg-primary/10');
+        }).on('dragleave', function() {
+            $(this).removeClass('bg-primary/10');
+        }).on('drop', function(e) {
+            e.preventDefault();
+            $(this).removeClass('bg-primary/10');
+            if (draggedItem) {
+                const historyId = $(draggedItem).data('history-id');
+                const folderId = $(this).attr('id').split('-')[1];
+                
+                $.ajax({
+                    url: `/api/history/${historyId}/move/`,
+                    type: 'PUT',
+                    headers: { 'X-CSRFToken': csrftoken },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ folder_id: folderId }),
+                    success: function() {
+                        loadPromptHistory();
+                    },
+                    error: function() {
+                        showError('Failed to move item.');
+                    }
+                });
+            }
+        });
+
+        // Expand folder if it contains the active item
+        const activeItem = $('.bg-primary\\/20');
+        if (activeItem.length > 0) {
+            const parentFolderContent = activeItem.closest('.flex-col.gap-1.ml-4');
+            if (parentFolderContent.length > 0) {
+                parentFolderContent.css('display', 'flex');
+                const parentFolder = parentFolderContent.parent();
+                const leftIcon = parentFolder.find('.folder-expand-icon');
+                const rightIcon = parentFolder.find('.folder-delete-btn .material-symbols-outlined');
+                leftIcon.text('expand_less'); // show expanded state for expand icon
+                rightIcon.text('delete'); // ensure delete icon remains delete
+            }
+        }
+        // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
+        setTimeout(restoreFolderState, 50);
     });
 }
+
 
 function formatTitle(title) {
     if (title.length > 25) {
@@ -269,3 +557,66 @@ function formatTitle(title) {
     }
     return title;
 }
+
+function saveFolderState() {
+    const openFolders = [];
+    $('#folderList > .flex').each(function() {
+        const folderId = $(this).attr('id');
+        const folderContent = $(this).find('.flex-col.gap-1.ml-4');
+        if (folderContent.is(':visible')) {
+            openFolders.push(folderId);
+        }
+    });
+    localStorage.setItem('openFolders', JSON.stringify(openFolders));
+}
+
+function addOpenFolder(folderId) {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    if (!openFolders.includes(folderId)) {
+        openFolders.push(folderId);
+        localStorage.setItem('openFolders', JSON.stringify(openFolders));
+    }
+}
+
+function removeOpenFolder(folderId) {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    const filtered = openFolders.filter(id => id !== folderId);
+    localStorage.setItem('openFolders', JSON.stringify(filtered));
+}
+
+function restoreFolderState() {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    console.debug('[restoreFolderState] openFolders:', openFolders);
+    openFolders.forEach(rawId => {
+        // Support stored formats: "folder-123", "123", or numeric 123
+        let folderSelector = null;
+        if (typeof rawId === 'number') {
+            folderSelector = `#folder-${rawId}`;
+        } else if (typeof rawId === 'string') {
+            if (rawId.startsWith('folder-')) {
+                folderSelector = `#${rawId}`;
+            } else if (/^\d+$/.test(rawId)) {
+                folderSelector = `#folder-${rawId}`;
+            } else {
+                // Unexpected format: try to use as-is
+                folderSelector = `#${rawId}`;
+            }
+        }
+
+        if (!folderSelector) return;
+
+        const folderElement = $(folderSelector);
+        console.debug('[restoreFolderState] trying selector', folderSelector, 'found:', folderElement.length);
+        if (folderElement.length === 0) return;
+
+        const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
+        console.debug('[restoreFolderState] folderContent length for', folderSelector, folderContent.length);
+        if (folderContent.length > 0) {
+            folderContent.css('display', 'flex');
+            const icon = folderElement.find('.folder-expand-icon');
+            if (icon.length) icon.text('expand_less');
+        }
+    });
+}
+
+// removed global folder-element click handler to avoid a large clickable area; toggles are delegated in `loadPromptHistory`

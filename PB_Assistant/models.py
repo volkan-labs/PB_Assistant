@@ -15,8 +15,18 @@ class PlanetaryBoundary(models.Model):
     def __str__(self):
         return self.name
 
+class SearchFolder(models.Model):
+    name = models.CharField(max_length=255)
+    user_id = models.IntegerField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+
 class SearchHistory(models.Model):
     user_id = models.IntegerField()
+    folder = models.ForeignKey(SearchFolder, related_name='searches', on_delete=models.SET_NULL, null=True, blank=True)
     query = models.TextField()
     answer = models.TextField(blank=True, null=True)
 

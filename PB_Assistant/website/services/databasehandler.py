@@ -40,7 +40,7 @@ class DatabaseHandler:
                 SearchHistory.objects
                 .filter(user_id=user_id)
                 .order_by('-timestamp')
-                .values('id', 'query', 'timestamp')
+                .values('id', 'query', 'timestamp', 'folder_id')
             )
         except Exception as e:
             logger.error(f"Error retrieving search history: {e}")
