@@ -69,7 +69,7 @@ def history(request):
     history_records = db_handler.retrieve_search_history_by_user(user_id=request.user.id if request.user.is_authenticated else 1)
 
     user_prompt_history = [
-        {"id": record["id"], "title": record["query"], "timestamp": record["timestamp"].isoformat()}
+        {"id": record["id"], "title": record["query"], "folder_id": record["folder_id"], "timestamp": record["timestamp"].isoformat()}
         for record in history_records
     ] if history_records else []
 
@@ -135,6 +135,7 @@ def save_preferences(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+from PB_Assistant.models import SearchFolder, SearchHistory
 
 @require_POST
 def upload_documents(request):
@@ -160,4 +161,76 @@ def upload_documents(request):
         "message": f"{len(saved_files)} documents uploaded successfully.",
         "saved_files": saved_files
     })
+
+@require_GET
+def get_folders(request):
+    user_id = 1  # Hardcoded for now
+    folders = SearchFolder.objects.filter(user_id=user_id).values('id', 'name')
+    return JsonResponse(list(folders), safe=False)
+
+@require_POST
+def create_folder(request):
+    try:
+        data = json.loads(request.body)
+        name = data.get('name')
+        if not name:
+            return JsonResponse({'error': 'Name is required'}, status=400)
+        
+        user_id = 1  # Hardcoded for now
+        folder = SearchFolder.objects.create(name=name, user_id=user_id)
+        return JsonResponse({'id': folder.id, 'name': folder.name}, status=201)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
+
+@require_http_methods(['PUT'])
+def update_folder(request, folder_id):
+    try:
+        data = json.loads(request.body)
+        name = data.get('name')
+        if not name:
+            return JsonResponse({'error': 'Name is required'}, status=400)
+            
+        user_id = 1  # Hardcoded for now
+        folder = SearchFolder.objects.get(id=folder_id, user_id=user_id)
+        folder.name = name
+        folder.save()
+        return JsonResponse({'message': 'Folder updated successfully'})
+    except SearchFolder.DoesNotExist:
+        return JsonResponse({'error': 'Folder not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
+
+@require_http_methods(['DELETE'])
+def delete_folder(request, folder_id):
+    user_id = 1  # Hardcoded for now
+    try:
+        folder = SearchFolder.objects.get(id=folder_id, user_id=user_id)
+        folder.delete()
+        return JsonResponse({}, status=204)
+    except SearchFolder.DoesNotExist:
+        return JsonResponse({'error': 'Folder not found'}, status=404)
+
+@require_http_methods(['PUT'])
+def move_history(request, history_id):
+    user_id = 1  # Hardcoded for now
+    try:
+        data = json.loads(request.body)
+        folder_id = data.get('folder_id')
+
+        history_item = SearchHistory.objects.get(id=history_id, user_id=user_id)
+        
+        if folder_id is None:
+            history_item.folder = None
+        else:
+            folder = SearchFolder.objects.get(id=folder_id, user_id=user_id)
+            history_item.folder = folder
+            
+        history_item.save()
+        return JsonResponse({'message': 'Search history moved successfully'})
+    except SearchHistory.DoesNotExist:
+        return JsonResponse({'error': 'Search history not found'}, status=44)
+    except SearchFolder.DoesNotExist:
+        return JsonResponse({'error': 'Folder not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
 

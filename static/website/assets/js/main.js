@@ -59,6 +59,48 @@ $(document).ready(function () {
     $('#closePanelIcon').click(function() {
         hideContentPanel(selectedRowId);
     });
+
+    $('#newFolderButton').click(function() {
+        $('#newFolderModal').removeClass('hidden');
+    });
+
+    $('#cancelNewFolderButton').click(function() {
+        $('#newFolderModal').addClass('hidden');
+    });
+
+    $('#createFolderButton').click(function() {
+        const folderName = $('#newFolderName').val().trim();
+        if (folderName) {
+            $.ajax({
+                url: '/api/folders/create/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                contentType: 'application/json',
+                data: JSON.stringify({ name: folderName }),
+                success: function() {
+                    $('#newFolderModal').addClass('hidden');
+                    $('#newFolderName').val('');
+                    loadPromptHistory();
+                },
+                error: function() {
+                    showError('Failed to create folder.');
+                }
+            });
+        }
+    });
+
+    restoreFolderState();
+
+    $('.flex.items-center.justify-between.px-2.cursor-pointer').click(function() {
+        $(this).next().slideToggle();
+        const icon = $(this).find('.material-symbols-outlined');
+        if (icon.text() === 'expand_more') {
+            icon.text('expand_less');
+        } else {
+            icon.text('expand_more');
+        }
+        saveFolderState();
+    });
 });
 
 let selectedRowId = '';
@@ -216,16 +258,39 @@ function timeAgo(isoString) {
     return `${years}y ago`;
 }
 
+
 function loadPromptHistory() {
     const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
-    $.getJSON('/history/', function (historyItems) {
+    
+    $.when(
+        $.getJSON('/api/folders/'),
+        $.getJSON('/history/')
+    ).done(function(foldersResponse, historyResponse) {
+        const folders = foldersResponse[0];
+        const historyItems = historyResponse[0];
+
+        $('#folderList').empty();
+        $('#userPromptHistory').empty();
+
+        const folderMap = new Map();
+        folders.forEach(folder => {
+            folderMap.set(folder.id, $(
+                `<div class="flex flex-col gap-1" id="folder-${folder.id}">
+                    <div class="flex items-center justify-between px-2 cursor-pointer">
+                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500">${folder.name}</h4>
+                        <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
+                    </div>
+                    <div class="flex flex-col gap-1 ml-4" style="display: none;"></div>
+                </div>`
+            ));
+            $('#folderList').append(folderMap.get(folder.id));
+        });
 
         if (!jQuery.isEmptyObject(historyItems)) {
-            $('#userPromptHistory').empty();
-            $.each(historyItems, function (index, value) {
-                $('#emptyHistory').hide();
-                $('#clearButton').show();
+            $('#emptyHistory').hide();
+            $('#clearButton').show();
 
+            historyItems.forEach(function (value) {
                 const isActive = value.id === activeHistoryId;
                 let classes = "group flex items-center justify-between rounded-lg pl-3 pr-2 transition-colors";
                 if (isActive) {
@@ -234,34 +299,104 @@ function loadPromptHistory() {
                     classes += " hover:bg-slate-100 dark:hover:bg-slate-800/50"; // Non-active hover state
                 }
 
-                $('#userPromptHistory').append(
-                    `
-                        <div class="${classes}">
-                            <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
+                const historyElement = `
+                    <div class="${classes}" draggable="true" data-history-id="${value.id}">
+                        <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
+                            <span
+                                class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
+                            <div class="flex flex-col min-w-0">
                                 <span
-                                    class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
-                                <div class="flex flex-col min-w-0">
-                                    <span
-                                        class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
-                                    <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
-                                </div>
-                            </a>
-                            <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
-                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
-                                <span class="material-symbols-outlined text-[18px]">close</span>
-                            </button>
-                        </div>
-                        `
-                );
+                                    class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
+                                <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
+                            </div>
+                        </a>
+                        <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                    `;
+                
+                if (value.folder_id && folderMap.has(value.folder_id)) {
+                    folderMap.get(value.folder_id).find('.flex-col.gap-1.ml-4').append(historyElement);
+                } else {
+                    $('#userPromptHistory').append(historyElement);
+                }
             });
-
         } else {
             $('#userPromptHistory').hide();
             $('#emptyHistory').show();
             $('#clearButton').hide();
         }
+
+        $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
+            const folderContent = $(this).next('.flex-col.gap-1.ml-4');
+            folderContent.slideToggle();
+            const icon = $(this).find('.material-symbols-outlined');
+            if (icon.text() === 'expand_more') {
+                icon.text('expand_less');
+            } else {
+                icon.text('expand_more');
+            }
+            console.log('Folder toggled inside loadPromptHistory, saving state...');
+            saveFolderState();
+        });
+
+        // Drag and drop functionality
+        let draggedItem = null;
+
+        $('[draggable="true"]').on('dragstart', function(e) {
+            draggedItem = this;
+            e.originalEvent.dataTransfer.effectAllowed = 'move';
+            e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
+        });
+
+        $('#folderList > div').on('dragover', function(e) {
+            e.preventDefault();
+            $(this).addClass('bg-primary/10');
+        }).on('dragleave', function() {
+            $(this).removeClass('bg-primary/10');
+        }).on('drop', function(e) {
+            e.preventDefault();
+            $(this).removeClass('bg-primary/10');
+            if (draggedItem) {
+                const historyId = $(draggedItem).data('history-id');
+                const folderId = $(this).attr('id').split('-')[1];
+                
+                $.ajax({
+                    url: `/api/history/${historyId}/move/`,
+                    type: 'PUT',
+                    headers: { 'X-CSRFToken': csrftoken },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ folder_id: folderId }),
+                    success: function() {
+                        loadPromptHistory();
+                    },
+                    error: function() {
+                        showError('Failed to move item.');
+                    }
+                });
+            }
+        });
+
+        // Expand folder if it contains the active item
+        const activeItem = $('.bg-primary\\/20');
+        if (activeItem.length > 0) {
+            const parentFolderContent = activeItem.closest('.flex-col.gap-1.ml-4');
+            if (parentFolderContent.length > 0) {
+                parentFolderContent.show();
+                const parentFolder = parentFolderContent.parent();
+                const leftIcon = parentFolder.find('.material-symbols-outlined').first();
+                const rightIcon = parentFolder.find('.material-symbols-outlined').last();
+                leftIcon.text('expand_more'); // Ensure folder expand icon remains unchanged
+                rightIcon.text('delete'); // Right icon
+            }
+        }
+        // After building folders, restore any previously saved open folders
+        restoreFolderState();
     });
 }
+
 
 function formatTitle(title) {
     if (title.length > 25) {
@@ -269,3 +404,50 @@ function formatTitle(title) {
     }
     return title;
 }
+
+function saveFolderState() {
+    const openFolders = [];
+    $('#folderList > .flex').each(function() {
+        const folderId = $(this).attr('id');
+        const folderContent = $(this).find('.flex-col.gap-1.ml-4');
+        if (folderContent.is(':visible')) {
+            openFolders.push(folderId);
+        }
+    });
+    localStorage.setItem('openFolders', JSON.stringify(openFolders));
+    console.log('Saved folder state:', openFolders); // Debugging
+}
+
+function restoreFolderState() {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    console.log('Restored folder state:', openFolders); // Debugging
+    openFolders.forEach(folderId => {
+        const folderElement = $(`#${folderId}`);
+        const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
+        if (folderContent.length > 0) {
+            folderContent.show();
+            const icon = folderElement.find('.material-symbols-outlined').first();
+            icon.text('expand_less');
+        } else {
+            console.warn(`Folder with ID ${folderId} not found in DOM.`); // Debugging
+        }
+    });
+}
+
+$(document).ready(function () {
+    console.log('Document ready, restoring folder state...'); // Debugging
+    restoreFolderState();
+
+    $('#folderList > .flex').off('click').on('click', function() {
+        const folderContent = $(this).find('.flex-col.gap-1.ml-4');
+        folderContent.slideToggle();
+        const icon = $(this).find('.material-symbols-outlined');
+        if (folderContent.is(':visible')) {
+            icon.text('expand_less');
+        } else {
+            icon.text('expand_more');
+        }
+        console.log('Folder toggled, saving state...'); // Debugging
+        saveFolderState(); // Save state on expand/collapse
+    });
+});
