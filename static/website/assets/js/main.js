@@ -89,23 +89,7 @@ $(document).ready(function () {
     });
 
 
-    $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
-        const header = $(this);
-        const folderContent = header.next('.flex-col.gap-1.ml-4');
-        folderContent.slideToggle(200, function() {
-            const isVisible = $(this).is(':visible');
-            const folderElement = $(this).closest('[id^="folder-"]');
-            const folderId = folderElement.attr('id');
-            const icon = header.find('.folder-expand-icon');
-            if (isVisible) {
-                icon.text('expand_less');
-                addOpenFolder(folderId);
-            } else {
-                icon.text('expand_more');
-                removeOpenFolder(folderId);
-            }
-        });
-    });
+    // Folder header toggles are bound after folder list is built (see loadPromptHistory)
 });
 
 let selectedRowId = '';
@@ -282,14 +266,14 @@ function loadPromptHistory() {
             const color = folderColors[folder.id % folderColors.length];
             folderMap.set(folder.id, $(
                 `<div class="flex flex-col gap-1" id="folder-${folder.id}">
-                    <div class="flex items-center justify-between px-2 cursor-pointer">
-                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center">
-                            <span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${color};"></span>
-                            ${folder.name}
+                    <div class="flex items-center justify-between px-2 group folder-header">
+                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <span class="material-symbols-outlined folder-toggle folder-expand-icon text-slate-400 text-lg cursor-pointer">expand_more</span>
+                            <span class="w-3 h-3 rounded-full mr-0 shrink-0" style="background-color: ${color};"></span>
+                            <span class="folder-name-text truncate cursor-pointer">${folder.name}</span>
                         </h4>
                         <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined folder-expand-icon text-slate-400 text-lg">expand_more</span>
-                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none">
+                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-opacity transition-colors focus:outline-none">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                             </button>
                         </div>
@@ -379,6 +363,25 @@ function loadPromptHistory() {
                 }
             });
         });
+            // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
+            $('#folderList').off('click', '.folder-header .folder-toggle, .folder-header .folder-name-text').on('click', '.folder-header .folder-toggle, .folder-header .folder-name-text', function(e) {
+                const clicked = $(this);
+                const header = clicked.closest('.folder-header');
+                const folderContent = header.next('.flex-col.gap-1.ml-4');
+                folderContent.slideToggle(200, function() {
+                    const isVisible = $(this).is(':visible');
+                    const folderElement = $(this).closest('[id^="folder-"]');
+                    const folderId = folderElement.attr('id');
+                    const icon = header.find('.folder-expand-icon');
+                    if (isVisible) {
+                        icon.text('expand_less');
+                        addOpenFolder(folderId);
+                    } else {
+                        icon.text('expand_more');
+                        removeOpenFolder(folderId);
+                    }
+                });
+            });
 
         // Attach direct click handlers to folder delete buttons so stopPropagation runs
         // before any ancestor click handlers (prevents toggling when clicking delete)
@@ -532,21 +535,4 @@ function restoreFolderState() {
     });
 }
 
-$(document).ready(function () {
-    $('#folderList > .flex').off('click').on('click', function() {
-        const folderElement = $(this);
-        const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
-        folderContent.slideToggle(200, function() {
-            const isVisible = $(this).is(':visible');
-            const folderId = folderElement.attr('id');
-            const icon = folderElement.find('.folder-expand-icon');
-            if (isVisible) {
-                icon.text('expand_less');
-                addOpenFolder(folderId);
-            } else {
-                icon.text('expand_more');
-                removeOpenFolder(folderId);
-            }
-        });
-    });
-});
+// removed global folder-element click handler to avoid a large clickable area; toggles are delegated in `loadPromptHistory`
