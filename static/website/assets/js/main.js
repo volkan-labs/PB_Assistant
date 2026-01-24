@@ -88,6 +88,81 @@ $(document).ready(function () {
         }
     });
 
+    // Sidebar filter: debounced input that filters folders and history items
+    function debounce(fn, delay) {
+        let timer = null;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
+    function applySidebarFilter(query) {
+        const q = query.trim().toLowerCase();
+        // Reset when empty: show all and restore persisted open state
+        if (!q) {
+            $('#folderList > .flex').show().each(function() {
+                const f = $(this);
+                const content = f.find('.flex-col.gap-1.ml-4');
+                content.css('display', 'none');
+                f.find('.folder-expand-icon').text('expand_more');
+            });
+            $('#userPromptHistory').children().show();
+            // restore the open folders the user had before filtering
+            setTimeout(restoreFolderState, 50);
+            $('#sidebarFilterClear').addClass('hidden');
+            return;
+        }
+
+        // Show clear button
+        $('#sidebarFilterClear').removeClass('hidden');
+
+        // Filter top-level history items
+        $('#userPromptHistory').children().each(function() {
+            const el = $(this);
+            const title = el.find('.truncate').first().text().toLowerCase();
+            if (title.indexOf(q) !== -1) el.show(); else el.hide();
+        });
+
+        // Filter folders: show folder if folder name matches OR any child item matches
+        $('#folderList > .flex').each(function() {
+            const folder = $(this);
+            const name = folder.find('.folder-name-text').text().toLowerCase();
+            let matches = name.indexOf(q) !== -1;
+
+            // Check items inside the folder
+            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function() {
+                const t = $(this).text().toLowerCase();
+                if (t.indexOf(q) !== -1) matches = true;
+            });
+
+            if (matches) {
+                folder.show();
+                // expand folder to reveal matching items
+                const content = folder.find('.flex-col.gap-1.ml-4');
+                content.css('display', 'flex');
+                folder.find('.folder-expand-icon').text('expand_less');
+            } else {
+                folder.hide();
+            }
+        });
+
+        // Hide empty message while filtering
+        $('#emptyHistory').hide();
+    }
+
+    const debouncedFilter = debounce(function() {
+        applySidebarFilter($('#sidebarFilter').val() || '');
+    }, 180);
+
+    $('#sidebarFilter').on('input', debouncedFilter);
+    $('#sidebarFilterClear').on('click', function() {
+        $('#sidebarFilter').val('');
+        $(this).addClass('hidden');
+        $('#sidebarFilter').trigger('input');
+        $('#sidebarFilter').focus();
+    });
+
 
     // Folder header toggles are bound after folder list is built (see loadPromptHistory)
 });
