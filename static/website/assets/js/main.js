@@ -361,6 +361,15 @@ function loadPromptHistory() {
             $('#folderList').append(folderMap.get(folder.id));
         });
 
+        // Show placeholder when there are no folders
+        if (!folders || folders.length === 0) {
+            $('#folderList').hide();
+            $('#emptyFolders').show();
+        } else {
+            $('#folderList').show();
+            $('#emptyFolders').hide();
+        }
+
         if (!jQuery.isEmptyObject(historyItems)) {
             historyItems.forEach(function (value) {
                 const isActive = value.id === activeHistoryId;
