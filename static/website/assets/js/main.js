@@ -29,7 +29,6 @@ $(document).ready(function () {
                     },
                     error: function (xhr, status, error) {
                         showError('Failed to clear history.');
-                        console.error('Error:', error);
                     }
                 });
             }
@@ -91,15 +90,22 @@ $(document).ready(function () {
 
     restoreFolderState();
 
-    $('.flex.items-center.justify-between.px-2.cursor-pointer').click(function() {
-        $(this).next().slideToggle();
-        const icon = $(this).find('.material-symbols-outlined');
-        if (icon.text() === 'expand_more') {
-            icon.text('expand_less');
-        } else {
-            icon.text('expand_more');
-        }
-        saveFolderState();
+    $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
+        const header = $(this);
+        const folderContent = header.next('.flex-col.gap-1.ml-4');
+        folderContent.slideToggle(200, function() {
+            const isVisible = $(this).is(':visible');
+            const folderElement = $(this).closest('[id^="folder-"]');
+            const folderId = folderElement.attr('id');
+            const icon = header.find('.material-symbols-outlined');
+            if (isVisible) {
+                icon.text('expand_less');
+                addOpenFolder(folderId);
+            } else {
+                icon.text('expand_more');
+                removeOpenFolder(folderId);
+            }
+        });
     });
 });
 
@@ -230,7 +236,6 @@ function deletePrompt(promptId) {
                 },
                 error: function (xhr, status, error) {
                     showError('Failed to delete the resource.');
-                    console.error('Error:', error);
                 }
             });
         }
@@ -273,14 +278,21 @@ function loadPromptHistory() {
         $('#userPromptHistory').empty();
 
         const folderMap = new Map();
+        const folderColors = ['#f97316', '#06b6d4', '#8b5cf6', '#ef4444', '#10b981', '#f59e0b'];
         folders.forEach(folder => {
+            const color = folderColors[folder.id % folderColors.length];
             folderMap.set(folder.id, $(
                 `<div class="flex flex-col gap-1" id="folder-${folder.id}">
                     <div class="flex items-center justify-between px-2 cursor-pointer">
-                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500">${folder.name}</h4>
+                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center">
+                            <span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${color};"></span>
+                            ${folder.name}
+                        </h4>
                         <span class="material-symbols-outlined text-slate-400 text-lg">expand_more</span>
                     </div>
-                    <div class="flex flex-col gap-1 ml-4" style="display: none;"></div>
+                    <div class="flex flex-col gap-1 ml-4" style="display: none;">
+                        <div class="folder-empty text-sm text-slate-400 dark:text-slate-500 italic px-3 py-2">No items in this folder.</div>
+                    </div>
                 </div>`
             ));
             $('#folderList').append(folderMap.get(folder.id));
@@ -318,7 +330,10 @@ function loadPromptHistory() {
                     `;
                 
                 if (value.folder_id && folderMap.has(value.folder_id)) {
-                    folderMap.get(value.folder_id).find('.flex-col.gap-1.ml-4').append(historyElement);
+                    const folderContent = folderMap.get(value.folder_id).find('.flex-col.gap-1.ml-4');
+                    // remove the empty indicator when adding items
+                    folderContent.find('.folder-empty').remove();
+                    folderContent.append(historyElement);
                 } else {
                     $('#userPromptHistory').append(historyElement);
                 }
@@ -330,16 +345,21 @@ function loadPromptHistory() {
         }
 
         $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
-            const folderContent = $(this).next('.flex-col.gap-1.ml-4');
-            folderContent.slideToggle();
-            const icon = $(this).find('.material-symbols-outlined');
-            if (icon.text() === 'expand_more') {
-                icon.text('expand_less');
-            } else {
-                icon.text('expand_more');
-            }
-            console.log('Folder toggled inside loadPromptHistory, saving state...');
-            saveFolderState();
+            const header = $(this);
+            const folderContent = header.next('.flex-col.gap-1.ml-4');
+            folderContent.slideToggle(200, function() {
+                const isVisible = $(this).is(':visible');
+                const folderElement = $(this).closest('[id^="folder-"]');
+                const folderId = folderElement.attr('id');
+                const icon = header.find('.material-symbols-outlined');
+                if (isVisible) {
+                    icon.text('expand_less');
+                    addOpenFolder(folderId);
+                } else {
+                    icon.text('expand_more');
+                    removeOpenFolder(folderId);
+                }
+            });
         });
 
         // Drag and drop functionality
@@ -415,12 +435,24 @@ function saveFolderState() {
         }
     });
     localStorage.setItem('openFolders', JSON.stringify(openFolders));
-    console.log('Saved folder state:', openFolders); // Debugging
+}
+
+function addOpenFolder(folderId) {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    if (!openFolders.includes(folderId)) {
+        openFolders.push(folderId);
+        localStorage.setItem('openFolders', JSON.stringify(openFolders));
+    }
+}
+
+function removeOpenFolder(folderId) {
+    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+    const filtered = openFolders.filter(id => id !== folderId);
+    localStorage.setItem('openFolders', JSON.stringify(filtered));
 }
 
 function restoreFolderState() {
     const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
-    console.log('Restored folder state:', openFolders); // Debugging
     openFolders.forEach(folderId => {
         const folderElement = $(`#${folderId}`);
         const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
@@ -428,26 +460,27 @@ function restoreFolderState() {
             folderContent.show();
             const icon = folderElement.find('.material-symbols-outlined').first();
             icon.text('expand_less');
-        } else {
-            console.warn(`Folder with ID ${folderId} not found in DOM.`); // Debugging
         }
     });
 }
 
 $(document).ready(function () {
-    console.log('Document ready, restoring folder state...'); // Debugging
     restoreFolderState();
 
     $('#folderList > .flex').off('click').on('click', function() {
-        const folderContent = $(this).find('.flex-col.gap-1.ml-4');
-        folderContent.slideToggle();
-        const icon = $(this).find('.material-symbols-outlined');
-        if (folderContent.is(':visible')) {
-            icon.text('expand_less');
-        } else {
-            icon.text('expand_more');
-        }
-        console.log('Folder toggled, saving state...'); // Debugging
-        saveFolderState(); // Save state on expand/collapse
+        const folderElement = $(this);
+        const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
+        folderContent.slideToggle(200, function() {
+            const isVisible = $(this).is(':visible');
+            const folderId = folderElement.attr('id');
+            const icon = folderElement.find('.material-symbols-outlined').first();
+            if (isVisible) {
+                icon.text('expand_less');
+                addOpenFolder(folderId);
+            } else {
+                icon.text('expand_more');
+                removeOpenFolder(folderId);
+            }
+        });
     });
 });
