@@ -299,9 +299,6 @@ function loadPromptHistory() {
         });
 
         if (!jQuery.isEmptyObject(historyItems)) {
-            $('#emptyHistory').hide();
-            $('#clearButton').show();
-
             historyItems.forEach(function (value) {
                 const isActive = value.id === activeHistoryId;
                 let classes = "group flex items-center justify-between rounded-lg pl-3 pr-2 transition-colors";
@@ -338,6 +335,23 @@ function loadPromptHistory() {
                     $('#userPromptHistory').append(historyElement);
                 }
             });
+
+            // If no items were added to the top-level history list (all moved into folders),
+            // show the empty indicator inside the history card.
+            if ($('#userPromptHistory').children().length === 0) {
+                $('#userPromptHistory').hide();
+                $('#emptyHistory').show();
+            } else {
+                $('#userPromptHistory').show();
+                $('#emptyHistory').hide();
+            }
+
+            // Show clear button when there are any history items overall
+            if (historyItems.length > 0) {
+                $('#clearButton').show();
+            } else {
+                $('#clearButton').hide();
+            }
         } else {
             $('#userPromptHistory').hide();
             $('#emptyHistory').show();
