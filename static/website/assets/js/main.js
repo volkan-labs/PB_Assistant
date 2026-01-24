@@ -341,7 +341,7 @@ function loadPromptHistory() {
             const color = folderColors[folder.id % folderColors.length];
             folderMap.set(folder.id, $(
                 `<div class="flex flex-col gap-1" id="folder-${folder.id}">
-                    <div class="flex items-center justify-between px-2 group folder-header">
+                    <div class="flex items-center justify-between px-2 group folder-header rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50">
                         <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
                             <span class="material-symbols-outlined folder-toggle folder-expand-icon text-slate-400 text-lg cursor-pointer">expand_more</span>
                             <span class="w-3 h-3 rounded-full mr-0 shrink-0" style="background-color: ${color};"></span>
