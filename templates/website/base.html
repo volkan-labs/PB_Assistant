@@ -115,30 +115,32 @@
             <div class="flex flex-1 flex-col overflow-y-auto px-4 py-6">
                 {% block new_search_button_area %}{% endblock %}
                 <!-- Section: Folders -->
-                <div class="flex flex-col gap-4 mb-4">
-                    <div class="flex items-center justify-between px-2">
+                <div class="mb-4">
+                    <div class="px-2 pb-2 flex items-center justify-between">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Folders</h3>
                         <button class="text-xs font-medium text-primary hover:text-primary/80" id="newFolderButton">New Folder</button>
                     </div>
-                    <div class="flex flex-col gap-1" id="folderList">
-                        <!-- Folder items will be injected here by JavaScript -->
+                    <div class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
+                        <div class="flex flex-col gap-1" id="folderList">
+                            <!-- Folder items will be injected here by JavaScript -->
+                        </div>
                     </div>
                 </div>
 
                 <!-- Section: History -->
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center justify-between px-2">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Recent
-                            Searches</h3> <button class="text-xs font-medium text-primary hover:text-primary/80"
-                            id="clearButton">Clear</button>
+                <div>
+                    <div class="px-2 pb-2 flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Recent Searches</h3>
+                        <button class="text-xs font-medium text-primary hover:text-primary/80" id="clearButton">Clear</button>
                     </div>
-                    <div class="flex flex-col gap-1" id="userPromptHistory">
-                        <!-- History items will be injected here by JavaScript -->
-                    </div>
-                    <div id="emptyHistory"
-                        class="flex flex-col items-center justify-center p-4 text-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20" style="display: none;">
-                        <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-2">history_toggle_off</span>
-                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">No recent searches yet.</p>
+                    <div class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
+                        <div class="flex flex-col gap-1" id="userPromptHistory">
+                            <!-- History items will be injected here by JavaScript -->
+                        </div>
+                        <div id="emptyHistory" class="flex flex-col items-center justify-center p-4 text-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20" style="display: none;">
+                            <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-2">history_toggle_off</span>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">No recent searches yet.</p>
+                        </div>
                     </div>
                 </div>
             </div>
