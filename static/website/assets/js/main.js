@@ -354,6 +354,8 @@ function loadPromptHistory() {
         $.getJSON('/api/folders/'),
         $.getJSON('/history/')
     ).done(function(foldersResponse, historyResponse) {
+        // Remove any floating menus before rebuilding the list
+        $('.item-actions-floating').remove();
         const folders = foldersResponse[0];
         const historyItems = historyResponse[0];
 
@@ -422,7 +424,7 @@ function loadPromptHistory() {
                                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
                             </button>
                             <div id="itemActionsMenu-${value.id}" data-history-id="${value.id}"
-                                class="absolute right-0 z-50 hidden w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                class="absolute right-0 z-[2000] hidden w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                 role="menu" aria-orientation="vertical" aria-labelledby="itemActionsButton-${value.id}" tabindex="-1">
                                 <div class="py-1" role="none">
                                 <div class="relative">
@@ -432,7 +434,7 @@ function loadPromptHistory() {
                                         <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-sm">chevron_right</span>
                                     </button>
                                     <div id="folderMoveSubmenu-${value.id}"
-                                        class="absolute left-full top-0 ml-1 z-50 hidden w-48 origin-top-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                        class="absolute left-full top-0 ml-1 z-[2001] hidden w-48 origin-top-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                         role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div class="py-1" role="none">
                                             <div id="availableFolders-${value.id}" class="flex flex-col">
@@ -624,6 +626,74 @@ function loadPromptHistory() {
 
                 let openSubMenuId = null; // Track which submenu is currently open
 
+                const sidebarScrollArea = $('#sidebarScrollArea');
+
+                function positionActionsMenu(itemId) {
+                    const menu = $(`#itemActionsMenu-${itemId}`);
+                    const button = $(`#itemActionsButton-${itemId}`);
+                    if (!menu.length || !button.length) return;
+
+                    const rect = button[0].getBoundingClientRect();
+                    const menuWidth = menu.outerWidth();
+                    const menuHeight = menu.outerHeight();
+
+                    let top = rect.bottom + 6;
+                    let left = rect.right - menuWidth;
+                    const viewportW = window.innerWidth;
+                    const viewportH = window.innerHeight;
+
+                    if (left < 8) left = 8;
+                    if (left + menuWidth > viewportW - 8) left = viewportW - menuWidth - 8;
+                    if (top + menuHeight > viewportH - 8) top = rect.top - menuHeight - 6;
+                    if (top < 8) top = 8;
+
+                    menu.css({
+                        position: 'fixed',
+                        top: `${top}px`,
+                        left: `${left}px`,
+                        zIndex: 3000,
+                    });
+                }
+
+                function floatActionsMenu(itemId) {
+                    const menu = $(`#itemActionsMenu-${itemId}`);
+                    if (!menu.length) return;
+                    if (!menu.data('original-parent')) {
+                        menu.data('original-parent', menu.parent());
+                    }
+                    if (!menu.hasClass('item-actions-floating')) {
+                        $('body').append(menu);
+                        menu.addClass('item-actions-floating');
+                    }
+                    positionActionsMenu(itemId);
+                }
+
+                function restoreActionsMenu(itemId) {
+                    const menu = $(`#itemActionsMenu-${itemId}`);
+                    if (!menu.length || !menu.hasClass('item-actions-floating')) return;
+                    const originalParent = menu.data('original-parent');
+                    if (originalParent && originalParent.length) {
+                        originalParent.append(menu);
+                    }
+                    menu.removeClass('item-actions-floating').css({
+                        position: '',
+                        top: '',
+                        left: '',
+                        zIndex: '',
+                    });
+                }
+
+                function closeOpenMenu() {
+                    if (!openMenuId) return;
+                    $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
+                    restoreActionsMenu(openMenuId);
+                    if (openSubMenuId) {
+                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+                        openSubMenuId = null;
+                    }
+                    openMenuId = null;
+                }
+
         
 
                 $(document).off('click.itemActions').on('click.itemActions', function(e) {
@@ -631,21 +701,7 @@ function loadPromptHistory() {
                     // If a main menu is open and the click is outside that menu and its button, close it
 
                     if (openMenuId && !$(e.target).closest(`#itemActionsMenu-${openMenuId}`).length && !$(e.target).closest(`#itemActionsButton-${openMenuId}`).length) {
-
-                        $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
-
-                        openMenuId = null;
-
-                        // Also close any open submenu
-
-                        if (openSubMenuId) {
-
-                            $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-
-                            openSubMenuId = null;
-
-                        }
-
+                        closeOpenMenu();
                     }
 
                 });
@@ -665,9 +721,7 @@ function loadPromptHistory() {
                     // Close other open main menus
 
                     if (openMenuId && openMenuId !== itemId) {
-
-                        $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
-
+                        closeOpenMenu();
                     }
 
                     // Close any open submenu
@@ -684,8 +738,26 @@ function loadPromptHistory() {
 
                     menu.toggleClass('hidden');
 
-                    openMenuId = menu.hasClass('hidden') ? null : itemId;
+                    if (menu.hasClass('hidden')) {
+                        restoreActionsMenu(itemId);
+                        openMenuId = null;
+                    } else {
+                        openMenuId = itemId;
+                        floatActionsMenu(itemId);
+                    }
 
+                });
+
+                // Reposition the floating menu on scroll/resize
+                sidebarScrollArea.off('scroll.itemActions').on('scroll.itemActions', function() {
+                    if (openMenuId) {
+                        positionActionsMenu(openMenuId);
+                    }
+                });
+                $(window).off('resize.itemActions').on('resize.itemActions', function() {
+                    if (openMenuId) {
+                        positionActionsMenu(openMenuId);
+                    }
                 });
 
         
@@ -783,45 +855,16 @@ function loadPromptHistory() {
         
 
                                                                 $folderButton.on('click', function(e) {
-
-        
-
                                                                     e.stopPropagation();
-
-        
-
                                                                     console.log('Direct click on folder button:', $(this).data('folder-id'), $(this).text()); // Debugging
-
-        
-
                                                                     const targetFolderId = $(this).data('folder-id');
-
-        
-
                                                                     const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-
-        
-
                                                                     moveHistoryItem(itemId, targetFolderId);
-
-        
-
                                                                     $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-
-        
-
                                                                     $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-
-        
-
+                                                                    restoreActionsMenu(itemId);
                                                                     openMenuId = null;
-
-        
-
                                                                     openSubMenuId = null;
-
-        
-
                                                                 });
 
         
@@ -857,23 +900,15 @@ function loadPromptHistory() {
                 // Handle moving to a specific folder
 
                 $('.move-to-folder-btn').off('click.moveItem').on('click.moveItem', function(e) {
-
                     e.stopPropagation();
-
                     const targetFolderId = $(this).data('folder-id');
-
                     const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-
                     moveHistoryItem(itemId, targetFolderId);
-
                     $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-
                     $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-
+                    restoreActionsMenu(itemId);
                     openMenuId = null;
-
                     openSubMenuId = null;
-
                 });
 
         
@@ -881,25 +916,16 @@ function loadPromptHistory() {
                 // Handle Create new folder button in menu
 
                 $('[id^="createNewFolderInMenu-"]').off('click.createNewFolder').on('click.createNewFolder', function(e) {
-
                     e.stopPropagation();
-
                     // Just open the new folder modal, the user can then create and manually move
-
                     $('#newFolderModal').removeClass('hidden');
-
                     // Close the actions menu
-
                     const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-
                     $(`#itemActionsMenu-${itemId}`).addClass('hidden');
-
                     $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-
+                    restoreActionsMenu(itemId);
                     openMenuId = null;
-
                     openSubMenuId = null;
-
                 });
 
         
@@ -907,27 +933,17 @@ function loadPromptHistory() {
                 // Handle Delete button in menu
 
                 $('[id^="deleteItemButton-"]').off('click.deleteItem').on('click.deleteItem', function(e) {
-
                     e.stopPropagation();
-
                     const itemId = $(this).attr('id').split('-')[1];
-
                     deletePrompt(itemId);
-
                     $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-
+                    restoreActionsMenu(itemId);
                     // Close any open submenu
-
                     if (openSubMenuId) {
-
                         $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-
                         openSubMenuId = null;
-
                     }
-
                     openMenuId = null;
-
                 });
 
             });
