@@ -690,119 +690,167 @@ function loadPromptHistory() {
 
         
 
-                $('[id^="moveToFolderOption-"]').off('click.moveToFolder').on('click.moveToFolder', function(e) {
-
-                    e.stopPropagation();
-
-                    const itemId = $(this).attr('id').split('-')[1];
-
-                    const subMenu = $(`#folderMoveSubmenu-${itemId}`);
+                        $('[id^="moveToFolderOption-"]').off('click.moveToFolder').on('click.moveToFolder', function(e) {
 
         
 
-                    // Close other open submenus if any
-
-                    if (openSubMenuId && openSubMenuId !== itemId) {
-
-                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-
-                    }
+                            // e.stopPropagation(); // Temporarily removed for debugging
 
         
 
-                    subMenu.toggleClass('hidden');
-
-                    openSubMenuId = subMenu.hasClass('hidden') ? null : itemId;
+                            const itemId = $(this).attr('id').split('-')[1];
 
         
 
-                                                                                    // Populate folders for this submenu if it's being opened
+                            const subMenu = $(`#folderMoveSubmenu-${itemId}`);
 
         
 
-                                                                                    if (!subMenu.hasClass('hidden')) { 
+                
 
         
 
-                                                                            const availableFoldersContainer = $(`#availableFolders-${itemId}`);
+                            // Close other open submenus if any
 
         
 
-                                                                            availableFoldersContainer.empty(); // Clear previous folders
+                            if (openSubMenuId && openSubMenuId !== itemId) {
 
         
 
-                    
+                                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
 
         
 
-                                                                            console.log('--- Debugging folder population ---');
+                            }
 
         
 
-                                                                            console.log('Folders array:', folders);
+                
 
         
 
-                                                                            console.log('Folders length:', folders.length);
+                            subMenu.toggleClass('hidden');
 
         
 
-                    
+                            openSubMenuId = subMenu.hasClass('hidden') ? null : itemId;
 
         
 
-                                                                            if (folders.length > 0) {
+                
 
         
 
-                                                                                console.log('Folders exist, iterating...');
+                            // Populate folders for this submenu if it's being opened
 
         
 
-                                                                                folders.forEach(folder => {
+                            if (!subMenu.hasClass('hidden')) { 
 
         
 
-                                                                                    console.log('Appending folder:', folder.name, 'ID:', folder.id);
+                                const availableFoldersContainer = $(`#availableFolders-${itemId}`);
 
         
 
-                                                                                    const folderButton = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn" role="menuitem" data-folder-id="${folder.id}">${folder.name}</button>`;
+                                availableFoldersContainer.empty(); // Clear previous folders
 
         
 
-                                                                                    availableFoldersContainer.append(folderButton);
+                
 
         
 
-                                                                                });
+                                if (folders.length > 0) {
 
         
 
-                                                                            } else {
+                                                            folders.forEach(folder => {
 
         
 
-                                                                                console.log('No folders available, appending message.');
+                                                                const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}">${folder.name}</button>`;
 
         
 
-                                                                                availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
+                                                                const $folderButton = $(folderButtonHtml); // Convert to jQuery object
 
         
 
-                                                                            }
+                                    
 
         
 
-                                                                            console.log('--- End debugging folder population ---');
+                                                                $folderButton.on('click', function(e) {
 
         
 
-                                                                        }
+                                                                    e.stopPropagation();
 
-                });
+        
+
+                                                                    console.log('Direct click on folder button:', $(this).data('folder-id'), $(this).text()); // Debugging
+
+        
+
+                                                                    const targetFolderId = $(this).data('folder-id');
+
+        
+
+                                                                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+
+        
+
+                                                                    moveHistoryItem(itemId, targetFolderId);
+
+        
+
+                                                                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+
+        
+
+                                                                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+
+        
+
+                                                                    openMenuId = null;
+
+        
+
+                                                                    openSubMenuId = null;
+
+        
+
+                                                                });
+
+        
+
+                                                                availableFoldersContainer.append($folderButton);
+
+        
+
+                                                            });
+
+        
+
+                                } else {
+
+        
+
+                                    availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
+
+        
+
+                                }
+
+        
+
+                            }
+
+        
+
+                        });
 
         
 
