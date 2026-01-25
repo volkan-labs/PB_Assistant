@@ -19,6 +19,7 @@ class SearchFolder(models.Model):
     name = models.CharField(max_length=255)
     user_id = models.IntegerField()
     timestamp = models.DateTimeField(default=timezone.now)
+    color = models.CharField(max_length=20, default='#6c757d', blank=True)
 
     def __str__(self):
         return self.name

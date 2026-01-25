@@ -165,7 +165,7 @@ def upload_documents(request):
 @require_GET
 def get_folders(request):
     user_id = 1  # Hardcoded for now
-    folders = SearchFolder.objects.filter(user_id=user_id).values('id', 'name')
+    folders = SearchFolder.objects.filter(user_id=user_id).values('id', 'name', 'color')
     return JsonResponse(list(folders), safe=False)
 
 @require_POST
@@ -173,12 +173,18 @@ def create_folder(request):
     try:
         data = json.loads(request.body)
         name = data.get('name')
+        color = data.get('color', '#6c757d')  # Default color if not provided
         if not name:
             return JsonResponse({'error': 'Name is required'}, status=400)
         
         user_id = 1  # Hardcoded for now
-        folder = SearchFolder.objects.create(name=name, user_id=user_id)
-        return JsonResponse({'id': folder.id, 'name': folder.name}, status=201)
+
+        # Check for existing folder with the same name (case-insensitive) for the same user
+        if SearchFolder.objects.filter(name__iexact=name, user_id=user_id).exists():
+            return JsonResponse({'error': f'Folder with name "{name}" already exists.'}, status=409)
+
+        folder = SearchFolder.objects.create(name=name, user_id=user_id, color=color)
+        return JsonResponse({'id': folder.id, 'name': folder.name, 'color': folder.color}, status=201)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
 

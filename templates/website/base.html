@@ -330,9 +330,12 @@
                         <div class="flex items-start gap-4">
                             <div class="flex-1">
                                 <h3 class="text-lg font-bold text-white leading-6" id="newFolderModalTitle">New Folder</h3>
-                                <div class="mt-2">
-                                    <input type="text" id="newFolderName" class="w-full bg-surface-highlight rounded-lg border border-[#3b4754] px-4 py-2.5 text-white" placeholder="Folder name">
+                                <div class="mt-2 flex items-center gap-2">
+                                    <div id="newFolderColorIndicator" class="w-7 h-7 rounded-md cursor-pointer shrink-0" style="background-color: #6c757d;"></div>
+                                    <input type="text" id="newFolderName" class="flex-1 bg-surface-highlight rounded-lg border border-[#3b4754] px-4 py-2.5 text-white" placeholder="Folder name">
+                                    <input type="color" id="newFolderColor" value="#6c757d" class="absolute w-0 h-0 opacity-0 pointer-events-none">
                                 </div>
+                                <span id="newFolderError" class="text-red-400 text-sm mt-1 hidden"></span>
                             </div>
                         </div>
                         <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
