@@ -81,6 +81,9 @@ $(document).ready(function () {
 
     $('#newFolderButton').click(function() {
         $('#newFolderModal').removeClass('hidden');
+        // Reset color picker to default or last selected color when modal opens
+        const defaultColor = $('#newFolderColor').val();
+        $('#newFolderColorIndicator').css('background-color', defaultColor);
     });
 
     $('#cancelNewFolderButton').click(function() {
@@ -100,6 +103,9 @@ $(document).ready(function () {
                 success: function() {
                     $('#newFolderModal').addClass('hidden');
                     $('#newFolderName').val('');
+                    // Reset color picker to default after successful creation
+                    $('#newFolderColor').val('#6c757d');
+                    $('#newFolderColorIndicator').css('background-color', '#6c757d');
                     loadPromptHistory();
                 },
                 error: function() {
@@ -109,12 +115,17 @@ $(document).ready(function () {
         }
     });
 
-    // Color swatch selection
-    $('.color-swatch').click(function() {
-        $('.color-swatch').removeClass('selected');
-        $(this).addClass('selected');
-        $('#newFolderColor').val($(this).data('color'));
+    // Handle opening the color picker when the indicator is clicked
+    $('#newFolderColorIndicator').on('click', function() {
+        $('#newFolderColor').trigger('click');
     });
+
+    // Handle color change from the hidden color input
+    $('#newFolderColor').on('input', function() {
+        $('#newFolderColorIndicator').css('background-color', $(this).val());
+    });
+
+
 
     // Sidebar filter: debounced input that filters folders and history items
     function debounce(fn, delay) {
