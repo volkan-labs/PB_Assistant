@@ -18,5 +18,6 @@ urlpatterns = [
     path('api/folders/<int:folder_id>/update/', views.update_folder, name='update_folder'),
     path('api/folders/<int:folder_id>/delete/', views.delete_folder, name='delete_folder'),
     path('api/history/<int:history_id>/move/', views.move_history, name='move_history'),
+    path('api/rss-feed/', views.rss_feed, name='rss_feed'),
     path('settings/', views.settings_view, name='settings'),
 ]

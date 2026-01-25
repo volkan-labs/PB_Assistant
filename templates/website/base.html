@@ -91,6 +91,9 @@
         #error-toast-loader {
             transition: width 5s linear;
         }
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+        }
     </style>
 
     {% csrf_token %}
@@ -103,8 +106,7 @@
 
 <body class="bg-background-light dark:bg-background-dark font-display text-white flex" {% block body_attributes %}{% endblock %}>
     <div class="flex w-full flex-row">
-        <!-- Sidebar -->
-        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
+        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0 relative z-[1000] transform">
             <!-- Sidebar Header / Branding -->
             <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-800/50">
                 <a href="/" class="flex items-center gap-3">
@@ -112,13 +114,13 @@
                 </a>
             </div>
             <!-- Sidebar Content -->
-            <div class="flex flex-1 flex-col overflow-y-auto px-4 py-6">
+            <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-4 py-6">
                 {% block new_search_button_area %}{% endblock %}
                 <!-- Sidebar Filter -->
                 <div class="mb-3 px-2">
                     <div class="relative">
-                        <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-white/5 dark:bg-surface-highlight rounded-md border border-slate-200/5 dark:border-slate-700 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-                        <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
+                        <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                        <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
                             <span class="material-symbols-outlined">close</span>
                         </button>
                     </div>
@@ -126,7 +128,7 @@
                 <!-- Section: Folders -->
                 <div class="mb-4">
                     <div class="px-2 pb-2 flex items-center justify-between">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Folders</h3>
+                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400">Folders</h3>
                         <button class="text-xs font-medium text-primary hover:text-primary/80" id="newFolderButton">New Folder</button>
                     </div>
                     <div class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
@@ -144,7 +146,7 @@
                 <!-- Section: History -->
                 <div>
                     <div class="px-2 pb-2 flex items-center justify-between">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Recent Searches</h3>
+                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400">Your searches</h3>
                         <button class="text-xs font-medium text-primary hover:text-primary/80" id="clearButton">Clear</button>
                     </div>
                     <div class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
@@ -231,7 +233,7 @@
                 </div>
             </header>
             <!-- Center Content -->
-            <div class="flex flex-1 flex-col items-center justify-center px-4 pb-20">
+            <div class="flex flex-1 flex-col items-center justify-center px-4">
                 {% block content %}{% endblock %}
             </div>
             <!-- Footer Links -->
@@ -240,10 +242,45 @@
                 <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ The Potsdam Institute for Climate Impact Research (PIK)</p>
             </footer>
         </main>
+
+        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
+            
+            <div class="flex flex-col flex-1 overflow-y-auto">
+
+
+                <!-- Publications Section -->
+                <div class="flex-1 min-h-0 flex flex-col">
+                    <div class="px-6 py-4">
+                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Latest Publications</h3>
+                    </div>
+                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
+                        <ul id="latest-publications-list">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Divider between publications and alerts -->
+                <div class="my-2 border-t-2 border-slate-300 dark:border-slate-700"></div>
+
+                <!-- Alerts Section -->
+                <div class="flex-grow-0 flex-shrink-0 basis-[30%] flex flex-col min-h-0">
+                    <div class="px-6 py-4">
+                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Alerts</h3>
+                    </div>
+                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
+                        <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
+                            <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
+                            <p class="font-medium">No new alerts.</p>
+                        <p class="text-xs mt-1"><a href="{% url 'settings' %}" class="text-primary hover:underline">Set up alerts in settings.</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmationModal" aria-labelledby="modal-title" aria-modal="true" class="relative z-50 hidden" role="dialog">
+    <div id="confirmationModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
         <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -283,7 +320,7 @@
     </div>
 
     <!-- New Folder Modal -->
-    <div id="newFolderModal" aria-labelledby="modal-title" aria-modal="true" class="relative z-50 hidden" role="dialog">
+    <div id="newFolderModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
         <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -364,6 +401,39 @@
                 applyTheme('system');
             }
         });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        const list = $('#latest-publications-list');
+        list.html('<li class="text-xs text-text-secondary">Loading publications...</li>'); // Loading indicator
+
+        fetch("{% url 'rss_feed' %}")
+            .then(response => response.json())
+            .then(data => {
+                list.empty();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                if (data.length === 0) {
+                    const settingsUrl = "{% url 'settings' %}";
+                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:underline">Configure RSS feeds in settings.</a></li>');
+                } else {
+                    data.forEach(item => {
+                        const listItem = `
+                            <li class="mb-4">
+                                <a href="${item.link}" target="_blank" class="text-sm text-primary hover:underline">${item.title}</a>
+                                <p class="text-xs text-text-secondary">${item.description}</p>
+                            </li>
+                        `;
+                        list.append(listItem);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load RSS feed:', err);
+                list.html('<li class="text-xs text-text-secondary">Failed to load publications.</li>');
+            });
     });
 </script>
 </body>

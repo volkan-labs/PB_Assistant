@@ -210,6 +210,9 @@ def delete_folder(request, folder_id):
     except SearchFolder.DoesNotExist:
         return JsonResponse({'error': 'Folder not found'}, status=404)
 
+
+from bs4 import BeautifulSoup
+from lxml import etree
 @require_http_methods(['PUT'])
 def move_history(request, history_id):
     user_id = 1  # Hardcoded for now
@@ -234,3 +237,34 @@ def move_history(request, history_id):
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
 
+@require_GET
+def rss_feed(request):
+    try:
+        url = 'https://www.science.org/rss/news_current.xml'
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        
+        root = etree.fromstring(response.content)
+        # Define default namespace
+        ns = {'d': 'http://purl.org/rss/1.0/'}
+        items = []
+        for item in root.findall('d:item', namespaces=ns)[:5]:
+            title = item.find('d:title', namespaces=ns).text
+            link = item.find('d:link', namespaces=ns).text
+            description = item.find('d:description', namespaces=ns).text
+            
+            soup = BeautifulSoup(description, 'html.parser')
+            plain_text_description = soup.get_text()
+            
+            if len(plain_text_description) > 100:
+                plain_text_description = plain_text_description[:100] + '...'
+            
+            items.append({
+                'title': title,
+                'link': link,
+                'description': plain_text_description,
+            })
+        return JsonResponse(items, safe=False)
+    except Exception as e:
+        logger.error(f"Error fetching or parsing RSS feed: {e}")
+        return JsonResponse({'error': 'Failed to fetch RSS feed'}, status=500)
