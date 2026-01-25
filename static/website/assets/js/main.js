@@ -637,8 +637,8 @@ function loadPromptHistory() {
                     const menuWidth = menu.outerWidth();
                     const menuHeight = menu.outerHeight();
 
-                    let top = rect.bottom + 6;
-                    let left = rect.right - menuWidth;
+                    let top = rect.top;
+                    let left = rect.left;
                     const viewportW = window.innerWidth;
                     const viewportH = window.innerHeight;
 
