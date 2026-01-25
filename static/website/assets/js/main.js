@@ -281,6 +281,22 @@ async function loadModels() {
     }
 }
 
+function moveHistoryItem(historyId, targetFolderId) {
+    $.ajax({
+        url: `/api/history/${historyId}/move/`,
+        type: 'PUT',
+        headers: { 'X-CSRFToken': csrftoken },
+        contentType: 'application/json',
+        data: JSON.stringify({ folder_id: targetFolderId }), // targetFolderId can be null
+        success: function() {
+            loadPromptHistory();
+        },
+        error: function() {
+            showError('Failed to move item.');
+        }
+    });
+}
+
 
 function deletePrompt(promptId) {
     showConfirmationModal(
@@ -528,20 +544,28 @@ function loadPromptHistory() {
             if (draggedItem) {
                 const historyId = $(draggedItem).data('history-id');
                 const folderId = $(this).attr('id').split('-')[1];
-                
-                $.ajax({
-                    url: `/api/history/${historyId}/move/`,
-                    type: 'PUT',
-                    headers: { 'X-CSRFToken': csrftoken },
-                    contentType: 'application/json',
-                    data: JSON.stringify({ folder_id: folderId }),
-                    success: function() {
-                        loadPromptHistory();
-                    },
-                    error: function() {
-                        showError('Failed to move item.');
-                    }
-                });
+                moveHistoryItem(historyId, folderId); // Use the new function
+            }
+        });
+
+        // Drag and drop to move items back to Recent Searches
+        $('#userPromptHistory').on('dragover', function(e) {
+            e.preventDefault();
+            // Only highlight if the dragged item is currently in a folder
+            if (draggedItem && $(draggedItem).closest('[id^="folder-"]').length > 0) {
+                $(this).addClass('border-2 border-primary');
+            }
+        }).on('dragleave', function() {
+            $(this).removeClass('border-2 border-primary');
+        }).on('drop', function(e) {
+            e.preventDefault();
+            $(this).removeClass('border-2 border-primary');
+            if (draggedItem) {
+                const historyId = $(draggedItem).data('history-id');
+                // Only move if the item is currently in a folder
+                if ($(draggedItem).closest('[id^="folder-"]').length > 0) {
+                    moveHistoryItem(historyId, null); // Move to no folder (Recent Searches)
+                }
             }
         });
 
