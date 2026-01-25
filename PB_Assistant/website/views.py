@@ -178,6 +178,11 @@ def create_folder(request):
             return JsonResponse({'error': 'Name is required'}, status=400)
         
         user_id = 1  # Hardcoded for now
+
+        # Check for existing folder with the same name (case-insensitive) for the same user
+        if SearchFolder.objects.filter(name__iexact=name, user_id=user_id).exists():
+            return JsonResponse({'error': f'Folder with name "{name}" already exists.'}, status=409)
+
         folder = SearchFolder.objects.create(name=name, user_id=user_id, color=color)
         return JsonResponse({'id': folder.id, 'name': folder.name, 'color': folder.color}, status=201)
     except json.JSONDecodeError:

@@ -79,41 +79,179 @@ $(document).ready(function () {
         hideContentPanel(selectedRowId);
     });
 
-    $('#newFolderButton').click(function() {
-        $('#newFolderModal').removeClass('hidden');
-        // Reset color picker to default or last selected color when modal opens
-        const defaultColor = $('#newFolderColor').val();
-        $('#newFolderColorIndicator').css('background-color', defaultColor);
-    });
+        $('#newFolderButton').click(function() {
 
-    $('#cancelNewFolderButton').click(function() {
-        $('#newFolderModal').addClass('hidden');
-    });
+            $('#newFolderModal').removeClass('hidden');
 
-    $('#createFolderButton').click(function() {
-        const folderName = $('#newFolderName').val().trim();
-        const folderColor = $('#newFolderColor').val();
-        if (folderName) {
+            $('#newFolderName').val(''); // Clear input on open
+
+            $('#newFolderError').text('').addClass('hidden'); // Clear and hide error
+
+            // Reset color picker to default or last selected color when modal opens
+
+            const defaultColor = $('#newFolderColor').val();
+
+            $('#newFolderColorIndicator').css('background-color', defaultColor);
+
+        });
+
+    
+
+        $('#cancelNewFolderButton').click(function() {
+
+            $('#newFolderModal').addClass('hidden');
+
+            $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
+
+        });
+
+    
+
+        $('#newFolderName').on('input', function() {
+
+            $('#newFolderError').text('').addClass('hidden'); // Clear error when typing
+
+        });
+
+    
+
+        $('#createFolderButton').click(function() {
+
+            const folderName = $('#newFolderName').val().trim();
+
+            const folderColor = $('#newFolderColor').val();
+
+            const newFolderErrorSpan = $('#newFolderError');
+
+    
+
+            newFolderErrorSpan.text('').addClass('hidden'); // Clear previous errors
+
+    
+
+            if (!folderName) {
+
+                newFolderErrorSpan.text('Folder name cannot be empty.').removeClass('hidden');
+
+                return;
+
+            }
+
+    
+
+            // Client-side check for duplicate folder names
+
             $.ajax({
-                url: '/api/folders/create/',
-                type: 'POST',
-                headers: { 'X-CSRFToken': csrftoken },
-                contentType: 'application/json',
-                data: JSON.stringify({ name: folderName, color: folderColor }),
-                success: function() {
-                    $('#newFolderModal').addClass('hidden');
-                    $('#newFolderName').val('');
-                    // Reset color picker to default after successful creation
-                    $('#newFolderColor').val('#6c757d');
-                    $('#newFolderColorIndicator').css('background-color', '#6c757d');
-                    loadPromptHistory();
+
+                url: '/api/folders/',
+
+                type: 'GET',
+
+                success: function(existingFolders) {
+
+                    const isDuplicate = existingFolders.some(folder => folder.name.toLowerCase() === folderName.toLowerCase());
+
+                    if (isDuplicate) {
+
+                        newFolderErrorSpan.text(`A folder with the name "${folderName}" already exists.`).removeClass('hidden');
+
+                        return;
+
+                    }
+
+    
+
+                    // If not a duplicate, proceed with creating the folder
+
+                    $.ajax({
+
+                        url: '/api/folders/create/',
+
+                        type: 'POST',
+
+                        headers: { 'X-CSRFToken': csrftoken },
+
+                        contentType: 'application/json',
+
+                        data: JSON.stringify({ name: folderName, color: folderColor }),
+
+                        success: function() {
+
+                            $('#newFolderModal').addClass('hidden');
+
+                            $('#newFolderName').val('');
+
+                            newFolderErrorSpan.text('').addClass('hidden'); // Clear and hide error on success
+
+                            // Reset color picker to default after successful creation
+
+                            $('#newFolderColor').val('#6c757d');
+
+                            $('#newFolderColorIndicator').css('background-color', '#6c757d');
+
+                            loadPromptHistory();
+
+                        },
+
+                        error: function(xhr) {
+
+                            let errorMessage = 'Failed to create folder.';
+
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+
+                                errorMessage = xhr.responseJSON.error;
+
+                                // Display server-side validation errors directly in the modal
+
+                                newFolderErrorSpan.text(errorMessage).removeClass('hidden');
+
+                            } else if (xhr.responseText) {
+
+                                try {
+
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response.error) {
+
+                                        errorMessage = response.error;
+
+                                        newFolderErrorSpan.text(errorMessage).removeClass('hidden');
+
+                                    }
+
+                                } catch (e) {
+
+                                    // Fallback to global error message for unexpected formats
+
+                                    showError(errorMessage);
+
+                                }
+
+                            } else {
+
+                                // Fallback to global error message for generic errors
+
+                                showError(errorMessage);
+
+                            }
+
+                        }
+
+                    });
+
                 },
+
                 error: function() {
-                    showError('Failed to create folder.');
+
+                    // If fetching existing folders fails, use the global error toast
+
+                    showError('Failed to fetch existing folders for validation.');
+
                 }
+
             });
-        }
-    });
+
+        });
 
     // Handle opening the color picker when the indicator is clicked
     $('#newFolderColorIndicator').on('click', function() {
