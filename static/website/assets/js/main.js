@@ -12,6 +12,15 @@ $(document).ready(function () {
 
         $('#loading-overlay-text').text('Loading, please wait...');
         $('#loading-overlay').removeClass('hidden');
+
+        const searchButton = $('#searchButton');
+        const searchText = $('#searchText');
+        const searchSpinner = $('#searchSpinner');
+
+        // Show loading state on button
+        searchButton.prop('disabled', true);
+        searchText.addClass('hidden');
+        searchSpinner.removeClass('hidden');
     });
 
     $('#clearButton').click(function () {
