@@ -5,13 +5,9 @@
   <div class="w-full max-w-2xl flex flex-col gap-8 animate-fade-in">
     <!-- Heading -->
     <div class="text-center">
-      <!-- <img src="pb-assistant-welcome.png" alt="Logo" class="mx-auto mb-4 h-10" /> -->
       <h1 class="text-4xl font-black tracking-tight text-black dark:text-white md:text-5xl mb-3">
         What are you looking for?
       </h1>
-      <p class="text-lg text-gray-600 dark:text-gray-400">
-        Search articles, topics, authors, or publications.
-      </p>
     </div>
     <!-- Search Input Group -->
     <div class="relative group">
@@ -22,9 +18,9 @@
           <span
             class="material-symbols-outlined text-gray-600 dark:text-gray-400 group-focus-within:text-primary transition-colors text-2xl">search</span>
         </div>
-        <textarea autofocus name="user_prompt"
+        <textarea autofocus name="user_prompt" rows="1" data-autogrow="true"
           class="block w-full rounded-xl border-none bg-white dark:bg-slate-800 py-5 pl-14 pr-4 pb-16 text-lg text-black dark:text-white placeholder-text-secondary shadow-2xl shadow-gray-500/70 dark:shadow-black/50 focus:ring-2 focus:ring-primary focus:outline-none transition-all resize-none"
-          placeholder="Search by keyword, topic, or author..." rows="5"></textarea>
+          placeholder="Ask anything..."></textarea>
         <div class="absolute bottom-3 right-3 flex items-center gap-2">
           <div class="relative hidden sm:block">
             <div
@@ -40,8 +36,8 @@
             </div>
           </div>
           <button type="submit" id="searchButton"
-            class="rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-surface-dark flex items-center justify-center gap-2">
-            <span id="searchText">Search</span>
+            class="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-surface-dark flex items-center justify-center">
+            <span id="searchText" class="material-symbols-outlined text-[20px]">search</span>
             <span id="searchSpinner" class="hidden w-4 h-4 border-2 border-t-white border-gray-200 rounded-full animate-spin"></span>
           </button>
         </div>

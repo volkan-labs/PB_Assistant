@@ -2,6 +2,17 @@ $(document).ready(function () {
     // Make sure the overlay is hidden on page load
     $('#loading-overlay').addClass('hidden');
 
+    function autoGrowTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    $('textarea[data-autogrow="true"]').each(function() {
+        autoGrowTextarea(this);
+    }).on('input', function() {
+        autoGrowTextarea(this);
+    });
+
     $('#userPromptForm').submit(function (event) {
         const userPrompt = $('textarea[name="user_prompt"]').val().trim();
         if (!userPrompt) {
