@@ -481,9 +481,10 @@ function loadPromptHistory() {
         $('#folderList').find('.folder-delete-btn').off('click').on('click', function(e) {
             e.stopPropagation();
             const folderNumericId = $(this).data('folder-id');
+            const folderName = $(this).closest('.folder-header').find('.folder-name-text').text();
             showConfirmationModal(
                 'Delete Folder',
-                'Are you sure you want to delete this folder? All items will be moved back to Recent Searches.',
+                `Are you sure you want to delete the folder "${folderName}"? All items will be moved back to Recent Searches.`,
                 'Delete',
                 function() {
                     $.ajax({
