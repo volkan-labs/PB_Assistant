@@ -94,6 +94,18 @@
         input[type="search"]::-webkit-search-cancel-button {
             -webkit-appearance: none;
         }
+
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-swatch.selected {
+            border-color: #fff;
+        }
     </style>
 
     {% csrf_token %}
@@ -332,6 +344,19 @@
                                 <h3 class="text-lg font-bold text-white leading-6" id="newFolderModalTitle">New Folder</h3>
                                 <div class="mt-2">
                                     <input type="text" id="newFolderName" class="w-full bg-surface-highlight rounded-lg border border-[#3b4754] px-4 py-2.5 text-white" placeholder="Folder name">
+                                </div>
+                                <div class="mt-4">
+                                    <label class="text-sm font-medium text-white">Color</label>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <div class="color-swatch" data-color="#6c757d" style="background-color: #6c757d;"></div>
+                                        <div class="color-swatch" data-color="#dc3545" style="background-color: #dc3545;"></div>
+                                        <div class="color-swatch" data-color="#fd7e14" style="background-color: #fd7e14;"></div>
+                                        <div class="color-swatch" data-color="#ffc107" style="background-color: #ffc107;"></div>
+                                        <div class="color-swatch" data-color="#28a745" style="background-color: #28a745;"></div>
+                                        <div class="color-swatch" data-color="#17a2b8" style="background-color: #17a2b8;"></div>
+                                        <div class="color-swatch" data-color="#007bff" style="background-color: #007bff;"></div>
+                                    </div>
+                                    <input type="hidden" id="newFolderColor" value="#6c757d">
                                 </div>
                             </div>
                         </div>

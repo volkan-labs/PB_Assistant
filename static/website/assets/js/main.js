@@ -89,13 +89,14 @@ $(document).ready(function () {
 
     $('#createFolderButton').click(function() {
         const folderName = $('#newFolderName').val().trim();
+        const folderColor = $('#newFolderColor').val();
         if (folderName) {
             $.ajax({
                 url: '/api/folders/create/',
                 type: 'POST',
                 headers: { 'X-CSRFToken': csrftoken },
                 contentType: 'application/json',
-                data: JSON.stringify({ name: folderName }),
+                data: JSON.stringify({ name: folderName, color: folderColor }),
                 success: function() {
                     $('#newFolderModal').addClass('hidden');
                     $('#newFolderName').val('');
@@ -106,6 +107,13 @@ $(document).ready(function () {
                 }
             });
         }
+    });
+
+    // Color swatch selection
+    $('.color-swatch').click(function() {
+        $('.color-swatch').removeClass('selected');
+        $(this).addClass('selected');
+        $('#newFolderColor').val($(this).data('color'));
     });
 
     // Sidebar filter: debounced input that filters folders and history items
@@ -374,9 +382,10 @@ function loadPromptHistory() {
         $('#userPromptHistory').empty();
 
         const folderMap = new Map();
-        const folderColors = ['#f97316', '#06b6d4', '#8b5cf6', '#ef4444', '#10b981', '#f59e0b'];
+        
         folders.forEach(folder => {
-            const color = folderColors[folder.id % folderColors.length];
+            console.log("Folder object received by frontend:", folder); // Debugging line
+            const color = folder.color;
             folderMap.set(folder.id, $(
                 `<div class="flex flex-col gap-1 rounded-lg" id="folder-${folder.id}">
                     <div class="flex items-center justify-between px-2 group folder-header rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50">
