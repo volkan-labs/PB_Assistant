@@ -349,7 +349,7 @@ function loadPromptHistory() {
         folders.forEach(folder => {
             const color = folderColors[folder.id % folderColors.length];
             folderMap.set(folder.id, $(
-                `<div class="flex flex-col gap-1" id="folder-${folder.id}">
+                `<div class="flex flex-col gap-1 rounded-lg" id="folder-${folder.id}">
                     <div class="flex items-center justify-between px-2 group folder-header rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50">
                         <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
                             <span class="material-symbols-outlined folder-toggle folder-expand-icon text-slate-400 text-lg cursor-pointer">expand_more</span>
@@ -512,16 +512,19 @@ function loadPromptHistory() {
             draggedItem = this;
             e.originalEvent.dataTransfer.effectAllowed = 'move';
             e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
+            $(this).addClass('opacity-50 border border-primary'); // Add visual feedback
+        }).on('dragend', function() {
+            $(this).removeClass('opacity-50 border border-primary'); // Remove visual feedback
         });
 
         $('#folderList > div').on('dragover', function(e) {
             e.preventDefault();
-            $(this).addClass('bg-primary/10');
+            $(this).addClass('border-2 border-primary');
         }).on('dragleave', function() {
-            $(this).removeClass('bg-primary/10');
+            $(this).removeClass('border-2 border-primary');
         }).on('drop', function(e) {
             e.preventDefault();
-            $(this).removeClass('bg-primary/10');
+            $(this).removeClass('border-2 border-primary');
             if (draggedItem) {
                 const historyId = $(draggedItem).data('history-id');
                 const folderId = $(this).attr('id').split('-')[1];
