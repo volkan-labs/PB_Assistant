@@ -406,7 +406,7 @@ function loadPromptHistory() {
                 }
 
                 const historyElement = `
-                    <div class="${classes}" draggable="true" data-history-id="${value.id}">
+                    <div class="${classes} relative" draggable="true" data-history-id="${value.id}">
                         <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
                             <span
                                 class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
@@ -416,10 +416,43 @@ function loadPromptHistory() {
                                 <span class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(value.timestamp)}</span>
                             </div>
                         </a>
-                        <button aria-label="Remove item" onclick="deletePrompt(${value.id})"
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
-                            <span class="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
+                        <div class="relative">
+                            <button aria-label="Item actions" id="itemActionsButton-${value.id}"
+                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
+                                <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                            </button>
+                            <div id="itemActionsMenu-${value.id}" data-history-id="${value.id}"
+                                class="absolute right-0 z-50 hidden w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                role="menu" aria-orientation="vertical" aria-labelledby="itemActionsButton-${value.id}" tabindex="-1">
+                                <div class="py-1" role="none">
+                                <div class="relative">
+                                    <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem" tabindex="-1" id="moveToFolderOption-${value.id}">
+                                        <span class="material-symbols-outlined text-[18px]">drive_file_move</span>
+                                        Move to folder
+                                        <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-sm">chevron_right</span>
+                                    </button>
+                                    <div id="folderMoveSubmenu-${value.id}"
+                                        class="absolute left-full top-0 ml-1 z-50 hidden w-48 origin-top-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                        role="menu" aria-orientation="vertical" tabindex="-1">
+                                        <div class="py-1" role="none">
+                                            <div id="availableFolders-${value.id}" class="flex flex-col">
+                                                <!-- Folders will be dynamically inserted here -->
+                                            </div>
+                                            <div class="border-t border-slate-300 dark:border-gray-700 my-1" role="none"></div>
+                                            <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem" tabindex="-1" id="createNewFolderInMenu-${value.id}">
+                                                <span class="material-symbols-outlined text-[18px]">create_new_folder</span>
+                                                Create new folder
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <button class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2" role="menuitem" tabindex="-1" id="deleteItemButton-${value.id}">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     `;
                 
@@ -584,7 +617,272 @@ function loadPromptHistory() {
         }
         // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
         setTimeout(restoreFolderState, 50);
-    });
+
+                // Action Menu Logic
+
+                let openMenuId = null; // Track which main menu is currently open
+
+                let openSubMenuId = null; // Track which submenu is currently open
+
+        
+
+                $(document).off('click.itemActions').on('click.itemActions', function(e) {
+
+                    // If a main menu is open and the click is outside that menu and its button, close it
+
+                    if (openMenuId && !$(e.target).closest(`#itemActionsMenu-${openMenuId}`).length && !$(e.target).closest(`#itemActionsButton-${openMenuId}`).length) {
+
+                        $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
+
+                        openMenuId = null;
+
+                        // Also close any open submenu
+
+                        if (openSubMenuId) {
+
+                            $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+
+                            openSubMenuId = null;
+
+                        }
+
+                    }
+
+                });
+
+        
+
+                $('[id^="itemActionsButton-"]').off('click.itemActionsButton').on('click.itemActionsButton', function(e) {
+
+                    e.stopPropagation(); // Prevent document click from immediately closing
+
+                    const itemId = $(this).attr('id').split('-')[1];
+
+                    const menu = $(`#itemActionsMenu-${itemId}`);
+
+        
+
+                    // Close other open main menus
+
+                    if (openMenuId && openMenuId !== itemId) {
+
+                        $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
+
+                    }
+
+                    // Close any open submenu
+
+                    if (openSubMenuId) {
+
+                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+
+                        openSubMenuId = null;
+
+                    }
+
+        
+
+                    menu.toggleClass('hidden');
+
+                    openMenuId = menu.hasClass('hidden') ? null : itemId;
+
+                });
+
+        
+
+                $('[id^="moveToFolderOption-"]').off('click.moveToFolder').on('click.moveToFolder', function(e) {
+
+                    e.stopPropagation();
+
+                    const itemId = $(this).attr('id').split('-')[1];
+
+                    const subMenu = $(`#folderMoveSubmenu-${itemId}`);
+
+        
+
+                    // Close other open submenus if any
+
+                    if (openSubMenuId && openSubMenuId !== itemId) {
+
+                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+
+                    }
+
+        
+
+                    subMenu.toggleClass('hidden');
+
+                    openSubMenuId = subMenu.hasClass('hidden') ? null : itemId;
+
+        
+
+                                                                                    // Populate folders for this submenu if it's being opened
+
+        
+
+                                                                                    if (!subMenu.hasClass('hidden')) { 
+
+        
+
+                                                                            const availableFoldersContainer = $(`#availableFolders-${itemId}`);
+
+        
+
+                                                                            availableFoldersContainer.empty(); // Clear previous folders
+
+        
+
+                    
+
+        
+
+                                                                            console.log('--- Debugging folder population ---');
+
+        
+
+                                                                            console.log('Folders array:', folders);
+
+        
+
+                                                                            console.log('Folders length:', folders.length);
+
+        
+
+                    
+
+        
+
+                                                                            if (folders.length > 0) {
+
+        
+
+                                                                                console.log('Folders exist, iterating...');
+
+        
+
+                                                                                folders.forEach(folder => {
+
+        
+
+                                                                                    console.log('Appending folder:', folder.name, 'ID:', folder.id);
+
+        
+
+                                                                                    const folderButton = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn" role="menuitem" data-folder-id="${folder.id}">${folder.name}</button>`;
+
+        
+
+                                                                                    availableFoldersContainer.append(folderButton);
+
+        
+
+                                                                                });
+
+        
+
+                                                                            } else {
+
+        
+
+                                                                                console.log('No folders available, appending message.');
+
+        
+
+                                                                                availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
+
+        
+
+                                                                            }
+
+        
+
+                                                                            console.log('--- End debugging folder population ---');
+
+        
+
+                                                                        }
+
+                });
+
+        
+
+                // Handle moving to a specific folder
+
+                $('.move-to-folder-btn').off('click.moveItem').on('click.moveItem', function(e) {
+
+                    e.stopPropagation();
+
+                    const targetFolderId = $(this).data('folder-id');
+
+                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+
+                    moveHistoryItem(itemId, targetFolderId);
+
+                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+
+                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+
+                    openMenuId = null;
+
+                    openSubMenuId = null;
+
+                });
+
+        
+
+                // Handle Create new folder button in menu
+
+                $('[id^="createNewFolderInMenu-"]').off('click.createNewFolder').on('click.createNewFolder', function(e) {
+
+                    e.stopPropagation();
+
+                    // Just open the new folder modal, the user can then create and manually move
+
+                    $('#newFolderModal').removeClass('hidden');
+
+                    // Close the actions menu
+
+                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+
+                    $(`#itemActionsMenu-${itemId}`).addClass('hidden');
+
+                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+
+                    openMenuId = null;
+
+                    openSubMenuId = null;
+
+                });
+
+        
+
+                // Handle Delete button in menu
+
+                $('[id^="deleteItemButton-"]').off('click.deleteItem').on('click.deleteItem', function(e) {
+
+                    e.stopPropagation();
+
+                    const itemId = $(this).attr('id').split('-')[1];
+
+                    deletePrompt(itemId);
+
+                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+
+                    // Close any open submenu
+
+                    if (openSubMenuId) {
+
+                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+
+                        openSubMenuId = null;
+
+                    }
+
+                    openMenuId = null;
+
+                });
+
+            });
 }
 
 
