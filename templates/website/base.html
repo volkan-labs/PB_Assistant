@@ -105,6 +105,31 @@
         input[type="search"]::-webkit-search-cancel-button {
             -webkit-appearance: none;
         }
+        .ollama-select {
+            background-image: none;
+            background-origin: border-box;
+            background-clip: padding-box;
+            background-repeat: no-repeat;
+            background-position: 0 0;
+            background-size: auto;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        html.dark .ollama-select {
+            background-image: none;
+        }
+        .ollama-select:focus-visible {
+            box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.25);
+        }
+        .ollama-select::-ms-expand {
+            display: none;
+        }
+        .dropdown-caret {
+            text-shadow: none;
+            filter: none;
+            -webkit-text-stroke: 0;
+        }
     </style>
 
     {% csrf_token %}
