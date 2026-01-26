@@ -4,11 +4,10 @@
 {% block body_attributes %}{% if history_id %}data-history-id="{{ history_id }}"{% endif %}{% endblock %}
 
 {% block new_search_button_area %}
-<div class="mb-4">
-    <button id="newSearchButton"
-        class="w-full text-center py-2 px-4 rounded-lg text-sm font-bold text-white bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined">search</span>
-        New Search
+<div class="px-2 pb-4">
+    <button id="newSearchButton" class="w-full justify-center text-primary hover:text-white bg-primary/10 hover:bg-primary font-bold transition-all px-4 py-3 rounded-xl flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">add_notes</span>
+        <span>New Search</span>
     </button>
 </div>
 {% endblock %}
@@ -24,7 +23,7 @@
                     {{ query }}
                 </p>
             </div>
-            <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0 self-start mt-1"
+            <div class="bg-center bg-no-repeat bg-cover rounded-xl size-10 shrink-0 self-start mt-1 overflow-hidden"
                 data-alt="User profile avatar image small">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
                     width="40" height="40">
@@ -76,7 +75,7 @@
         </div>
         <!-- AI Response Block -->
         <div class="flex gap-4">
-            <div class="size-10 rounded-full bg-transparent flex items-center justify-center shrink-0 self-start mt-1">
+            <div class="size-10 rounded-xl bg-transparent flex items-center justify-center shrink-0 self-start mt-1 overflow-hidden">
                 <!-- <span class="material-symbols-outlined text-white">smart_toy</span> -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
                     width="512" height="512">
