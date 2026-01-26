@@ -190,7 +190,7 @@
                                         </div>
                                         <p class="text-sm text-[#637588] dark:text-[#94a3b8] mb-6">Select dimensions to
                                             evaluate for the pending documents above:</p>
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div id="documents-planetary-boundaries-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                             <label class="relative cursor-pointer">
                                                 <input class="peer sr-only" type="checkbox" name="boundary" value="Climate Change" />
                                                 <div
@@ -373,95 +373,23 @@
                                 class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
                                 <div class="p-8 flex flex-col gap-8">
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]">
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Climate Change" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Climate Change</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Biosphere Integrity" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Biosphere Integrity</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Land-System Change" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Land-System Change</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Freshwater Use" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Freshwater Use</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Biogeochemical Flows" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Biogeochemical Flows</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Ocean Acidification" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Ocean Acidification</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Atmospheric Aerosol Loading" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Atmospheric Aerosol Loading</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Stratospheric Ozone Depletion" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Stratospheric Ozone Depletion</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
-                                            <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Novel Entities" />
-                                                <div
-                                                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
-                                                    <span>Novel Entities</span>
-                                                    <span
-                                                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check_circle</span>
-                                                </div>
-                                            </label>
+                                        <div class="flex items-center gap-2 mb-5">
+                                            <span class="material-symbols-outlined text-primary text-xl">language</span>
+                                            <h4
+                                                class="text-sm font-bold text-[#111418] dark:text-white uppercase tracking-wide">
+                                                Planetary Boundaries Analysis
+                                            </h4>
+                                        </div>
+                                        <p class="text-sm text-[#637588] dark:text-[#94a3b8] mb-6">Select dimensions to
+                                            evaluate for the pending documents above:</p>
+                                        <div id="interests-planetary-boundaries-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <!-- Planetary boundaries will be loaded here -->
                                         </div>
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
                                         <button
                                             id="save-interests-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]" disabled>
                                             <span class="material-symbols-outlined text-[20px]">save</span>
                                             Save Interests
                                         </button>
@@ -720,10 +648,88 @@
             activateTab('tab-documents');
         }
         
+        // --- Planetary Boundaries Logic ---
+        const documentsPlanetaryBoundariesGrid = document.getElementById('documents-planetary-boundaries-grid');
+        const interestsPlanetaryBoundariesGrid = document.getElementById('interests-planetary-boundaries-grid');
+
+        function createBoundaryCheckbox(boundary, namePrefix = 'boundary') {
+            const label = document.createElement('label');
+            label.className = 'relative cursor-pointer';
+            label.innerHTML = `
+                <input class="peer sr-only" type="checkbox" name="${namePrefix}" value="${boundary.name}" data-boundary-id="${boundary.id}" />
+                <div
+                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                    <span class="overflow-hidden text-ellipsis whitespace-nowrap">${boundary.name}</span>
+                    <span
+                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity flex-shrink-0">check_circle</span>
+                </div>
+            `;
+            return label;
+        }
+
+        async function fetchAndRenderPlanetaryBoundaries() {
+            try {
+                const response = await fetch('/api/planetary-boundaries/');
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    documentsPlanetaryBoundariesGrid.innerHTML = ''; // Clear hardcoded
+                    interestsPlanetaryBoundariesGrid.innerHTML = ''; // Clear hardcoded
+
+                    data.forEach(boundary => {
+                        // For documents tab
+                        const docCheckbox = createBoundaryCheckbox(boundary, 'document_boundary');
+                        documentsPlanetaryBoundariesGrid.appendChild(docCheckbox);
+                        
+                        // For interests tab
+                        const interestCheckbox = createBoundaryCheckbox(boundary, 'interest_boundary');
+                        interestsPlanetaryBoundariesGrid.appendChild(interestCheckbox);
+                    });
+
+                    // Re-attach event listeners for dynamically added checkboxes
+                    documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]').forEach(checkbox => {
+                        checkbox.addEventListener('change', updateUploadButtonState);
+                    });
+                    interestsPlanetaryBoundariesGrid.querySelectorAll('input[name="interest_boundary"]').forEach(checkbox => {
+                        checkbox.addEventListener('change', updateInterestsSaveButtonState); // New state update for interests
+                    });
+
+                    // Initial state update for the upload button and interests save button
+                    updateUploadButtonState();
+                    updateInterestsSaveButtonState();
+
+                } else {
+                    documentsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                    interestsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                }
+            } catch (error) {
+                console.error("Error fetching planetary boundaries:", error);
+                documentsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                interestsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+            }
+        }
+        
         // --- File Upload Logic ---
         const documentUploadInput = document.getElementById('document-upload-input');
         const uploadDocumentsButton = document.getElementById('upload-documents-button');
         const pendingUploadsList = document.getElementById('pending-uploads-list');
+
+        function updateInterestsSaveButtonState() {
+            const saveInterestsButton = document.getElementById('save-interests-button');
+            const hasInterests = document.querySelectorAll('input[name="interest_boundary"]:checked').length > 0;
+            if (saveInterestsButton) {
+                saveInterestsButton.disabled = !hasInterests;
+                if (!hasInterests) {
+                    saveInterestsButton.classList.remove('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    saveInterestsButton.classList.add('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    saveInterestsButton.title = "Select at least one interest to save.";
+                } else {
+                    saveInterestsButton.classList.remove('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    saveInterestsButton.classList.add('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    saveInterestsButton.removeAttribute('title');
+                }
+            }
+        }
 
         if (documentUploadInput) {
             documentUploadInput.addEventListener('change', function(event) {
@@ -756,9 +762,10 @@
                     return;
                 }
 
-                const boundaries = Array.from(document.querySelectorAll('input[name="boundary"]:checked')).map(cb => cb.value);
+                // Get dynamically selected boundaries for documents
+                const boundaries = Array.from(documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]:checked')).map(cb => cb.value);
                 if (boundaries.length === 0) {
-                    showToast("Please select at least one Planetary Boundary.");
+                    showToast("Please select at least one Planetary Boundary for analysis.");
                     return;
                 }
 
@@ -790,7 +797,8 @@
                             if (response.ok) {
                                 showToast(data.message || "Documents uploaded successfully!", 'success');
                                 selectedFiles = []; // Clear files after successful upload
-                                document.querySelectorAll('input[name="boundary"]').forEach(checkbox => {
+                                // Uncheck all document boundary checkboxes
+                                documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]').forEach(checkbox => {
                                     checkbox.checked = false;
                                 });
                                 renderPendingUploads();
@@ -810,14 +818,30 @@
         // Initialize pending uploads on page load
         renderPendingUploads(); 
         
-        // Add event listeners to boundary checkboxes
-        const boundaryCheckboxes = document.querySelectorAll('input[name="boundary"]');
-        boundaryCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateUploadButtonState);
-        });
+        // Update function for upload button state
+        function updateUploadButtonState() {
+            const uploadButton = document.getElementById('upload-documents-button');
+            const hasFiles = selectedFiles.length > 0;
+            const hasBoundaries = documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]:checked').length > 0;
+            const isDisabled = !(hasFiles && hasBoundaries);
 
-        // Initial state update for the upload button
-        updateUploadButtonState();
+            if (uploadButton) {
+                uploadButton.disabled = isDisabled;
+
+                if (isDisabled) {
+                    uploadButton.classList.remove('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    uploadButton.classList.add('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    uploadButton.title = "Select PDFs and at least one boundary to enable upload.";
+                } else {
+                    uploadButton.classList.remove('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    uploadButton.classList.add('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    uploadButton.removeAttribute('title');
+                }
+            }
+        }
+        
+        // Call fetch and render for planetary boundaries
+        fetchAndRenderPlanetaryBoundaries();
         
         // --- Theme Selection Logic ---
         const themeRadios = document.querySelectorAll('input[name="theme-option"]');

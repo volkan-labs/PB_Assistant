@@ -135,7 +135,12 @@ def save_preferences(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-from PB_Assistant.models import SearchFolder, SearchHistory
+from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary
+
+@require_GET
+def get_planetary_boundaries(request):
+    boundaries = PlanetaryBoundary.objects.all().values('id', 'name', 'short_name')
+    return JsonResponse(list(boundaries), safe=False)
 
 @require_POST
 def upload_documents(request):
