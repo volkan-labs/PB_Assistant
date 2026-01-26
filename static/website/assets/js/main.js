@@ -632,8 +632,6 @@ function loadPromptHistory() {
                 const historyElement = `
                     <div class="${classes} relative" draggable="true" data-history-id="${value.id}">
                         <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
-                            <span
-                                class="material-symbols-outlined text-slate-400 text-[20px] group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0">history</span>
                             <div class="flex flex-col min-w-0">
                                 <span
                                     class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
