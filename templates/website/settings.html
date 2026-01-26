@@ -599,11 +599,29 @@
     // --- Main DOMContentLoaded Logic ---
 
     document.addEventListener('DOMContentLoaded', function() {
-        const documentsTabInput = document.getElementById('tab-documents');
-        if (documentsTabInput) {
-            documentsTabInput.checked = true;
-            // Dispatch a change event to ensure any dependent styling or logic is triggered
-            documentsTabInput.dispatchEvent(new Event('change'));
+        // Function to activate a specific tab
+        function activateTab(tabId) {
+            const tabInput = document.getElementById(tabId);
+            if (tabInput) {
+                tabInput.checked = true;
+                tabInput.dispatchEvent(new Event('change')); // Trigger change event for styling
+            }
+        }
+
+        // Check URL hash for initial tab
+        const hash = window.location.hash.substring(1); // Remove '#'
+        if (hash) {
+            const targetTabId = `tab-${hash}`;
+            const targetTabInput = document.getElementById(targetTabId);
+            if (targetTabInput) {
+                activateTab(targetTabId);
+            } else {
+                // Default to documents if hash is invalid
+                activateTab('tab-documents');
+            }
+        } else {
+            // Default to documents if no hash is present
+            activateTab('tab-documents');
         }
         
         // --- File Upload Logic ---
