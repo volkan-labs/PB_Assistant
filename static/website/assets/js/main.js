@@ -1047,7 +1047,7 @@ function loadPromptHistory() {
 
         
 
-                                                                const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}">${folder.name}</button>`;
+                                                                const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}"><span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${folder.color};"></span>${folder.name}</button>`;
 
         
 
