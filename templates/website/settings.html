@@ -56,13 +56,19 @@
         }
         #tab-documents:checked ~ .tab-content-documents { display: flex; }
         #tab-preferences:checked ~ .tab-content-preferences { display: flex; }
+        #tab-interests:checked ~ .tab-content-interests { display: flex; }
+        #tab-alerts:checked ~ .tab-content-alerts { display: flex; }
         #tab-documents:checked ~ .tabs-container #label-documents,
-        #tab-preferences:checked ~ .tabs-container #label-preferences {
+        #tab-preferences:checked ~ .tabs-container #label-preferences,
+        #tab-interests:checked ~ .tabs-container #label-interests,
+        #tab-alerts:checked ~ .tabs-container #label-alerts {
             border-color: #135bec; /* primary color */
             color: #111418;
         }
         .dark #tab-documents:checked ~ .tabs-container #label-documents,
-        .dark #tab-preferences:checked ~ .tabs-container #label-preferences {
+        .dark #tab-preferences:checked ~ .tabs-container #label-preferences,
+        .dark #tab-interests:checked ~ .tabs-container #label-interests,
+        .dark #tab-alerts:checked ~ .tabs-container #label-alerts {
             color: white;
         }
         .tab-content { display: none; }
@@ -109,6 +115,8 @@
                 <div class="relative flex flex-col gap-8">
                     <input class="hidden" id="tab-documents" name="settings-tabs" type="radio" />
                     <input class="hidden" id="tab-preferences" name="settings-tabs" type="radio" />
+                    <input class="hidden" id="tab-interests" name="settings-tabs" type="radio" />
+                    <input class="hidden" id="tab-alerts" name="settings-tabs" type="radio" />
                     <div class="tabs-container flex border-b border-[#e5e7eb] dark:border-[#2a3447]">
                         <label id="label-documents"
                             class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
@@ -119,6 +127,16 @@
                             class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
                             for="tab-preferences">
                             Preferences
+                        </label>
+                        <label id="label-interests"
+                            class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
+                            for="tab-interests">
+                            Interests
+                        </label>
+                        <label id="label-alerts"
+                            class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
+                            for="tab-alerts">
+                            Alerts
                         </label>
                     </div>
                     <div class="tab-content tab-content-documents flex-col gap-8 peer-checked/docs:flex">
@@ -162,6 +180,103 @@
                                         <div id="pending-uploads-list" class="space-y-3">
                                         </div>
                                     </div>
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
+                                        <button
+                                            id="upload-documents-button"
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]" disabled>
+                                            <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+                                            Save Changes &amp; Upload
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content tab-content-preferences flex-col gap-10 peer-checked/pref:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">General Preferences</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Manage your default chat
+                                    configurations and appearance.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                                                <div class="p-6 flex flex-col gap-8">
+                                                                    <div class="pb-4 border-b border-[#e5e7eb] dark:border-[#2a3447]">
+                                                                        <div class="flex items-center gap-4 mb-6">
+                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                                                                <span class="material-symbols-outlined text-2xl">smart_toy</span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Default
+                                                                                    LLM Model</h3>
+                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Choose the engine for
+                                                                                    your conversations</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div id="ollama-models-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 col-span-full"></div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <div class="flex items-center gap-4 mb-4">
+                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                                                                <span class="material-symbols-outlined text-2xl">palette</span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Interface
+                                                                                    Theme</h3>
+                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Customize how the
+                                                                                    application looks</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid grid-cols-3 gap-4">
+                                                                            <label class="cursor-pointer group">
+                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="light" />
+                                                                                <div
+                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                                                    <span
+                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
+                                                                                    <span class="text-xs font-semibold">Light</span>
+                                                                                </div>
+                                                                            </label>
+                                                                            <label class="cursor-pointer group">
+                                                                                <input checked="" class="sr-only peer" name="theme-option" type="radio" value="dark" />
+                                                                                <div
+                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                                                    <span
+                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">dark_mode</span>
+                                                                                    <span class="text-xs font-semibold">Dark</span>
+                                                                                </div>
+                                                                            </label>
+                                                                            <label class="cursor-pointer group">
+                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="system" />
+                                                                                <div
+                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                                                    <span
+                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">settings_system_daydream</span>
+                                                                                    <span class="text-xs font-semibold">System</span>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
+                                                                        <button id="save-preferences-button"
+                                                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                                                                            <span class="material-symbols-outlined text-[20px]">save</span>
+                                                                            Save Changes
+                                                                        </button>
+                                                                    </div>
+                                                                </div>                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content tab-content-interests flex-col gap-8 peer-checked/interests:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">Planetary Boundary Interests</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Select planetary boundaries you are interested in tracking.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                <div class="p-8 flex flex-col gap-8">
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]">
                                         <div class="flex items-center gap-2 mb-5">
                                             <span class="material-symbols-outlined text-primary text-xl">language</span>
@@ -259,90 +374,31 @@
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
                                         <button
-                                            id="upload-documents-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]" disabled>
-                                            <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
-                                            Save Changes &amp; Upload
+                                            id="save-interests-button"
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                                            <span class="material-symbols-outlined text-[20px]">save</span>
+                                            Save Interests
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </section>
                     </div>
-                    <div class="tab-content tab-content-preferences flex-col gap-10 peer-checked/pref:flex">
+                    <div class="tab-content tab-content-alerts flex-col gap-8 peer-checked/alerts:flex">
                         <section class="flex flex-col gap-6">
                             <div class="px-2">
-                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">General Preferences</h2>
-                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Manage your default chat
-                                    configurations and appearance.</p>
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">Alerts</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Configure your alert preferences.</p>
                             </div>
                             <div
                                 class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
-                                                                <div class="p-6 flex flex-col gap-8">
-                                                                    <div class="pb-4 border-b border-[#e5e7eb] dark:border-[#2a3447]">
-                                                                        <div class="flex items-center gap-4 mb-6">
-                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
-                                                                                <span class="material-symbols-outlined text-2xl">smart_toy</span>
-                                                                            </div>
-                                                                            <div>
-                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Default
-                                                                                    LLM Model</h3>
-                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Choose the engine for
-                                                                                    your conversations</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div id="ollama-models-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 col-span-full"></div>
-                                                                    </div>
-                                                                    <div>
-                                                                        <div class="flex items-center gap-4 mb-4">
-                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
-                                                                                <span class="material-symbols-outlined text-2xl">palette</span>
-                                                                            </div>
-                                                                            <div>
-                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Interface
-                                                                                    Theme</h3>
-                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Customize how the
-                                                                                    application looks</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="grid grid-cols-3 gap-4">
-                                                                            <label class="cursor-pointer group">
-                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="light" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
-                                                                                    <span class="text-xs font-semibold">Light</span>
-                                                                                </div>
-                                                                            </label>
-                                                                            <label class="cursor-pointer group">
-                                                                                <input checked="" class="sr-only peer" name="theme-option" type="radio" value="dark" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">dark_mode</span>
-                                                                                    <span class="text-xs font-semibold">Dark</span>
-                                                                                </div>
-                                                                            </label>
-                                                                            <label class="cursor-pointer group">
-                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="system" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">settings_system_daydream</span>
-                                                                                    <span class="text-xs font-semibold">System</span>
-                                                                                </div>
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                                                        <button id="save-preferences-button"
-                                                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
-                                                                            <span class="material-symbols-outlined text-[20px]">save</span>
-                                                                            Save Changes
-                                                                        </button>
-                                                                    </div>
-                                                                </div>                            </div>
+                                <div class="p-8 flex flex-col gap-8">
+                                    <div class="text-center py-12">
+                                        <h3 class="text-xl font-bold text-[#111418] dark:text-white">Coming Soon!</h3>
+                                        <p class="text-[#637588] dark:text-[#94a3b8] mt-2">Alerts functionality is under development. Stay tuned!</p>
+                                    </div>
+                                </div>
+                            </div>
                         </section>
                     </div>
 
@@ -543,11 +599,11 @@
     // --- Main DOMContentLoaded Logic ---
 
     document.addEventListener('DOMContentLoaded', function() {
-        const preferencesTabInput = document.getElementById('tab-preferences');
-        if (preferencesTabInput) {
-            preferencesTabInput.checked = true;
+        const documentsTabInput = document.getElementById('tab-documents');
+        if (documentsTabInput) {
+            documentsTabInput.checked = true;
             // Dispatch a change event to ensure any dependent styling or logic is triggered
-            preferencesTabInput.dispatchEvent(new Event('change'));
+            documentsTabInput.dispatchEvent(new Event('change'));
         }
         
         // --- File Upload Logic ---
