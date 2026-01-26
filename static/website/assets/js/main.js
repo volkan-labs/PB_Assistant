@@ -149,15 +149,39 @@ $(document).ready(function () {
 
         
 
-                $('#cancelNewFolderButton').click(function() {
+                        $('#closeNewFolderModalButton').click(function() {
 
-                    $('#newFolderModal').addClass('hidden');
+        
 
-                    $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
+            
 
-                    $('#newFolderColorPalette').addClass('hidden');
+        
 
-                });
+                            $('#newFolderModal').addClass('hidden');
+
+        
+
+            
+
+        
+
+                            $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
+
+        
+
+            
+
+        
+
+                            $('#newFolderColorPalette').addClass('hidden');
+
+        
+
+            
+
+        
+
+                        });
 
         
 
