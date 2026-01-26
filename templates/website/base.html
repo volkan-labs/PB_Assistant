@@ -124,9 +124,13 @@
                     <img src="{% static '/website/assets/images/ess-ai-logo.png' %}" alt="Logo" class="h-20" />
                 </a>
             </div>
+            <!-- Sticky new search button -->
+            
+            {% block new_search_button_area %}{% endblock %}
+            
             <!-- Sidebar Content -->
-            <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-4 py-6">
-                {% block new_search_button_area %}{% endblock %}
+            <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
+                
                 <!-- Sidebar Filter -->
                 <div class="mb-3 px-2">
                     <div class="relative">
