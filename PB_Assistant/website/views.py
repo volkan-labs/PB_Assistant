@@ -121,10 +121,12 @@ def save_preferences(request):
         data = json.loads(request.body)
         default_llm = data.get('default_llm')
         interface_theme = data.get('interface_theme')
-
+        planetary_boundary_interests = data.get('planetary_boundary_interests', [])
+    
         print(f"Endpoint /api/preferences/save/ hit!")
         print(f"Received default_llm: {default_llm}")
         print(f"Received interface_theme: {interface_theme}")
+        print(f"Selected Planetary Boundaries: {planetary_boundary_interests}")
 
         # In a real application, you would save these preferences to the user's profile
         # For now, we just log and return a success message.
@@ -135,7 +137,12 @@ def save_preferences(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-from PB_Assistant.models import SearchFolder, SearchHistory
+from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary
+
+@require_GET
+def get_planetary_boundaries(request):
+    boundaries = PlanetaryBoundary.objects.all().values('id', 'name', 'short_name')
+    return JsonResponse(list(boundaries), safe=False)
 
 @require_POST
 def upload_documents(request):

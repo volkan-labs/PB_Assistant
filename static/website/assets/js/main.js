@@ -7,6 +7,44 @@ $(document).ready(function () {
         textarea.style.height = `${textarea.scrollHeight}px`;
     }
 
+    // Generic function to handle collapsible sections
+    function toggleSection(headerId, contentId, localStorageKey) {
+        const header = $(`#${headerId}`);
+        const content = $(`#${contentId}`);
+        const icon = header.find(`.section-toggle-icon`);
+
+        // Restore state from local storage on load
+        const isCollapsed = localStorage.getItem(localStorageKey) === 'true';
+        if (isCollapsed) {
+            content.hide();
+            icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
+            header.addClass('collapsed');
+        } else {
+            content.show();
+            icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
+            header.removeClass('collapsed');
+        }
+
+        header.on('click', function(e) {
+            // Prevent event from propagating if a child (like the "New Folder" button or clear button) is clicked
+            if ($(e.target).is('button') || $(e.target).closest('button').length) {
+                return;
+            }
+
+            content.slideToggle(200, function() {
+                const nowCollapsed = !$(this).is(':visible');
+                localStorage.setItem(localStorageKey, nowCollapsed);
+                if (nowCollapsed) {
+                    icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
+                    header.addClass('collapsed');
+                } else {
+                    icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
+                    header.removeClass('collapsed');
+                }
+            });
+        });
+    }
+
     $('textarea[data-autogrow="true"]').each(function() {
         autoGrowTextarea(this);
     }).on('input', function() {
@@ -78,6 +116,10 @@ $(document).ready(function () {
     $('#closePanelIcon').click(function() {
         hideContentPanel(selectedRowId);
     });
+
+    // Initialize collapsible sections
+    toggleSection('folder-header', 'folder-content', 'folderSectionState');
+    toggleSection('searches-header', 'searches-content', 'searchesSectionState');
 
         $('#newFolderButton').click(function() {
 
@@ -282,7 +324,7 @@ $(document).ready(function () {
                 const f = $(this);
                 const content = f.find('.flex-col.gap-1.ml-4');
                 content.css('display', 'none');
-                f.find('.folder-expand-icon').text('expand_more');
+                f.find('.section-toggle-icon').removeClass('rotate-90');
             });
             $('#userPromptHistory').children().show();
             // restore the open folders the user had before filtering
@@ -318,7 +360,7 @@ $(document).ready(function () {
                 // expand folder to reveal matching items
                 const content = folder.find('.flex-col.gap-1.ml-4');
                 content.css('display', 'flex');
-                folder.find('.folder-expand-icon').text('expand_less');
+                folder.find('.section-toggle-icon').addClass('rotate-90');
             } else {
                 folder.hide();
             }
@@ -539,7 +581,7 @@ function loadPromptHistory() {
                 `<div class="flex flex-col gap-1 rounded-lg" id="folder-${folder.id}">
                     <div class="flex items-center justify-between px-2 group folder-header rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50">
                         <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                            <span class="material-symbols-outlined folder-toggle folder-expand-icon text-slate-400 text-lg cursor-pointer">expand_more</span>
+                            <span class="material-symbols-outlined section-toggle-icon text-slate-400 text-lg cursor-pointer">chevron_right</span>
                             <span class="w-3 h-3 rounded-full mr-0 shrink-0" style="background-color: ${color};"></span>
                             <span class="folder-name-text truncate cursor-pointer">${folder.name}</span>
                         </h4>
@@ -659,42 +701,29 @@ function loadPromptHistory() {
             $('#clearButton').hide();
         }
 
-        $('.flex.items-center.justify-between.px-2.cursor-pointer').off('click').on('click', function() {
-            const header = $(this);
+
+
+
+        // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
+        $('#folderList').off('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text').on('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text', function(e) {
+            const clicked = $(this);
+            const header = clicked.closest('.folder-header');
             const folderContent = header.next('.flex-col.gap-1.ml-4');
             folderContent.slideToggle(200, function() {
                 const isVisible = $(this).is(':visible');
                 const folderElement = $(this).closest('[id^="folder-"]');
                 const folderId = folderElement.attr('id');
-                const icon = header.find('.folder-expand-icon');
+                const icon = header.find('.section-toggle-icon');
+
                 if (isVisible) {
-                    icon.text('expand_less');
+                    icon.addClass('rotate-90'); // Expanded state
                     addOpenFolder(folderId);
                 } else {
-                    icon.text('expand_more');
+                    icon.removeClass('rotate-90'); // Collapsed state
                     removeOpenFolder(folderId);
                 }
             });
         });
-            // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
-            $('#folderList').off('click', '.folder-header .folder-toggle, .folder-header .folder-name-text').on('click', '.folder-header .folder-toggle, .folder-header .folder-name-text', function(e) {
-                const clicked = $(this);
-                const header = clicked.closest('.folder-header');
-                const folderContent = header.next('.flex-col.gap-1.ml-4');
-                folderContent.slideToggle(200, function() {
-                    const isVisible = $(this).is(':visible');
-                    const folderElement = $(this).closest('[id^="folder-"]');
-                    const folderId = folderElement.attr('id');
-                    const icon = header.find('.folder-expand-icon');
-                    if (isVisible) {
-                        icon.text('expand_less');
-                        addOpenFolder(folderId);
-                    } else {
-                        icon.text('expand_more');
-                        removeOpenFolder(folderId);
-                    }
-                });
-            });
 
         // Attach direct click handlers to folder delete buttons so stopPropagation runs
         // before any ancestor click handlers (prevents toggling when clicking delete)
@@ -780,7 +809,7 @@ function loadPromptHistory() {
             if (parentFolderContent.length > 0) {
                 parentFolderContent.css('display', 'flex');
                 const parentFolder = parentFolderContent.parent();
-                const leftIcon = parentFolder.find('.folder-expand-icon');
+                const leftIcon = parentFolder.find('.section-toggle-icon');
                 const rightIcon = parentFolder.find('.folder-delete-btn .material-symbols-outlined');
                 leftIcon.text('expand_less'); // show expanded state for expand icon
                 rightIcon.text('delete'); // ensure delete icon remains delete
@@ -1188,8 +1217,8 @@ function restoreFolderState() {
         console.debug('[restoreFolderState] folderContent length for', folderSelector, folderContent.length);
         if (folderContent.length > 0) {
             folderContent.css('display', 'flex');
-            const icon = folderElement.find('.folder-expand-icon');
-            if (icon.length) icon.text('expand_less');
+            const icon = folderElement.find('.section-toggle-icon');
+            if (icon.length) icon.addClass('rotate-90');
         }
     });
 }

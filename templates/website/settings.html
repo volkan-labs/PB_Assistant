@@ -2,7 +2,7 @@
 {% csrf_token %}
 
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -56,13 +56,16 @@
         }
         #tab-documents:checked ~ .tab-content-documents { display: flex; }
         #tab-preferences:checked ~ .tab-content-preferences { display: flex; }
+        #tab-alerts:checked ~ .tab-content-alerts { display: flex; }
         #tab-documents:checked ~ .tabs-container #label-documents,
-        #tab-preferences:checked ~ .tabs-container #label-preferences {
+        #tab-preferences:checked ~ .tabs-container #label-preferences,
+        #tab-alerts:checked ~ .tabs-container #label-alerts {
             border-color: #135bec; /* primary color */
             color: #111418;
         }
         .dark #tab-documents:checked ~ .tabs-container #label-documents,
-        .dark #tab-preferences:checked ~ .tabs-container #label-preferences {
+        .dark #tab-preferences:checked ~ .tabs-container #label-preferences,
+        .dark #tab-alerts:checked ~ .tabs-container #label-alerts {
             color: white;
         }
         .tab-content { display: none; }
@@ -80,13 +83,12 @@
     <div class="flex flex-col min-h-screen">
         <header
             class="sticky top-0 z-50 flex items-center justify-between border-b border-[#e5e7eb] dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/80 backdrop-blur-md px-6 py-4">
-            <div class="flex items-center gap-3">
-                <div
-                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white shadow-lg shadow-primary/20">
-                    <img src="{% static '/website/assets/images/logo.png' %}" alt="Logo" />
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-white text-xl">settings</span>
+                    </div>
+                    <h1 class="text-xl font-bold leading-tight tracking-tight">Settings</h1>
                 </div>
-                <h1 class="text-xl font-bold leading-tight tracking-tight">Settings</h1>
-            </div>
             <div class="flex items-center gap-6">
                 <a class="text-sm font-semibold leading-normal text-primary hover:text-blue-600 transition-colors flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/5 border border-primary/20"
                     href="/">
@@ -97,18 +99,21 @@
         </header>
         <main class="flex-1 max-w-3xl w-full mx-auto py-12 px-6 relative">
             <!-- Error Toast -->
-            <div id="error-toast" class="hidden absolute top-4 right-4 z-60 bg-red-600 text-white p-4 rounded-lg shadow-lg">
+            <div id="error-toast"
+                class="hidden absolute top-4 right-4 z-60 bg-red-600 text-white p-4 rounded-lg shadow-lg">
                 <div class="flex items-center gap-4">
                     <span id="error-toast-message"></span>
                     <button id="error-toast-close" class="text-white">&times;</button>
                 </div>
-                <div class="absolute bottom-0 left-0 h-1 bg-white/30" id="error-toast-loader" style="width: 100%;"></div>
+                <div class="absolute bottom-0 left-0 h-1 bg-white/30" id="error-toast-loader" style="width: 100%;">
+                </div>
             </div>
 
             <div class="flex flex-col gap-8 pb-32">
                 <div class="relative flex flex-col gap-8">
                     <input class="hidden" id="tab-documents" name="settings-tabs" type="radio" />
                     <input class="hidden" id="tab-preferences" name="settings-tabs" type="radio" />
+                    <input class="hidden" id="tab-alerts" name="settings-tabs" type="radio" />
                     <div class="tabs-container flex border-b border-[#e5e7eb] dark:border-[#2a3447]">
                         <label id="label-documents"
                             class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
@@ -119,6 +124,11 @@
                             class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
                             for="tab-preferences">
                             Preferences
+                        </label>
+                        <label id="label-alerts"
+                            class="px-8 py-4 text-sm font-bold cursor-pointer transition-all border-b-[3px] border-transparent text-[#637588] dark:text-[#94a3b8] hover:text-primary"
+                            for="tab-alerts">
+                            Alerts
                         </label>
                     </div>
                     <div class="tab-content tab-content-documents flex-col gap-8 peer-checked/docs:flex">
@@ -146,7 +156,8 @@
                                                 class="cursor-pointer px-8 py-3 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/25 transition-all active:scale-95 inline-flex items-center gap-2">
                                                 <span class="material-symbols-outlined text-lg">add</span>
                                                 Select Files
-                                                <input id="document-upload-input" accept=".pdf" class="hidden" multiple="" type="file" />
+                                                <input id="document-upload-input" accept=".pdf" class="hidden"
+                                                    multiple="" type="file" />
                                             </label>
                                         </div>
                                     </div>
@@ -172,9 +183,11 @@
                                         </div>
                                         <p class="text-sm text-[#637588] dark:text-[#94a3b8] mb-6">Select dimensions to
                                             evaluate for the pending documents above:</p>
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div id="documents-planetary-boundaries-grid"
+                                            class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Climate Change" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Climate Change" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Climate Change</span>
@@ -183,7 +196,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Biosphere Integrity" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Biosphere Integrity" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Biosphere Integrity</span>
@@ -192,7 +206,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Land-System Change" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Land-System Change" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Land-System Change</span>
@@ -201,7 +216,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Freshwater Use" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Freshwater Use" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Freshwater Use</span>
@@ -211,7 +227,8 @@
                                             </label>
 
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Biogeochemical Flows" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Biogeochemical Flows" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Biogeochemical Flows</span>
@@ -220,7 +237,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Ocean Acidification" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Ocean Acidification" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Ocean Acidification</span>
@@ -229,7 +247,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Atmospheric Aerosol Loading" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Atmospheric Aerosol Loading" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Atmospheric Aerosol Loading</span>
@@ -238,7 +257,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Stratospheric Ozone Depletion" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Stratospheric Ozone Depletion" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Stratospheric Ozone Depletion</span>
@@ -247,7 +267,8 @@
                                                 </div>
                                             </label>
                                             <label class="relative cursor-pointer">
-                                                <input class="peer sr-only" type="checkbox" name="boundary" value="Novel Entities" />
+                                                <input class="peer sr-only" type="checkbox" name="boundary"
+                                                    value="Novel Entities" />
                                                 <div
                                                     class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
                                                     <span>Novel Entities</span>
@@ -258,9 +279,9 @@
                                         </div>
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                        <button
-                                            id="upload-documents-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]" disabled>
+                                        <button id="upload-documents-button"
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]"
+                                            disabled>
                                             <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
                                             Save Changes &amp; Upload
                                         </button>
@@ -278,71 +299,143 @@
                             </div>
                             <div
                                 class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
-                                                                <div class="p-6 flex flex-col gap-8">
-                                                                    <div class="pb-4 border-b border-[#e5e7eb] dark:border-[#2a3447]">
-                                                                        <div class="flex items-center gap-4 mb-6">
-                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
-                                                                                <span class="material-symbols-outlined text-2xl">smart_toy</span>
-                                                                            </div>
-                                                                            <div>
-                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Default
-                                                                                    LLM Model</h3>
-                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Choose the engine for
-                                                                                    your conversations</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div id="ollama-models-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 col-span-full"></div>
-                                                                    </div>
-                                                                    <div>
-                                                                        <div class="flex items-center gap-4 mb-4">
-                                                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
-                                                                                <span class="material-symbols-outlined text-2xl">palette</span>
-                                                                            </div>
-                                                                            <div>
-                                                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Interface
-                                                                                    Theme</h3>
-                                                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Customize how the
-                                                                                    application looks</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="grid grid-cols-3 gap-4">
-                                                                            <label class="cursor-pointer group">
-                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="light" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
-                                                                                    <span class="text-xs font-semibold">Light</span>
-                                                                                </div>
-                                                                            </label>
-                                                                            <label class="cursor-pointer group">
-                                                                                <input checked="" class="sr-only peer" name="theme-option" type="radio" value="dark" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">dark_mode</span>
-                                                                                    <span class="text-xs font-semibold">Dark</span>
-                                                                                </div>
-                                                                            </label>
-                                                                            <label class="cursor-pointer group">
-                                                                                <input class="sr-only peer" name="theme-option" type="radio" value="system" />
-                                                                                <div
-                                                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
-                                                                                    <span
-                                                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">settings_system_daydream</span>
-                                                                                    <span class="text-xs font-semibold">System</span>
-                                                                                </div>
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                                                        <button id="save-preferences-button"
-                                                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
-                                                                            <span class="material-symbols-outlined text-[20px]">save</span>
-                                                                            Save Changes
-                                                                        </button>
-                                                                    </div>
-                                                                </div>                            </div>
+                                <div class="p-6 flex flex-col gap-8">
+                                    <div class="pb-4 border-b border-[#e5e7eb] dark:border-[#2a3447]">
+                                        <div class="flex items-center gap-4 mb-6">
+                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                                <span class="material-symbols-outlined text-2xl">smart_toy</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">
+                                                    Default
+                                                    LLM Model</h3>
+                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Choose the engine
+                                                    for
+                                                    your conversations</p>
+                                            </div>
+                                        </div>
+                                        <div id="ollama-models-grid"
+                                            class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 col-span-full"></div>
+                                    </div>
+
+                                    <div class="pb-4 border-b border-[#e5e7eb] dark:border-[#2a3447]">
+
+                                        <div class="flex items-center gap-4 mb-6">
+                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                                <span class="material-symbols-outlined text-2xl">language</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">
+                                                    Planetary Boundary Preferences</h3>
+                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Select
+                                                planetary boundaries you are interested in tracking.</p>
+                                            </div>
+                                        </div>
+                                        <div id="interests-planetary-boundaries-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <!-- Planetary boundaries will be loaded here -->
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <div class="p-3 bg-primary/10 rounded-xl text-primary">
+                                                <span class="material-symbols-outlined text-2xl">palette</span>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-[#111418] dark:text-white font-semibold text-base">Interface Theme</h3>
+                                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm">Customize how the application looks</p>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <label class="cursor-pointer group">
+                                                <input class="sr-only peer" name="theme-option" type="radio"
+                                                    value="light" />
+                                                <div
+                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                    <span
+                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">light_mode</span>
+                                                    <span class="text-xs font-semibold">Light</span>
+                                                </div>
+                                            </label>
+                                            <label class="cursor-pointer group">
+                                                <input checked="" class="sr-only peer" name="theme-option" type="radio"
+                                                    value="dark" />
+                                                <div
+                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                    <span
+                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">dark_mode</span>
+                                                    <span class="text-xs font-semibold">Dark</span>
+                                                </div>
+                                            </label>
+                                            <label class="cursor-pointer group">
+                                                <input class="sr-only peer" name="theme-option" type="radio"
+                                                    value="system" />
+                                                <div
+                                                    class="flex flex-col items-center gap-2 p-4 rounded-xl border border-[#e5e7eb] dark:border-[#3e4a61] peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-[#637588] dark:text-[#94a3b8] peer-checked:text-primary">
+                                                    <span
+                                                        class="material-symbols-outlined group-hover:scale-110 transition-transform">settings_system_daydream</span>
+                                                    <span class="text-xs font-semibold">System</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
+                                        <button id="save-preferences-button"
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                                            <span class="material-symbols-outlined text-[20px]">save</span>
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content tab-content-interests flex-col gap-8 peer-checked/interests:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">Planetary Boundary
+                                    Interests</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Select planetary boundaries
+                                    you are interested in tracking.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                <div class="p-8 flex flex-col gap-8">
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]">
+                                        <div id="interests-planetary-boundaries-grid"
+                                            class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <!-- Planetary boundaries will be loaded here -->
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
+                                        <button id="save-interests-button"
+                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]"
+                                            disabled>
+                                            <span class="material-symbols-outlined text-[20px]">save</span>
+                                            Save Interests
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-content tab-content-alerts flex-col gap-8 peer-checked/alerts:flex">
+                        <section class="flex flex-col gap-6">
+                            <div class="px-2">
+                                <h2 class="text-[#111418] dark:text-white text-xl font-bold">Alerts</h2>
+                                <p class="text-[#637588] dark:text-[#94a3b8] text-sm mt-1.5">Configure your alert
+                                    preferences.</p>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-[#1a2230] rounded-2xl border border-[#e5e7eb] dark:border-[#2a3447] overflow-hidden">
+                                <div class="p-8 flex flex-col gap-8">
+                                    <div class="text-center py-12">
+                                        <h3 class="text-xl font-bold text-[#111418] dark:text-white">Coming Soon!</h3>
+                                        <p class="text-[#637588] dark:text-[#94a3b8] mt-2">Alerts functionality is under
+                                            development. Stay tuned!</p>
+                                    </div>
+                                </div>
+                            </div>
                         </section>
                     </div>
 
@@ -367,7 +460,8 @@
     </div>
 
 
-    <div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div id="loading-overlay"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="flex flex-col items-center">
             <div class="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin"></div>
             <p class="text-white mt-4" id="loading-overlay-text">Saving...</p>
@@ -391,7 +485,7 @@
         const loader = document.getElementById('error-toast-loader');
         const messageElement = document.getElementById('error-toast-message');
         const closeButton = document.getElementById('error-toast-close');
-        
+
         if (!toast || !loader || !messageElement || !closeButton) {
             console.error("Toast elements not found!");
             return;
@@ -412,7 +506,7 @@
             toast.classList.add('bg-red-600');
             loader.classList.add('bg-white/30');
         }
-        
+
         // Display toast and start loader animation
         toast.classList.remove('hidden');
         console.log("Toast should be visible now.");
@@ -458,9 +552,9 @@
             const itemDiv = document.createElement('div');
             itemDiv.id = `pending-upload-${index}`;
             itemDiv.className = 'flex items-center gap-4 p-4 rounded-xl border border-primary/30 bg-primary/[0.02] dark:bg-primary/[0.04] transition-all hover:bg-primary/[0.05] group';
-            
+
             const fileSize = file.size > 0 ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : '0 KB';
-            
+
             itemDiv.innerHTML = `
                 <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     <span class="material-symbols-outlined">description</span>
@@ -480,7 +574,7 @@
         });
         updatePendingUploadCount();
     }
-    
+
     function updatePendingUploadCount() {
         const count = selectedFiles.length;
         const countSpan = document.getElementById('pending-uploads-count');
@@ -507,7 +601,7 @@
                 'Delete Pending Upload',
                 `Are you sure you want to remove '${selectedFiles[index].name}'?`,
                 'Delete',
-                function() {
+                function () {
                     selectedFiles.splice(index, 1);
                     renderPendingUploads();
                     showToast("File removed from pending uploads.", 'success'); // Added success toast
@@ -542,31 +636,137 @@
 
     // --- Main DOMContentLoaded Logic ---
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const preferencesTabInput = document.getElementById('tab-preferences');
-        if (preferencesTabInput) {
-            preferencesTabInput.checked = true;
-            // Dispatch a change event to ensure any dependent styling or logic is triggered
-            preferencesTabInput.dispatchEvent(new Event('change'));
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to activate a specific tab
+        function activateTab(tabId) {
+            const tabInput = document.getElementById(tabId);
+            if (tabInput) {
+                tabInput.checked = true;
+                tabInput.dispatchEvent(new Event('change')); // Trigger change event for styling
+            }
         }
-        
+
+        // Add event listeners to all settings-tabs radio buttons
+        const tabRadios = document.querySelectorAll('input[name="settings-tabs"]');
+        tabRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                // Update URL hash without reloading the page
+                const tabName = this.id.replace('tab-', ''); // e.g., 'documents', 'preferences'
+                history.pushState(null, '', `#${tabName}`);
+            });
+        });
+
+        // Check URL hash for initial tab
+        const hash = window.location.hash.substring(1); // Remove '#'
+        if (hash) {
+            const targetTabId = `tab-${hash}`;
+            const targetTabInput = document.getElementById(targetTabId);
+            if (targetTabInput) {
+                activateTab(targetTabId);
+            } else {
+                // Default to documents if hash is invalid
+                activateTab('tab-documents');
+            }
+        } else {
+            // Default to documents if no hash is present
+            activateTab('tab-documents');
+        }
+
+        // --- Planetary Boundaries Logic ---
+        const documentsPlanetaryBoundariesGrid = document.getElementById('documents-planetary-boundaries-grid');
+        const interestsPlanetaryBoundariesGrid = document.getElementById('interests-planetary-boundaries-grid');
+
+        function createBoundaryCheckbox(boundary, namePrefix = 'boundary') {
+            const label = document.createElement('label');
+            label.className = 'relative cursor-pointer';
+            label.innerHTML = `
+                <input class="peer sr-only" type="checkbox" name="${namePrefix}" value="${boundary.name}" data-boundary-id="${boundary.id}" />
+                <div
+                    class="px-4 py-3 rounded-xl text-sm font-medium border border-[#e5e7eb] dark:border-[#2a3447] bg-white dark:bg-[#232d3f] text-[#637588] dark:text-[#94a3b8] peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between hover:border-primary/50">
+                    <span class="overflow-hidden text-ellipsis whitespace-nowrap">${boundary.name}</span>
+                    <span
+                        class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity flex-shrink-0">check_circle</span>
+                </div>
+            `;
+            return label;
+        }
+
+        async function fetchAndRenderPlanetaryBoundaries() {
+            try {
+                const response = await fetch('/api/planetary-boundaries/');
+                const data = await response.json();
+
+                if (response.ok && data.length > 0) {
+                    documentsPlanetaryBoundariesGrid.innerHTML = ''; // Clear hardcoded
+                    interestsPlanetaryBoundariesGrid.innerHTML = ''; // Clear hardcoded
+
+                    data.forEach(boundary => {
+                        // For documents tab
+                        const docCheckbox = createBoundaryCheckbox(boundary, 'document_boundary');
+                        documentsPlanetaryBoundariesGrid.appendChild(docCheckbox);
+
+                        // For interests tab
+                        const interestCheckbox = createBoundaryCheckbox(boundary, 'interest_boundary');
+                        interestsPlanetaryBoundariesGrid.appendChild(interestCheckbox);
+                    });
+
+                    // Re-attach event listeners for dynamically added checkboxes
+                    documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]').forEach(checkbox => {
+                        checkbox.addEventListener('change', updateUploadButtonState);
+                    });
+                    interestsPlanetaryBoundariesGrid.querySelectorAll('input[name="interest_boundary"]').forEach(checkbox => {
+                        checkbox.addEventListener('change', updateInterestsSaveButtonState); // New state update for interests
+                    });
+
+                    // Initial state update for the upload button and interests save button
+                    updateUploadButtonState();
+                    updateInterestsSaveButtonState();
+
+                } else {
+                    documentsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                    interestsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                }
+            } catch (error) {
+                console.error("Error fetching planetary boundaries:", error);
+                documentsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+                interestsPlanetaryBoundariesGrid.innerHTML = `<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>`;
+            }
+        }
+
         // --- File Upload Logic ---
         const documentUploadInput = document.getElementById('document-upload-input');
         const uploadDocumentsButton = document.getElementById('upload-documents-button');
         const pendingUploadsList = document.getElementById('pending-uploads-list');
 
+        function updateInterestsSaveButtonState() {
+            const saveInterestsButton = document.getElementById('save-interests-button');
+            const hasInterests = document.querySelectorAll('input[name="interest_boundary"]:checked').length > 0;
+            if (saveInterestsButton) {
+                saveInterestsButton.disabled = !hasInterests;
+                if (!hasInterests) {
+                    saveInterestsButton.classList.remove('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    saveInterestsButton.classList.add('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    saveInterestsButton.title = "Select at least one interest to save.";
+                } else {
+                    saveInterestsButton.classList.remove('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    saveInterestsButton.classList.add('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    saveInterestsButton.removeAttribute('title');
+                }
+            }
+        }
+
         if (documentUploadInput) {
-            documentUploadInput.addEventListener('change', function(event) {
+            documentUploadInput.addEventListener('change', function (event) {
                 for (let i = 0; i < event.target.files.length; i++) {
                     selectedFiles.push(event.target.files[i]);
                 }
                 renderPendingUploads();
-                event.target.value = ''; 
+                event.target.value = '';
             });
         }
-        
+
         if (pendingUploadsList) {
-            pendingUploadsList.addEventListener('click', function(event) {
+            pendingUploadsList.addEventListener('click', function (event) {
                 const deleteButton = event.target.closest('.delete-upload-button');
                 if (deleteButton) {
                     const index = parseInt(deleteButton.dataset.index, 10);
@@ -580,15 +780,16 @@
         }
 
         if (uploadDocumentsButton) {
-            uploadDocumentsButton.addEventListener('click', async function() {
+            uploadDocumentsButton.addEventListener('click', async function () {
                 if (selectedFiles.length === 0) {
                     showToast("No files selected for upload.");
                     return;
                 }
 
-                const boundaries = Array.from(document.querySelectorAll('input[name="boundary"]:checked')).map(cb => cb.value);
+                // Get dynamically selected boundaries for documents
+                const boundaries = Array.from(documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]:checked')).map(cb => cb.value);
                 if (boundaries.length === 0) {
-                    showToast("Please select at least one Planetary Boundary.");
+                    showToast("Please select at least one Planetary Boundary for analysis.");
                     return;
                 }
 
@@ -596,10 +797,10 @@
                     'Confirm Upload',
                     `Are you sure you want to upload ${selectedFiles.length} file(s) and analyze them for ${boundaries.length} selected boundaries?`,
                     'Upload',
-                    async function() {
+                    async function () {
                         const loadingOverlay = document.getElementById('loading-overlay');
                         loadingOverlay.classList.remove('hidden'); // Show overlay
-                        
+
                         const formData = new FormData();
                         selectedFiles.forEach(file => {
                             formData.append('documents', file);
@@ -620,7 +821,8 @@
                             if (response.ok) {
                                 showToast(data.message || "Documents uploaded successfully!", 'success');
                                 selectedFiles = []; // Clear files after successful upload
-                                document.querySelectorAll('input[name="boundary"]').forEach(checkbox => {
+                                // Uncheck all document boundary checkboxes
+                                documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]').forEach(checkbox => {
                                     checkbox.checked = false;
                                 });
                                 renderPendingUploads();
@@ -638,17 +840,33 @@
         }
 
         // Initialize pending uploads on page load
-        renderPendingUploads(); 
-        
-        // Add event listeners to boundary checkboxes
-        const boundaryCheckboxes = document.querySelectorAll('input[name="boundary"]');
-        boundaryCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateUploadButtonState);
-        });
+        renderPendingUploads();
 
-        // Initial state update for the upload button
-        updateUploadButtonState();
-        
+        // Update function for upload button state
+        function updateUploadButtonState() {
+            const uploadButton = document.getElementById('upload-documents-button');
+            const hasFiles = selectedFiles.length > 0;
+            const hasBoundaries = documentsPlanetaryBoundariesGrid.querySelectorAll('input[name="document_boundary"]:checked').length > 0;
+            const isDisabled = !(hasFiles && hasBoundaries);
+
+            if (uploadButton) {
+                uploadButton.disabled = isDisabled;
+
+                if (isDisabled) {
+                    uploadButton.classList.remove('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    uploadButton.classList.add('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    uploadButton.title = "Select PDFs and at least one boundary to enable upload.";
+                } else {
+                    uploadButton.classList.remove('bg-gray-400', 'text-gray-700', 'cursor-not-allowed', 'shadow-none', 'opacity-70');
+                    uploadButton.classList.add('bg-primary', 'hover:bg-blue-600', 'shadow-xl', 'shadow-primary/30', 'hover:scale-[1.02]', 'active:scale-[0.98]');
+                    uploadButton.removeAttribute('title');
+                }
+            }
+        }
+
+        // Call fetch and render for planetary boundaries
+        fetchAndRenderPlanetaryBoundaries();
+
         // --- Theme Selection Logic ---
         const themeRadios = document.querySelectorAll('input[name="theme-option"]');
 
@@ -667,37 +885,37 @@
         function initializeTheme() {
             const storedTheme = localStorage.getItem('theme') || 'system';
             const themeRadio = document.querySelector(`input[name="theme-option"][value="${storedTheme}"]`);
-            if(themeRadio) themeRadio.checked = true;
+            if (themeRadio) themeRadio.checked = true;
             applyTheme(storedTheme);
         }
 
         initializeTheme();
 
         themeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                applyTheme(this.value); 
+            radio.addEventListener('change', function () {
+                applyTheme(this.value);
                 localStorage.setItem('theme', this.value);
             });
         });
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             if ((localStorage.getItem('theme') || 'system') === 'system') {
-                applyTheme('system'); 
+                applyTheme('system');
             }
         });
 
         // --- Modal & Toast Close Listeners ---
         const errorToastClose = document.getElementById('error-toast-close');
         if (errorToastClose) {
-            errorToastClose.addEventListener('click', function() {
+            errorToastClose.addEventListener('click', function () {
                 clearTimeout(errorToastTimeout);
                 document.getElementById('error-toast').classList.add('hidden');
             });
         }
-        
+
         const modalCancelButton = document.getElementById('modalCancelButton');
-        if(modalCancelButton){
-            modalCancelButton.addEventListener('click', function() {
+        if (modalCancelButton) {
+            modalCancelButton.addEventListener('click', function () {
                 document.getElementById('confirmationModal').classList.add('hidden');
             });
         }
@@ -754,7 +972,7 @@
     function initializeLlmModel() {
         fetchAndRenderModels().then(() => {
             const storedLlmModel = localStorage.getItem('selectedLlmModel');
-            if(storedLlmModel) {
+            if (storedLlmModel) {
                 const llmRadioToSelect = document.querySelector(`input[name="llm-model"][value="${storedLlmModel}"]`);
                 if (llmRadioToSelect) {
                     llmRadioToSelect.checked = true;
@@ -764,7 +982,7 @@
     }
 
     // Initialize on DOMContentLoaded and add event listener
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         initializeLlmModel();
         document.body.addEventListener('change', handleLlmModelChange);
 
@@ -772,9 +990,11 @@
         const loadingOverlay = document.getElementById('loading-overlay');
 
         if (savePreferencesButton) {
-            savePreferencesButton.addEventListener('click', async function() {
+            savePreferencesButton.addEventListener('click', async function () {
                 const defaultLlm = localStorage.getItem('selectedLlmModel');
                 const interfaceTheme = localStorage.getItem('theme');
+                const userPlanetaryBoundaryInterests = Array.from(document.querySelectorAll('input[name="interest_boundary"]:checked')).map(cb => cb.dataset.boundaryId);
+
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
                 loadingOverlay.classList.remove('hidden'); // Show overlay
@@ -788,7 +1008,8 @@
                         },
                         body: JSON.stringify({
                             default_llm: defaultLlm,
-                            interface_theme: interfaceTheme
+                            interface_theme: interfaceTheme, 
+                            planetary_boundary_interests: userPlanetaryBoundaryInterests
                         })
                     });
 
@@ -812,44 +1033,43 @@
     });
 </script>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmationModal" aria-labelledby="modal-title" aria-modal="true" class="relative z-50 hidden" role="dialog">
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="p-6">
-                        <div class="flex items-start gap-4">
-                            <div
-                                class="flex-shrink-0 flex items-center justify-center size-10 rounded-full bg-red-500/10">
-                                <span class="material-symbols-outlined text-red-500">warning</span>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-white leading-6" id="modalTitle">Delete Item</h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-text-secondary leading-relaxed" id="modalBody">
-                                        Are you sure you want to delete this? This action cannot be undone.
-                                    </p>
-                                </div>
+<!-- Confirmation Modal -->
+<div id="confirmationModal" aria-labelledby="modal-title" aria-modal="true" class="relative z-50 hidden" role="dialog">
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div
+                class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div class="p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 flex items-center justify-center size-10 rounded-full bg-red-500/10">
+                            <span class="material-symbols-outlined text-red-500">warning</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white leading-6" id="modalTitle">Delete Item</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-text-secondary leading-relaxed" id="modalBody">
+                                    Are you sure you want to delete this? This action cannot be undone.
+                                </p>
                             </div>
                         </div>
-                        <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-                            <button id="modalConfirmButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto transition-colors"
-                                type="button">
-                                Confirm
-                            </button>
-                            <button id="modalCancelButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-transparent px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-[#3b4754] hover:bg-[#3b4754] sm:w-auto transition-colors"
-                                type="button">
-                                Cancel
-                            </button>
-                        </div>
+                    </div>
+                    <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
+                        <button id="modalConfirmButton"
+                            class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto transition-colors"
+                            type="button">
+                            Confirm
+                        </button>
+                        <button id="modalCancelButton"
+                            class="inline-flex w-full justify-center rounded-lg bg-transparent px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-[#3b4754] hover:bg-[#3b4754] sm:w-auto transition-colors"
+                            type="button">
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </html>
