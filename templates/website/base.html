@@ -295,7 +295,7 @@
                 <!-- Publications Section -->
                 <div class="flex-1 min-h-0 flex flex-col">
                     <div class="px-6 py-4">
-                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Latest Publications</h3>
+                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Planetary boundaries News</h3>
                     </div>
                     <div class="px-6 pb-4 flex-1 overflow-y-auto">
                         <ul id="latest-publications-list">
@@ -488,9 +488,18 @@
                     list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:underline">Configure RSS feeds in settings.</a></li>');
                 } else {
                     data.forEach(item => {
+                        const metaParts = [];
+                        if (item.date) {
+                            metaParts.push(item.date);
+                        }
+                        if (item.source) {
+                            metaParts.push(item.source);
+                        }
+                        const metaLine = metaParts.length ? `<p class="text-[11px] text-text-secondary mt-1">${metaParts.join(' · ')}</p>` : '';
                         const listItem = `
                             <li class="mb-4">
                                 <a href="${item.link}" target="_blank" class="text-sm text-primary hover:underline">${item.title}</a>
+                                ${metaLine}
                                 <p class="text-xs text-text-secondary">${item.description}</p>
                             </li>
                         `;
