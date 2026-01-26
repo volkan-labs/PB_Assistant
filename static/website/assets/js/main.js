@@ -25,13 +25,13 @@ $(document).ready(function () {
             header.removeClass('collapsed');
         }
 
-        header.on('click', function(e) {
+        header.on('click', function (e) {
             // Prevent event from propagating if a child (like the "New Folder" button or clear button) is clicked
             if ($(e.target).is('button') || $(e.target).closest('button').length) {
                 return;
             }
 
-            content.slideToggle(200, function() {
+            content.slideToggle(200, function () {
                 const nowCollapsed = !$(this).is(':visible');
                 localStorage.setItem(localStorageKey, nowCollapsed);
                 if (nowCollapsed) {
@@ -45,9 +45,9 @@ $(document).ready(function () {
         });
     }
 
-    $('textarea[data-autogrow="true"]').each(function() {
+    $('textarea[data-autogrow="true"]').each(function () {
         autoGrowTextarea(this);
-    }).on('input', function() {
+    }).on('input', function () {
         autoGrowTextarea(this);
     });
 
@@ -100,12 +100,12 @@ $(document).ready(function () {
     });
 
     // Modal cancel button
-    $('#modalCancelButton').click(function() {
+    $('#modalCancelButton').click(function () {
         $('#confirmationModal').addClass('hidden');
     });
 
     // Error toast close button
-    $('#error-toast-close').click(function() {
+    $('#error-toast-close').click(function () {
         clearTimeout(errorToastTimeout);
         $('#error-toast').addClass('hidden');
     });
@@ -113,7 +113,7 @@ $(document).ready(function () {
     // Set dynamic copyright year
     $('#copyright-year').text(new Date().getFullYear());
 
-    $('#closePanelIcon').click(function() {
+    $('#closePanelIcon').click(function () {
         hideContentPanel(selectedRowId);
     });
 
@@ -121,196 +121,212 @@ $(document).ready(function () {
     toggleSection('folder-header', 'folder-content', 'folderSectionState');
     toggleSection('searches-header', 'searches-content', 'searchesSectionState');
 
-        $('#newFolderButton').click(function() {
+    $('#newFolderButton').click(function () {
 
-            $('#newFolderModal').removeClass('hidden');
+        $('#newFolderModal').removeClass('hidden');
 
-            $('#newFolderName').val(''); // Clear input on open
+        $('#newFolderName').val(''); // Clear input on open
 
-            $('#newFolderError').text('').addClass('hidden'); // Clear and hide error
+        $('#newFolderError').text('').addClass('hidden'); // Clear and hide error
 
-            // Reset color picker to default or last selected color when modal opens
+        // Reset color picker to default
 
-            const defaultColor = $('#newFolderColor').val();
+        const defaultColor = '#6c757d';
 
-            $('#newFolderColorIndicator').css('background-color', defaultColor);
+        $('#newFolderColor').val(defaultColor);
 
-        });
+        $('#newFolderColorTrigger span').css('color', defaultColor);
 
-    
+        $('#newFolderColorPalette').addClass('hidden');
 
-        $('#cancelNewFolderButton').click(function() {
+    });
 
-            $('#newFolderModal').addClass('hidden');
+    $('#closeNewFolderModalButton').click(function () {
 
-            $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
+        $('#newFolderModal').addClass('hidden');
 
-        });
+        $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
 
-    
+        $('#newFolderColorPalette').addClass('hidden');
 
-        $('#newFolderName').on('input', function() {
+    });
 
-            $('#newFolderError').text('').addClass('hidden'); // Clear error when typing
+    $('#newFolderName').on('input', function () {
 
-        });
+        $('#newFolderError').text('').addClass('hidden'); // Clear error when typing
 
-    
+    });
 
-        $('#createFolderButton').click(function() {
+    $('#newFolderColorTrigger').on('click', function (e) {
 
-            const folderName = $('#newFolderName').val().trim();
+        e.stopPropagation();
 
-            const folderColor = $('#newFolderColor').val();
+        $('#newFolderColorPalette').toggleClass('hidden');
 
-            const newFolderErrorSpan = $('#newFolderError');
+    });
 
-    
+    $(document).on('click', '.color-swatch', function () {
 
-            newFolderErrorSpan.text('').addClass('hidden'); // Clear previous errors
+        const selectedColor = $(this).data('color');
 
-    
+        $('#newFolderColor').val(selectedColor);
 
-            if (!folderName) {
+        $('#newFolderColorTrigger span').css('color', selectedColor);
 
-                newFolderErrorSpan.text('Folder name cannot be empty.').removeClass('hidden');
+        $('#newFolderColorPalette').addClass('hidden');
 
-                return;
+    });
 
-            }
+    // Hide palette if clicking outside the modal content
 
-    
+    $(document).on('click', function (e) {
 
-            // Client-side check for duplicate folder names
+        if (!$('#newFolderColorPalette').hasClass('hidden') && !$(e.target).closest('.relative').length) {
 
-            $.ajax({
+            $('#newFolderColorPalette').addClass('hidden');
 
-                url: '/api/folders/',
+        }
 
-                type: 'GET',
+    });
 
-                success: function(existingFolders) {
+    $('#createFolderButton').click(function () {
 
-                    const isDuplicate = existingFolders.some(folder => folder.name.toLowerCase() === folderName.toLowerCase());
+        const folderName = $('#newFolderName').val().trim();
 
-                    if (isDuplicate) {
+        const folderColor = $('#newFolderColor').val();
 
-                        newFolderErrorSpan.text(`A folder with the name "${folderName}" already exists.`).removeClass('hidden');
+        const newFolderErrorSpan = $('#newFolderError');
 
-                        return;
+        newFolderErrorSpan.text('').addClass('hidden'); // Clear previous errors
 
-                    }
+        if (!folderName) {
 
-    
+            newFolderErrorSpan.text('Folder name cannot be empty.').removeClass('hidden');
 
-                    // If not a duplicate, proceed with creating the folder
+            return;
 
-                    $.ajax({
+        }
 
-                        url: '/api/folders/create/',
+        // Client-side check for duplicate folder names
 
-                        type: 'POST',
+        $.ajax({
 
-                        headers: { 'X-CSRFToken': csrftoken },
+            url: '/api/folders/',
 
-                        contentType: 'application/json',
+            type: 'GET',
 
-                        data: JSON.stringify({ name: folderName, color: folderColor }),
+            success: function (existingFolders) {
 
-                        success: function() {
+                const isDuplicate = existingFolders.some(folder => folder.name.toLowerCase() === folderName.toLowerCase());
 
-                            $('#newFolderModal').addClass('hidden');
+                if (isDuplicate) {
 
-                            $('#newFolderName').val('');
+                    newFolderErrorSpan.text(`A folder with the name "${folderName}" already exists.`).removeClass('hidden');
 
-                            newFolderErrorSpan.text('').addClass('hidden'); // Clear and hide error on success
+                    return;
 
-                            // Reset color picker to default after successful creation
+                }
 
-                            $('#newFolderColor').val('#6c757d');
+                // If not a duplicate, proceed with creating the folder
 
-                            $('#newFolderColorIndicator').css('background-color', '#6c757d');
+                $.ajax({
 
-                            loadPromptHistory();
+                    url: '/api/folders/create/',
 
-                        },
+                    type: 'POST',
 
-                        error: function(xhr) {
+                    headers: { 'X-CSRFToken': csrftoken },
 
-                            let errorMessage = 'Failed to create folder.';
+                    contentType: 'application/json',
 
-                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                    data: JSON.stringify({ name: folderName, color: folderColor }),
 
-                                errorMessage = xhr.responseJSON.error;
+                    success: function () {
 
-                                // Display server-side validation errors directly in the modal
+                        $('#newFolderModal').addClass('hidden');
 
-                                newFolderErrorSpan.text(errorMessage).removeClass('hidden');
+                        $('#newFolderName').val('');
 
-                            } else if (xhr.responseText) {
+                        newFolderErrorSpan.text('').addClass('hidden'); // Clear and hide error on success
 
-                                try {
+                        // Reset color picker to default after successful creation
 
-                                    const response = JSON.parse(xhr.responseText);
+                        const defaultColor = '#6c757d';
 
-                                    if (response.error) {
+                        $('#newFolderColor').val(defaultColor);
 
-                                        errorMessage = response.error;
+                        $('#newFolderColorTrigger span').css('color', defaultColor);
 
-                                        newFolderErrorSpan.text(errorMessage).removeClass('hidden');
+                        $('#newFolderColorPalette').addClass('hidden');
 
-                                    }
+                        loadPromptHistory();
 
-                                } catch (e) {
+                    },
 
-                                    // Fallback to global error message for unexpected formats
+                    error: function (xhr) {
 
-                                    showError(errorMessage);
+                        let errorMessage = 'Failed to create folder.';
+
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+
+                            errorMessage = xhr.responseJSON.error;
+
+                            // Display server-side validation errors directly in the modal
+
+                            newFolderErrorSpan.text(errorMessage).removeClass('hidden');
+
+                        } else if (xhr.responseText) {
+
+                            try {
+
+                                const response = JSON.parse(xhr.responseText);
+
+                                if (response.error) {
+
+                                    errorMessage = response.error;
+
+                                    newFolderErrorSpan.text(errorMessage).removeClass('hidden');
 
                                 }
 
-                            } else {
+                            } catch (e) {
 
-                                // Fallback to global error message for generic errors
+                                // Fallback to global error message for unexpected formats
 
                                 showError(errorMessage);
 
                             }
 
+                        } else {
+
+                            // Fallback to global error message for generic errors
+
+                            showError(errorMessage);
+
                         }
 
-                    });
+                    }
 
-                },
+                });
 
-                error: function() {
+            },
 
-                    // If fetching existing folders fails, use the global error toast
+            error: function () {
 
-                    showError('Failed to fetch existing folders for validation.');
+                // If fetching existing folders fails, use the global error toast
 
-                }
+                showError('Failed to fetch existing folders for validation.');
 
-            });
+            }
 
         });
 
-    // Handle opening the color picker when the indicator is clicked
-    $('#newFolderColorIndicator').on('click', function() {
-        $('#newFolderColor').trigger('click');
     });
-
-    // Handle color change from the hidden color input
-    $('#newFolderColor').on('input', function() {
-        $('#newFolderColorIndicator').css('background-color', $(this).val());
-    });
-
-
 
     // Sidebar filter: debounced input that filters folders and history items
     function debounce(fn, delay) {
         let timer = null;
-        return function(...args) {
+        return function (...args) {
             clearTimeout(timer);
             timer = setTimeout(() => fn.apply(this, args), delay);
         };
@@ -320,7 +336,7 @@ $(document).ready(function () {
         const q = query.trim().toLowerCase();
         // Reset when empty: show all and restore persisted open state
         if (!q) {
-            $('#folderList > .flex').show().each(function() {
+            $('#folderList > .flex').show().each(function () {
                 const f = $(this);
                 const content = f.find('.flex-col.gap-1.ml-4');
                 content.css('display', 'none');
@@ -337,20 +353,20 @@ $(document).ready(function () {
         $('#sidebarFilterClear').removeClass('hidden');
 
         // Filter top-level history items
-        $('#userPromptHistory').children().each(function() {
+        $('#userPromptHistory').children().each(function () {
             const el = $(this);
             const title = el.find('.truncate').first().text().toLowerCase();
             if (title.indexOf(q) !== -1) el.show(); else el.hide();
         });
 
         // Filter folders: show folder if folder name matches OR any child item matches
-        $('#folderList > .flex').each(function() {
+        $('#folderList > .flex').each(function () {
             const folder = $(this);
             const name = folder.find('.folder-name-text').text().toLowerCase();
             let matches = name.indexOf(q) !== -1;
 
             // Check items inside the folder
-            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function() {
+            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function () {
                 const t = $(this).text().toLowerCase();
                 if (t.indexOf(q) !== -1) matches = true;
             });
@@ -370,18 +386,17 @@ $(document).ready(function () {
         $('#emptyHistory').hide();
     }
 
-    const debouncedFilter = debounce(function() {
+    const debouncedFilter = debounce(function () {
         applySidebarFilter($('#sidebarFilter').val() || '');
     }, 180);
 
     $('#sidebarFilter').on('input', debouncedFilter);
-    $('#sidebarFilterClear').on('click', function() {
+    $('#sidebarFilterClear').on('click', function () {
         $('#sidebarFilter').val('');
         $(this).addClass('hidden');
         $('#sidebarFilter').trigger('input');
         $('#sidebarFilter').focus();
     });
-
 
     // Folder header toggles are bound after folder list is built (see loadPromptHistory)
 });
@@ -389,7 +404,7 @@ $(document).ready(function () {
 let selectedRowId = '';
 function display_contents(id, title, page_contents, page_contents_not_used_by_llm) {
 
-    if(selectedRowId != '') {
+    if (selectedRowId != '') {
         $("#row-" + selectedRowId).removeClass('bg-primary/20');
     }
     selectedRowId = id;
@@ -398,10 +413,10 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
 
     clearDocumentContent();
 
-    if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm) )) {
+    if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm))) {
 
         $('#documentContentsPanel').removeClass('hidden');
-        let formattedTitle = title.length > 80 ? `${title.substring(0,77)}...` : title;
+        let formattedTitle = title.length > 80 ? `${title.substring(0, 77)}...` : title;
         $('#documentContentsTitle').html(formattedTitle);
 
         $.each(page_contents, function (index, value) {
@@ -419,7 +434,7 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
 function hideContentPanel(id) {
     clearDocumentContent();
     $('#documentContentsPanel').addClass('hidden');
-    $('#row-'+id).removeClass("bg-primary/20");
+    $('#row-' + id).removeClass("bg-primary/20");
 }
 
 function clearDocumentContent() {
@@ -445,9 +460,8 @@ function showError(message) {
     // Reset and start animation
     loader.css('width', '100%');
     // Force a reflow to restart the animation
-    loader.get(0).offsetHeight; 
+    loader.get(0).offsetHeight;
     loader.css('width', '0%');
-
 
     errorToastTimeout = setTimeout(() => {
         toast.addClass('hidden');
@@ -460,7 +474,7 @@ function showConfirmationModal(title, body, confirmText, onConfirm) {
     $('#modalConfirmButton').text(confirmText);
 
     // Use .off() to prevent multiple handlers from being attached
-    $('#modalConfirmButton').off('click').on('click', function() {
+    $('#modalConfirmButton').off('click').on('click', function () {
         onConfirm();
         $('#confirmationModal').addClass('hidden');
     });
@@ -498,22 +512,21 @@ function moveHistoryItem(historyId, targetFolderId) {
         headers: { 'X-CSRFToken': csrftoken },
         contentType: 'application/json',
         data: JSON.stringify({ folder_id: targetFolderId }), // targetFolderId can be null
-        success: function() {
+        success: function () {
             loadPromptHistory();
         },
-        error: function() {
+        error: function () {
             showError('Failed to move item.');
         }
     });
 }
-
 
 function deletePrompt(promptId) {
     showConfirmationModal(
         'Delete Search Item',
         'Are you sure you want to delete this item? This action cannot be undone.',
         'Delete Item',
-        function() {
+        function () {
             const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
             $.ajax({
                 url: '/delete-history/' + promptId,
@@ -535,7 +548,6 @@ function deletePrompt(promptId) {
     );
 }
 
-
 function timeAgo(isoString) {
     const date = new Date(isoString);
     const now = new Date();
@@ -556,14 +568,13 @@ function timeAgo(isoString) {
     return `${years}y ago`;
 }
 
-
 function loadPromptHistory() {
     const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
-    
+
     $.when(
         $.getJSON('/api/folders/'),
         $.getJSON('/history/')
-    ).done(function(foldersResponse, historyResponse) {
+    ).done(function (foldersResponse, historyResponse) {
         // Remove any floating menus before rebuilding the list
         $('.item-actions-floating').remove();
         const folders = foldersResponse[0];
@@ -573,7 +584,7 @@ function loadPromptHistory() {
         $('#userPromptHistory').empty();
 
         const folderMap = new Map();
-        
+
         folders.forEach(folder => {
             console.log("Folder object received by frontend:", folder); // Debugging line
             const color = folder.color;
@@ -668,7 +679,7 @@ function loadPromptHistory() {
                         </div>
                     </div>
                     `;
-                
+
                 if (value.folder_id && folderMap.has(value.folder_id)) {
                     const folderContent = folderMap.get(value.folder_id).find('.flex-col.gap-1.ml-4');
                     // remove the empty indicator when adding items
@@ -701,15 +712,12 @@ function loadPromptHistory() {
             $('#clearButton').hide();
         }
 
-
-
-
         // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
-        $('#folderList').off('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text').on('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text', function(e) {
+        $('#folderList').off('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text').on('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text', function (e) {
             const clicked = $(this);
             const header = clicked.closest('.folder-header');
             const folderContent = header.next('.flex-col.gap-1.ml-4');
-            folderContent.slideToggle(200, function() {
+            folderContent.slideToggle(200, function () {
                 const isVisible = $(this).is(':visible');
                 const folderElement = $(this).closest('[id^="folder-"]');
                 const folderId = folderElement.attr('id');
@@ -727,7 +735,7 @@ function loadPromptHistory() {
 
         // Attach direct click handlers to folder delete buttons so stopPropagation runs
         // before any ancestor click handlers (prevents toggling when clicking delete)
-        $('#folderList').find('.folder-delete-btn').off('click').on('click', function(e) {
+        $('#folderList').find('.folder-delete-btn').off('click').on('click', function (e) {
             e.stopPropagation();
             const folderNumericId = $(this).data('folder-id');
             const folderName = $(this).closest('.folder-header').find('.folder-name-text').text();
@@ -735,18 +743,18 @@ function loadPromptHistory() {
                 'Delete Folder',
                 `Are you sure you want to delete the folder "${folderName}"? All items will be moved back to Recent Searches.`,
                 'Delete',
-                function() {
+                function () {
                     $.ajax({
                         url: `/api/folders/${folderNumericId}/delete/`,
                         type: 'DELETE',
                         headers: { 'X-CSRFToken': csrftoken },
-                        success: function() {
+                        success: function () {
                             // Ensure any saved open state for this folder is removed
                             removeOpenFolder('folder-' + folderNumericId);
                             // Reload lists so items reappear in recent history
                             loadPromptHistory();
                         },
-                        error: function() {
+                        error: function () {
                             showError('Failed to delete folder.');
                         }
                     });
@@ -757,21 +765,21 @@ function loadPromptHistory() {
         // Drag and drop functionality
         let draggedItem = null;
 
-        $('[draggable="true"]').on('dragstart', function(e) {
+        $('[draggable="true"]').on('dragstart', function (e) {
             draggedItem = this;
             e.originalEvent.dataTransfer.effectAllowed = 'move';
             e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
             $(this).addClass('opacity-50 border border-primary'); // Add visual feedback
-        }).on('dragend', function() {
+        }).on('dragend', function () {
             $(this).removeClass('opacity-50 border border-primary'); // Remove visual feedback
         });
 
-        $('#folderList > div').on('dragover', function(e) {
+        $('#folderList > div').on('dragover', function (e) {
             e.preventDefault();
             $(this).addClass('border-2 border-primary');
-        }).on('dragleave', function() {
+        }).on('dragleave', function () {
             $(this).removeClass('border-2 border-primary');
-        }).on('drop', function(e) {
+        }).on('drop', function (e) {
             e.preventDefault();
             $(this).removeClass('border-2 border-primary');
             if (draggedItem) {
@@ -782,15 +790,15 @@ function loadPromptHistory() {
         });
 
         // Drag and drop to move items back to Recent Searches
-        $('#userPromptHistory').on('dragover', function(e) {
+        $('#userPromptHistory').on('dragover', function (e) {
             e.preventDefault();
             // Only highlight if the dragged item is currently in a folder
             if (draggedItem && $(draggedItem).closest('[id^="folder-"]').length > 0) {
                 $(this).addClass('border-2 border-primary');
             }
-        }).on('dragleave', function() {
+        }).on('dragleave', function () {
             $(this).removeClass('border-2 border-primary');
-        }).on('drop', function(e) {
+        }).on('drop', function (e) {
             e.preventDefault();
             $(this).removeClass('border-2 border-primary');
             if (draggedItem) {
@@ -818,342 +826,255 @@ function loadPromptHistory() {
         // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
         setTimeout(restoreFolderState, 50);
 
-                // Action Menu Logic
-
-                let openMenuId = null; // Track which main menu is currently open
-
-                let openSubMenuId = null; // Track which submenu is currently open
-
-                const sidebarScrollArea = $('#sidebarScrollArea');
-                const menuItemSelectedClasses = 'bg-slate-100 dark:bg-slate-800/50';
-
-                function positionActionsMenu(itemId) {
-                    const menu = $(`#itemActionsMenu-${itemId}`);
-                    const button = $(`#itemActionsButton-${itemId}`);
-                    if (!menu.length || !button.length) return;
-
-                    const rect = button[0].getBoundingClientRect();
-                    const menuWidth = menu.outerWidth();
-                    const menuHeight = menu.outerHeight();
+        // Action Menu Logic
+
+        let openMenuId = null; // Track which main menu is currently open
+
+        let openSubMenuId = null; // Track which submenu is currently open
+
+        const sidebarScrollArea = $('#sidebarScrollArea');
+        const menuItemSelectedClasses = 'bg-slate-100 dark:bg-slate-800/50';
+
+        function positionActionsMenu(itemId) {
+            const menu = $(`#itemActionsMenu-${itemId}`);
+            const button = $(`#itemActionsButton-${itemId}`);
+            if (!menu.length || !button.length) return;
+
+            const rect = button[0].getBoundingClientRect();
+            const menuWidth = menu.outerWidth();
+            const menuHeight = menu.outerHeight();
+
+            let top = rect.top;
+            let left = rect.left;
+            const viewportW = window.innerWidth;
+            const viewportH = window.innerHeight;
+
+            if (left < 8) left = 8;
+            if (left + menuWidth > viewportW - 8) left = viewportW - menuWidth - 8;
+            if (top + menuHeight > viewportH - 8) top = rect.top - menuHeight - 6;
+            if (top < 8) top = 8;
+
+            menu.css({
+                position: 'fixed',
+                top: `${top}px`,
+                left: `${left}px`,
+                zIndex: 3000,
+            });
+        }
+
+        function floatActionsMenu(itemId) {
+            const menu = $(`#itemActionsMenu-${itemId}`);
+            if (!menu.length) return;
+            if (!menu.data('original-parent')) {
+                menu.data('original-parent', menu.parent());
+            }
+            if (!menu.hasClass('item-actions-floating')) {
+                $('body').append(menu);
+                menu.addClass('item-actions-floating');
+            }
+            positionActionsMenu(itemId);
+        }
+
+        function restoreActionsMenu(itemId) {
+            const menu = $(`#itemActionsMenu-${itemId}`);
+            if (!menu.length || !menu.hasClass('item-actions-floating')) return;
+            const originalParent = menu.data('original-parent');
+            if (originalParent && originalParent.length) {
+                originalParent.append(menu);
+            }
+            menu.removeClass('item-actions-floating').css({
+                position: '',
+                top: '',
+                left: '',
+                zIndex: '',
+            });
+        }
 
-                    let top = rect.top;
-                    let left = rect.left;
-                    const viewportW = window.innerWidth;
-                    const viewportH = window.innerHeight;
+        function closeOpenMenu() {
+            if (!openMenuId) return;
+            $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
+            $(`#itemActionsButton-${openMenuId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
+            $(`[data-history-id="${openMenuId}"]`).removeClass(menuItemSelectedClasses);
+            restoreActionsMenu(openMenuId);
+            if (openSubMenuId) {
+                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+                openSubMenuId = null;
+            }
+            openMenuId = null;
+        }
 
-                    if (left < 8) left = 8;
-                    if (left + menuWidth > viewportW - 8) left = viewportW - menuWidth - 8;
-                    if (top + menuHeight > viewportH - 8) top = rect.top - menuHeight - 6;
-                    if (top < 8) top = 8;
+        $(document).off('click.itemActions').on('click.itemActions', function (e) {
 
-                    menu.css({
-                        position: 'fixed',
-                        top: `${top}px`,
-                        left: `${left}px`,
-                        zIndex: 3000,
-                    });
-                }
+            // If a main menu is open and the click is outside that menu and its button, close it
 
-                function floatActionsMenu(itemId) {
-                    const menu = $(`#itemActionsMenu-${itemId}`);
-                    if (!menu.length) return;
-                    if (!menu.data('original-parent')) {
-                        menu.data('original-parent', menu.parent());
-                    }
-                    if (!menu.hasClass('item-actions-floating')) {
-                        $('body').append(menu);
-                        menu.addClass('item-actions-floating');
-                    }
-                    positionActionsMenu(itemId);
-                }
-
-                function restoreActionsMenu(itemId) {
-                    const menu = $(`#itemActionsMenu-${itemId}`);
-                    if (!menu.length || !menu.hasClass('item-actions-floating')) return;
-                    const originalParent = menu.data('original-parent');
-                    if (originalParent && originalParent.length) {
-                        originalParent.append(menu);
-                    }
-                    menu.removeClass('item-actions-floating').css({
-                        position: '',
-                        top: '',
-                        left: '',
-                        zIndex: '',
-                    });
-                }
+            if (openMenuId && !$(e.target).closest(`#itemActionsMenu-${openMenuId}`).length && !$(e.target).closest(`#itemActionsButton-${openMenuId}`).length) {
+                closeOpenMenu();
+            }
 
-                function closeOpenMenu() {
-                    if (!openMenuId) return;
-                    $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
-                    $(`#itemActionsButton-${openMenuId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-                    $(`[data-history-id="${openMenuId}"]`).removeClass(menuItemSelectedClasses);
-                    restoreActionsMenu(openMenuId);
-                    if (openSubMenuId) {
-                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-                        openSubMenuId = null;
-                    }
-                    openMenuId = null;
-                }
+        });
 
-        
+        $('[id^="itemActionsButton-"]').off('click.itemActionsButton').on('click.itemActionsButton', function (e) {
 
-                $(document).off('click.itemActions').on('click.itemActions', function(e) {
+            e.stopPropagation(); // Prevent document click from immediately closing
 
-                    // If a main menu is open and the click is outside that menu and its button, close it
+            const itemId = $(this).attr('id').split('-')[1];
 
-                    if (openMenuId && !$(e.target).closest(`#itemActionsMenu-${openMenuId}`).length && !$(e.target).closest(`#itemActionsButton-${openMenuId}`).length) {
-                        closeOpenMenu();
-                    }
+            const menu = $(`#itemActionsMenu-${itemId}`);
 
-                });
+            // Close other open main menus
 
-        
+            if (openMenuId && openMenuId !== itemId) {
+                closeOpenMenu();
+            }
 
-                $('[id^="itemActionsButton-"]').off('click.itemActionsButton').on('click.itemActionsButton', function(e) {
+            // Close any open submenu
 
-                    e.stopPropagation(); // Prevent document click from immediately closing
+            if (openSubMenuId) {
 
-                    const itemId = $(this).attr('id').split('-')[1];
+                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
 
-                    const menu = $(`#itemActionsMenu-${itemId}`);
+                openSubMenuId = null;
 
-        
+            }
 
-                    // Close other open main menus
+            menu.toggleClass('hidden');
 
-                    if (openMenuId && openMenuId !== itemId) {
-                        closeOpenMenu();
-                    }
+            if (menu.hasClass('hidden')) {
+                $(`#itemActionsButton-${itemId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
+                $(`[data-history-id="${itemId}"]`).removeClass(menuItemSelectedClasses);
+                restoreActionsMenu(itemId);
+                openMenuId = null;
+            } else {
+                $(`#itemActionsButton-${itemId}`).addClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
+                $(`[data-history-id="${itemId}"]`).addClass(menuItemSelectedClasses);
+                openMenuId = itemId;
+                floatActionsMenu(itemId);
+            }
 
-                    // Close any open submenu
+        });
 
-                    if (openSubMenuId) {
+        // Reposition the floating menu on scroll/resize
+        sidebarScrollArea.off('scroll.itemActions').on('scroll.itemActions', function () {
+            if (openMenuId) {
+                positionActionsMenu(openMenuId);
+            }
+        });
+        $(window).off('resize.itemActions').on('resize.itemActions', function () {
+            if (openMenuId) {
+                positionActionsMenu(openMenuId);
+            }
+        });
 
-                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+        $('[id^="moveToFolderOption-"]').off('click.moveToFolder').on('click.moveToFolder', function (e) {
 
-                        openSubMenuId = null;
+            // e.stopPropagation(); // Temporarily removed for debugging
 
-                    }
+            const itemId = $(this).attr('id').split('-')[1];
 
-        
+            const subMenu = $(`#folderMoveSubmenu-${itemId}`);
 
-                    menu.toggleClass('hidden');
+            // Close other open submenus if any
 
-                    if (menu.hasClass('hidden')) {
-                        $(`#itemActionsButton-${itemId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-                        $(`[data-history-id="${itemId}"]`).removeClass(menuItemSelectedClasses);
-                        restoreActionsMenu(itemId);
-                        openMenuId = null;
-                    } else {
-                        $(`#itemActionsButton-${itemId}`).addClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-                        $(`[data-history-id="${itemId}"]`).addClass(menuItemSelectedClasses);
-                        openMenuId = itemId;
-                        floatActionsMenu(itemId);
-                    }
+            if (openSubMenuId && openSubMenuId !== itemId) {
 
-                });
+                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
 
-                // Reposition the floating menu on scroll/resize
-                sidebarScrollArea.off('scroll.itemActions').on('scroll.itemActions', function() {
-                    if (openMenuId) {
-                        positionActionsMenu(openMenuId);
-                    }
-                });
-                $(window).off('resize.itemActions').on('resize.itemActions', function() {
-                    if (openMenuId) {
-                        positionActionsMenu(openMenuId);
-                    }
-                });
+            }
 
-        
+            subMenu.toggleClass('hidden');
 
-                        $('[id^="moveToFolderOption-"]').off('click.moveToFolder').on('click.moveToFolder', function(e) {
+            openSubMenuId = subMenu.hasClass('hidden') ? null : itemId;
 
-        
+            // Populate folders for this submenu if it's being opened
 
-                            // e.stopPropagation(); // Temporarily removed for debugging
+            if (!subMenu.hasClass('hidden')) {
 
-        
+                const availableFoldersContainer = $(`#availableFolders-${itemId}`);
 
-                            const itemId = $(this).attr('id').split('-')[1];
+                availableFoldersContainer.empty(); // Clear previous folders
 
-        
+                if (folders.length > 0) {
 
-                            const subMenu = $(`#folderMoveSubmenu-${itemId}`);
+                    folders.forEach(folder => {
 
-        
+                        const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}"><span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${folder.color};"></span>${folder.name}</button>`;
 
-                
+                        const $folderButton = $(folderButtonHtml); // Convert to jQuery object
 
-        
-
-                            // Close other open submenus if any
-
-        
-
-                            if (openSubMenuId && openSubMenuId !== itemId) {
-
-        
-
-                                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-
-        
-
-                            }
-
-        
-
-                
-
-        
-
-                            subMenu.toggleClass('hidden');
-
-        
-
-                            openSubMenuId = subMenu.hasClass('hidden') ? null : itemId;
-
-        
-
-                
-
-        
-
-                            // Populate folders for this submenu if it's being opened
-
-        
-
-                            if (!subMenu.hasClass('hidden')) { 
-
-        
-
-                                const availableFoldersContainer = $(`#availableFolders-${itemId}`);
-
-        
-
-                                availableFoldersContainer.empty(); // Clear previous folders
-
-        
-
-                
-
-        
-
-                                if (folders.length > 0) {
-
-        
-
-                                                            folders.forEach(folder => {
-
-        
-
-                                                                const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}">${folder.name}</button>`;
-
-        
-
-                                                                const $folderButton = $(folderButtonHtml); // Convert to jQuery object
-
-        
-
-                                    
-
-        
-
-                                                                $folderButton.on('click', function(e) {
-                                                                    e.stopPropagation();
-                                                                    console.log('Direct click on folder button:', $(this).data('folder-id'), $(this).text()); // Debugging
-                                                                    const targetFolderId = $(this).data('folder-id');
-                                                                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-                                                                    moveHistoryItem(itemId, targetFolderId);
-                                                                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-                                                                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-                                                                    restoreActionsMenu(itemId);
-                                                                    openMenuId = null;
-                                                                    openSubMenuId = null;
-                                                                });
-
-        
-
-                                                                availableFoldersContainer.append($folderButton);
-
-        
-
-                                                            });
-
-        
-
-                                } else {
-
-        
-
-                                    availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
-
-        
-
-                                }
-
-        
-
-                            }
-
-        
-
+                        $folderButton.on('click', function (e) {
+                            e.stopPropagation();
+                            console.log('Direct click on folder button:', $(this).data('folder-id'), $(this).text()); // Debugging
+                            const targetFolderId = $(this).data('folder-id');
+                            const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+                            moveHistoryItem(itemId, targetFolderId);
+                            $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+                            $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+                            restoreActionsMenu(itemId);
+                            openMenuId = null;
+                            openSubMenuId = null;
                         });
 
-        
+                        availableFoldersContainer.append($folderButton);
 
-                // Handle moving to a specific folder
+                    });
 
-                $('.move-to-folder-btn').off('click.moveItem').on('click.moveItem', function(e) {
-                    e.stopPropagation();
-                    const targetFolderId = $(this).data('folder-id');
-                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-                    moveHistoryItem(itemId, targetFolderId);
-                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-                    restoreActionsMenu(itemId);
-                    openMenuId = null;
-                    openSubMenuId = null;
-                });
+                } else {
 
-        
+                    availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
 
-                // Handle Create new folder button in menu
+                }
 
-                $('[id^="createNewFolderInMenu-"]').off('click.createNewFolder').on('click.createNewFolder', function(e) {
-                    e.stopPropagation();
-                    // Just open the new folder modal, the user can then create and manually move
-                    $('#newFolderModal').removeClass('hidden');
-                    // Close the actions menu
-                    const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
-                    $(`#itemActionsMenu-${itemId}`).addClass('hidden');
-                    $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
-                    restoreActionsMenu(itemId);
-                    openMenuId = null;
-                    openSubMenuId = null;
-                });
+            }
 
-        
+        });
 
-                // Handle Delete button in menu
+        // Handle moving to a specific folder
 
-                $('[id^="deleteItemButton-"]').off('click.deleteItem').on('click.deleteItem', function(e) {
-                    e.stopPropagation();
-                    const itemId = $(this).attr('id').split('-')[1];
-                    deletePrompt(itemId);
-                    $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
-                    restoreActionsMenu(itemId);
-                    // Close any open submenu
-                    if (openSubMenuId) {
-                        $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
-                        openSubMenuId = null;
-                    }
-                    openMenuId = null;
-                });
+        $('.move-to-folder-btn').off('click.moveItem').on('click.moveItem', function (e) {
+            e.stopPropagation();
+            const targetFolderId = $(this).data('folder-id');
+            const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+            moveHistoryItem(itemId, targetFolderId);
+            $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+            $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+            restoreActionsMenu(itemId);
+            openMenuId = null;
+            openSubMenuId = null;
+        });
 
-            });
+        // Handle Create new folder button in menu
+
+        $('[id^="createNewFolderInMenu-"]').off('click.createNewFolder').on('click.createNewFolder', function (e) {
+            e.stopPropagation();
+            // Just open the new folder modal, the user can then create and manually move
+            $('#newFolderModal').removeClass('hidden');
+            // Close the actions menu
+            const itemId = $(this).closest('[id^="itemActionsMenu-"]').data('history-id');
+            $(`#itemActionsMenu-${itemId}`).addClass('hidden');
+            $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+            restoreActionsMenu(itemId);
+            openMenuId = null;
+            openSubMenuId = null;
+        });
+
+        // Handle Delete button in menu
+
+        $('[id^="deleteItemButton-"]').off('click.deleteItem').on('click.deleteItem', function (e) {
+            e.stopPropagation();
+            const itemId = $(this).attr('id').split('-')[1];
+            deletePrompt(itemId);
+            $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
+            restoreActionsMenu(itemId);
+            // Close any open submenu
+            if (openSubMenuId) {
+                $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
+                openSubMenuId = null;
+            }
+            openMenuId = null;
+        });
+
+    });
 }
-
 
 function formatTitle(title) {
     if (title.length > 25) {
@@ -1164,7 +1085,7 @@ function formatTitle(title) {
 
 function saveFolderState() {
     const openFolders = [];
-    $('#folderList > .flex').each(function() {
+    $('#folderList > .flex').each(function () {
         const folderId = $(this).attr('id');
         const folderContent = $(this).find('.flex-col.gap-1.ml-4');
         if (folderContent.is(':visible')) {

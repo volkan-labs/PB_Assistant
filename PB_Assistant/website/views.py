@@ -226,6 +226,8 @@ def delete_folder(request, folder_id):
 
 from bs4 import BeautifulSoup
 from lxml import etree
+from email.utils import parsedate_to_datetime
+from datetime import datetime
 @require_http_methods(['PUT'])
 def move_history(request, history_id):
     user_id = 1  # Hardcoded for now
@@ -253,29 +255,80 @@ def move_history(request, history_id):
 @require_GET
 def rss_feed(request):
     try:
-        url = 'https://www.science.org/rss/news_current.xml'
-        response = requests.get(url, timeout=10)
+        url = 'https://news.mongabay.com/?feed=custom&s=&post_type=posts&topic=planetary-boundaries'
+        response = requests.get(
+            url,
+            timeout=10,
+            headers={
+                'User-Agent': 'PB_Assistant/1.0 (+https://example.com)',
+                'Accept': 'application/rss+xml, application/xml;q=0.9, */*;q=0.8',
+            },
+        )
         response.raise_for_status()
-        
-        root = etree.fromstring(response.content)
-        # Define default namespace
-        ns = {'d': 'http://purl.org/rss/1.0/'}
+
+        parser = etree.XMLParser(recover=True)
+        root = etree.fromstring(response.content, parser=parser)
+        ns_rdf = {'d': 'http://purl.org/rss/1.0/'}
+        ns = {
+            'content': 'http://purl.org/rss/1.0/modules/content/',
+            'dc': 'http://purl.org/dc/elements/1.1/',
+        }
         items = []
-        for item in root.findall('d:item', namespaces=ns)[:5]:
-            title = item.find('d:title', namespaces=ns).text
-            link = item.find('d:link', namespaces=ns).text
-            description = item.find('d:description', namespaces=ns).text
-            
-            soup = BeautifulSoup(description, 'html.parser')
-            plain_text_description = soup.get_text()
-            
-            if len(plain_text_description) > 100:
-                plain_text_description = plain_text_description[:100] + '...'
-            
+        def normalize_date(raw_date):
+            if not raw_date:
+                return None
+            raw_date = raw_date.strip()
+            parsed = None
+            try:
+                parsed = parsedate_to_datetime(raw_date)
+            except Exception:
+                parsed = None
+            if parsed is None:
+                try:
+                    parsed = datetime.fromisoformat(raw_date.replace('Z', '+00:00'))
+                except Exception:
+                    return None
+            return parsed.date().strftime('%b %d, %Y')
+
+        def clean_text(html_text):
+            if not html_text:
+                return ''
+            soup = BeautifulSoup(html_text, 'html.parser')
+            return ' '.join(soup.get_text().split())
+
+        if root.tag.endswith('RDF'):
+            item_nodes = root.findall('d:item', namespaces=ns_rdf)
+        else:
+            channel = root.find('channel') or root.find('.//channel')
+            item_nodes = channel.findall('item') if channel is not None else root.findall('.//item')
+
+        for item in item_nodes[:5]:
+            title = item.findtext('title') or item.findtext('d:title', namespaces=ns_rdf)
+            link = item.findtext('link') or item.findtext('d:link', namespaces=ns_rdf)
+            description = (
+                item.findtext('content:encoded', namespaces=ns)
+                or item.findtext('description')
+                or item.findtext('d:description', namespaces=ns_rdf)
+            )
+            date_raw = (
+                item.findtext('pubDate')
+                or item.findtext('dc:date', namespaces=ns)
+                or item.findtext('d:date', namespaces=ns_rdf)
+            )
+
+            plain_text_description = clean_text(description)
+            if len(plain_text_description) > 140:
+                plain_text_description = plain_text_description[:140].rstrip() + '...'
+
+            if not title or not link:
+                continue
+
             items.append({
                 'title': title,
                 'link': link,
                 'description': plain_text_description,
+                'date': normalize_date(date_raw),
+                'source': 'Mongabay',
             })
         return JsonResponse(items, safe=False)
     except Exception as e:
