@@ -2,6 +2,30 @@ $(document).ready(function () {
     // Make sure the overlay is hidden on page load
     $('#loading-overlay').addClass('hidden');
 
+    const userActionsButton = $('#userActionsButton');
+    const userActionsMenu = $('#userActionsMenu');
+
+    if (userActionsButton.length && userActionsMenu.length) {
+        userActionsButton.on('click', function (e) {
+            e.stopPropagation();
+            userActionsMenu.toggleClass('hidden');
+        });
+
+        userActionsMenu.on('click', function (e) {
+            e.stopPropagation();
+        });
+
+        $(document).on('click', function () {
+            userActionsMenu.addClass('hidden');
+        });
+
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape') {
+                userActionsMenu.addClass('hidden');
+            }
+        });
+    }
+
     function autoGrowTextarea(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = `${textarea.scrollHeight}px`;
