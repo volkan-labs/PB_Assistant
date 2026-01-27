@@ -146,7 +146,8 @@ def get_planetary_boundaries(request):
 
 @require_POST
 def upload_documents(request):
-    upload_dir = '/upload_test'
+    user_id = request.user.id if request.user.is_authenticated else 1
+    upload_dir = os.path.join('upload_test', str(user_id))
     os.makedirs(upload_dir, exist_ok=True)
 
     boundaries = request.POST.getlist('boundaries[]')
