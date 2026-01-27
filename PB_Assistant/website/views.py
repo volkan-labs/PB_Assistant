@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.conf import settings
 import json
 from django.shortcuts import render, redirect
+from django.db.models import Count
 
 from .services.databasehandler import DatabaseHandler
 from .services.articlerenderer import ArticleRenderer
@@ -207,7 +208,7 @@ def delete_document(request):
 @require_GET
 def get_folders(request):
     user_id = 1  # Hardcoded for now
-    folders = SearchFolder.objects.filter(user_id=user_id).values('id', 'name', 'color')
+    folders = SearchFolder.objects.filter(user_id=user_id).annotate(item_count=Count('searches')).values('id', 'name', 'color', 'item_count')
     return JsonResponse(list(folders), safe=False)
 
 @require_POST

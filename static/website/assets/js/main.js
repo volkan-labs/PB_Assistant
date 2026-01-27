@@ -585,6 +585,15 @@ function loadPromptHistory() {
 
         const folderMap = new Map();
 
+        // Update the "Folders" header with the total count
+        $('#folder-header h3').html(`
+            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>
+            Folders
+            <span class="ml-2 inline-flex items-center rounded-full bg-blue-100 px-1 py-0 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                ${folders.length}
+            </span>
+        `);
+
         folders.forEach(folder => {
             console.log("Folder object received by frontend:", folder); // Debugging line
             const color = folder.color;
