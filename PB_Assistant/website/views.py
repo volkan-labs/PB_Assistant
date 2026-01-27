@@ -170,6 +170,40 @@ def upload_documents(request):
         "saved_files": saved_files
     })
 
+@require_http_methods(['DELETE'])
+def delete_document(request):
+    try:
+        data = json.loads(request.body)
+        filename = data.get('filename')
+        
+        if not filename:
+            return JsonResponse({'error': 'Filename is required'}, status=400)
+
+        user_id = request.user.id if request.user.is_authenticated else 1
+        upload_dir = os.path.join('upload_test', str(user_id))
+        
+        # Sanitize filename to prevent directory traversal
+        if '..' in filename or filename.startswith('/'):
+            return JsonResponse({'error': 'Invalid filename'}, status=400)
+
+        filepath = os.path.join(upload_dir, filename)
+
+        if os.path.exists(filepath) and os.path.isfile(filepath):
+            # Security check: ensure the resolved path is within the user's upload directory
+            if os.path.realpath(filepath).startswith(os.path.realpath(upload_dir)):
+                os.remove(filepath)
+                return JsonResponse({'message': 'Document deleted successfully'}, status=200)
+            else:
+                return JsonResponse({'error': 'Permission denied'}, status=403)
+        else:
+            return JsonResponse({'error': 'File not found'}, status=404)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        logger.error(f"Error deleting document: {e}")
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
+
 @require_GET
 def get_folders(request):
     user_id = 1  # Hardcoded for now
@@ -252,6 +286,30 @@ def move_history(request, history_id):
         return JsonResponse({'error': 'Folder not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
+
+@require_GET
+def knowledge_library_view(request):
+    user_id = request.user.id if request.user.is_authenticated else 1
+    upload_dir = os.path.join('upload_test', str(user_id))
+
+    documents = []
+    if os.path.exists(upload_dir):
+        for filename in os.listdir(upload_dir):
+            filepath = os.path.join(upload_dir, filename)
+            if os.path.isfile(filepath):
+                documents.append({
+                    'name': filename,
+                    'size': os.path.getsize(filepath),
+                    'timestamp': datetime.fromtimestamp(os.path.getmtime(filepath))
+                })
+    
+    # Sort documents by timestamp, newest first
+    documents.sort(key=lambda x: x['timestamp'], reverse=True)
+
+    context = {
+        'documents': documents
+    }
+    return render(request, 'website/knowledge_library.html', context)
 
 @require_GET
 def rss_feed(request):
