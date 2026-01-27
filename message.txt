@@ -1,0 +1,5 @@
+The empty message container is already consistent in both cases.
+
+I have verified the `templates/website/knowledge_library.html` file, and both the initial render (via Django's `{% else %}` block) and the dynamic render (via JavaScript after deletion) use the exact same HTML structure and content for the "no documents" message. They also both share the `id="document-table-container"`.
+
+Therefore, the consistency you requested has already been implemented.
