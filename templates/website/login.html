@@ -25,12 +25,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#111418",
-                        "surface-highlight": "#283039",
-                        "text-secondary": "#9dabb9",
+                        "primary": "#5FA8A3",
+                        "background-light": "#F6F8FA",
+                        "background-dark": "#0D1117",
+                        "surface-dark": "#161B22",
+                        "surface-highlight": "#21262D",
+                        "text-secondary": "#57606A",
                     },
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
@@ -49,7 +49,7 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased font-display min-h-screen flex flex-col items-center justify-center relative selection:bg-primary/30">
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display min-h-screen flex flex-col items-center justify-center relative selection:bg-primary/30">
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-[#1a2333] via-[#0d1117] to-black opacity-80"></div>
         <div
@@ -69,17 +69,17 @@
             class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
         </div>
         <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-amber-500 peer-checked/light:dark:text-amber-400"
+            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-primary peer-checked/light:dark:text-primary"
             for="theme-light">
             <span class="material-symbols-outlined text-[20px]">light_mode</span>
         </label>
         <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-blue-600 peer-checked/dark:dark:text-blue-400"
+            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-primary peer-checked/dark:dark:text-primary"
             for="theme-dark">
             <span class="material-symbols-outlined text-[20px]">dark_mode</span>
         </label>
         <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-purple-600 peer-checked/system:dark:text-purple-400"
+            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-primary peer-checked/system:dark:text-primary"
             for="theme-system">
             <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
         </label>

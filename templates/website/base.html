@@ -25,12 +25,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#111418",
-                        "surface-highlight": "#283039",
-                        "text-secondary": "#9dabb9",
+                        "primary": "#5FA8A3",
+                        "background-light": "#F6F8FA",
+                        "background-dark": "#0D1117",
+                        "surface-dark": "#161B22",
+                        "surface-highlight": "#21262D",
+                        "text-secondary": "#57606A",
                     },
                     fontFamily: {
                         "display": ["Manrope", "sans-serif"]
@@ -69,15 +69,15 @@
 
         /* Custom scrollbar variables */
         :root {
-            --scrollbar-track-color: #f3f4f6; /* bg-gray-100 */
-            --scrollbar-thumb-color: #9ca3af; /* bg-gray-400 */
-            --scrollbar-thumb-hover-color: #6b7280; /* bg-gray-500 */
+            --scrollbar-track-color: #F6F8FA;
+            --scrollbar-thumb-color: #D0D7DE;
+            --scrollbar-thumb-hover-color: #FF9B51;
         }
 
         html.dark {
-            --scrollbar-track-color: #111418; /* surface-dark */
-            --scrollbar-thumb-color: #283039; /* surface-highlight */
-            --scrollbar-thumb-hover-color: #3b4754; /* a bit lighter than surface-highlight */
+            --scrollbar-track-color: #0D1117;
+            --scrollbar-thumb-color: #30363D;
+            --scrollbar-thumb-hover-color: #FF9B51;
         }
 
         /* Custom scrollbar for webkit browsers */
@@ -140,7 +140,7 @@
     <script src="{% static 'website/assets/js/main.js' %}?v={% now "U" %}" type="text/javascript"></script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-white flex" {% block body_attributes %}{% endblock %}>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 flex" {% block body_attributes %}{% endblock %}>
     <div class="flex w-full flex-row">
         <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0 relative z-[1000] transform">
             <!-- Sidebar Header / Branding -->
@@ -171,7 +171,7 @@
                         <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
                             <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
                         </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80" id="newFolderButton">New Folder</button>
+                        <button class="text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" id="newFolderButton">New Folder</button>
                     </div>
                     <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
                         <div class="flex flex-col gap-1" id="folderList">
@@ -191,7 +191,7 @@
                         <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
                             <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
                         </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80" id="clearButton">Clear</button>
+                        <button class="text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" id="clearButton">Clear</button>
                     </div>
                     <div id="searches-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
                         <div class="flex flex-col gap-1" id="userPromptHistory">
@@ -274,17 +274,17 @@
                         class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
                     </div>
                     <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-amber-500 peer-checked/light:dark:text-amber-400"
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-primary peer-checked/light:dark:text-primary"
                         for="theme-light">
                         <span class="material-symbols-outlined text-[20px]">light_mode</span>
                     </label>
                     <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-blue-600 peer-checked/dark:dark:text-blue-400"
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-primary peer-checked/dark:dark:text-primary"
                         for="theme-dark">
                         <span class="material-symbols-outlined text-[20px]">dark_mode</span>
                     </label>
                     <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-purple-600 peer-checked/system:dark:text-purple-400"
+                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-primary peer-checked/system:dark:text-primary"
                         for="theme-system">
                         <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
                     </label>
@@ -303,7 +303,7 @@
                             Recommended Papers
                         </h3>
                         <a href="{% url 'search' %}?filter=recommended"
-                           class="text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+                           class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors inline-flex items-center gap-1">
                             View all
                             <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                         </a>
@@ -369,7 +369,7 @@
             <!-- Footer Links -->
             <footer class="flex flex-col items-center justify-center py-6 text-[10px] text-slate-500 dark:text-slate-500">
                 <p>&copy; <span id="copyright-year">2025</span> Earth System Science AI Assistant. All rights reserved.</p>
-                <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ <a class="hover:text-primary transition-colors" href="https://www.pik-potsdam.de/en" target="_blank" rel="noopener noreferrer">The Potsdam Institute for Climate Impact Research (PIK)</a></p>
+                <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ <a class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors" href="https://www.pik-potsdam.de/en" target="_blank" rel="noopener noreferrer">The Potsdam Institute for Climate Impact Research (PIK)</a></p>
             </footer>
         </main>
 
@@ -401,7 +401,7 @@
                         <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
                             <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
                             <p class="font-medium">No new alerts.</p>
-                        <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-primary hover:underline">Set up alerts in settings.</a></p>
+                        <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Set up alerts in settings.</a></p>
                         </div>
                     </div>
                 </div>
@@ -571,7 +571,7 @@
                 }
                 if (data.length === 0) {
                     const settingsUrl = "{% url 'settings' %}";
-                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:underline">Configure RSS feeds in settings.</a></li>');
+                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">Configure RSS feeds in settings.</a></li>');
                 } else {
                     data.forEach(item => {
                         const metaParts = [];
@@ -584,7 +584,7 @@
                         const metaLine = metaParts.length ? `<p class="text-[11px] text-text-secondary mt-1">${metaParts.join(' · ')}</p>` : '';
                         const listItem = `
                             <li class="mb-4">
-                                <a href="${item.link}" target="_blank" class="text-sm text-primary hover:underline">${item.title}</a>
+                                <a href="${item.link}" target="_blank" class="text-sm text-slate-700 dark:text-slate-200 hover:text-primary transition-colors">${item.title}</a>
                                 ${metaLine}
                                 <p class="text-xs text-text-secondary">${item.description}</p>
                             </li>
