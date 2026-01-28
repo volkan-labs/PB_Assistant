@@ -1,0 +1,51 @@
+<div id="newFolderModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div
+                class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div class="p-6">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-white leading-6" id="newFolderModalTitle">New Folder</h3>
+                            <div class="mt-2 relative">
+                                <div class="relative flex items-center">
+                                    <button type="button" id="newFolderColorTrigger" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-colors text-slate-400 hover:bg-slate-700">
+                                        <span class="material-symbols-outlined text-lg" style="color: #6c757d;">palette</span>
+                                    </button>
+                                    <input type="text" id="newFolderName" class="w-full bg-surface-highlight rounded-lg border border-[#3b4754] pl-11 pr-4 py-2.5 text-white placeholder-text-secondary focus:ring-primary focus:border-primary" placeholder="Folder name">
+                                    <input type="hidden" id="newFolderColor" value="#6c757d">
+                                </div>
+                                <div id="newFolderColorPalette" class="absolute left-0 mt-2 z-10 w-full rounded-lg bg-surface-highlight border border-[#3b4754] p-2 hidden">
+                                    <div class="flex flex-wrap gap-1">
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f87171;" data-color="#f87171"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #fb923c;" data-color="#fb923c"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #facc15;" data-color="#facc15"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #4ade80;" data-color="#4ade80"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #38bdf8;" data-color="#38bdf8"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #818cf8;" data-color="#818cf8"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #c084fc;" data-color="#c084fc"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f472b6;" data-color="#f472b6"></div>
+                                        <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #6c757d;" data-color="#6c757d"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="newFolderError" class="text-red-400 text-sm mt-1 hidden"></span>
+                        </div>
+                        <!-- X button added here -->
+                        <button type="button" id="closeNewFolderModalButton" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
+                        <button id="createFolderButton"
+                            class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 sm:w-auto transition-colors"
+                            type="button">
+                            Create Folder
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

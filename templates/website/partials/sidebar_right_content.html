@@ -1,0 +1,29 @@
+<div class="flex flex-col flex-1 overflow-y-auto">
+    <!-- Publications Section -->
+    <div class="flex-1 min-h-0 flex flex-col">
+        <div class="px-6 py-4">
+            <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Planetary boundaries News</h3>
+        </div>
+        <div class="px-6 pb-4 flex-1 overflow-y-auto">
+            <ul id="latest-publications-list">
+            </ul>
+        </div>
+    </div>
+
+    <!-- Divider between publications and alerts -->
+    <div class="my-2 border-t-2 border-slate-300 dark:border-slate-700"></div>
+
+    <!-- Alerts Section -->
+    <div class="flex-grow-0 flex-shrink-0 basis-[30%] flex flex-col min-h-0">
+        <div class="px-6 py-4">
+            <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Alerts</h3>
+        </div>
+        <div class="px-6 pb-4 flex-1 overflow-y-auto">
+            <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
+                <p class="font-medium">No new alerts.</p>
+                <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-primary hover:text-primary/80 transition-colors">Set up alerts in settings.</a></p>
+            </div>
+        </div>
+    </div>
+</div>

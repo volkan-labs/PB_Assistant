@@ -10,8 +10,9 @@
     <title>Earth System Science AI Assistant</title>
     {% include "website/partials/head_common_scripts.html" %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-    {% include "website/partials/material_symbols.html" with include_fill_variant=False %}
+    {% include "website/partials/material_symbols.html" with include_fill_variant=True %}
     {% include "website/partials/tailwind_config.html" %}
+    {% include "website/partials/theme_init_script.html" %}
 
 </head>
 
@@ -319,7 +320,6 @@
         </div>
     </main>
 
-    {% include "website/partials/theme_init_script.html" %}
     {% include "website/partials/theme_toggle_script.html" %}
 </body>
 

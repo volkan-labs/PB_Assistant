@@ -8,9 +8,10 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Settings - Earth System Science AI Assistant</title>
-    {% include "website/partials/material_symbols.html" with include_fill_variant=False %}
+    {% include "website/partials/material_symbols.html" with include_fill_variant=True %}
     {% include "website/partials/head_common_scripts.html" %}
     {% include "website/partials/tailwind_config.html" %}
+    <link href="{% static 'website/assets/css/base.css' %}" rel="stylesheet" />
     <link href="{% static 'website/assets/css/settings.css' %}" rel="stylesheet" />
 </head>
 
@@ -115,12 +116,7 @@
                                         </div>
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                        <button id="upload-documents-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]"
-                                            disabled>
-                                            <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
-                                            Save Changes &amp; Upload
-                                        </button>
+                                        {% include "website/partials/button_primary_action.html" with button_id="upload-documents-button" icon="cloud_upload" label="Save Changes &amp; Upload" disabled=True %}
                                     </div>
                                 </div>
                             </div>
@@ -216,11 +212,7 @@
                                         </div>
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                        <button id="save-preferences-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]">
-                                            <span class="material-symbols-outlined text-[20px]">save</span>
-                                            Save Changes
-                                        </button>
+                                        {% include "website/partials/button_primary_action.html" with button_id="save-preferences-button" icon="save" label="Save Changes" %}
                                     </div>
                                 </div>
                             </div>
@@ -244,12 +236,7 @@
                                         </div>
                                     </div>
                                     <div class="pt-4 border-t border-[#e5e7eb] dark:border-[#2a3447]" align="right">
-                                        <button id="save-interests-button"
-                                            class="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all flex items-center gap-2 scale-100 hover:scale-[1.02] active:scale-[0.98]"
-                                            disabled>
-                                            <span class="material-symbols-outlined text-[20px]">save</span>
-                                            Save Interests
-                                        </button>
+                                        {% include "website/partials/button_primary_action.html" with button_id="save-interests-button" icon="save" label="Save Interests" disabled=True %}
                                     </div>
                                 </div>
                             </div>

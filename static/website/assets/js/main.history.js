@@ -1,543 +1,3 @@
-$(document).ready(function () {
-    // Make sure the overlay is hidden on page load
-    $('#loading-overlay').addClass('hidden');
-
-    const userActionsButton = $('#userActionsButton');
-    const userActionsMenu = $('#userActionsMenu');
-
-    if (userActionsButton.length && userActionsMenu.length) {
-        userActionsButton.on('click', function (e) {
-            e.stopPropagation();
-            userActionsMenu.toggleClass('hidden');
-        });
-
-        userActionsMenu.on('click', function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).on('click', function () {
-            userActionsMenu.addClass('hidden');
-        });
-
-        $(document).on('keydown', function (e) {
-            if (e.key === 'Escape') {
-                userActionsMenu.addClass('hidden');
-            }
-        });
-    }
-
-    function autoGrowTextarea(textarea) {
-        textarea.style.height = 'auto';
-        const styles = window.getComputedStyle(textarea);
-        const maxHeight = parseFloat(styles.maxHeight);
-        const targetHeight = Number.isFinite(maxHeight) ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight;
-        textarea.style.height = `${targetHeight}px`;
-
-        if (Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight + 1) {
-            textarea.classList.remove('no-scrollbar');
-        } else {
-            textarea.classList.add('no-scrollbar');
-        }
-    }
-
-    // Generic function to handle collapsible sections
-    function toggleSection(headerId, contentId, localStorageKey) {
-        const header = $(`#${headerId}`);
-        const content = $(`#${contentId}`);
-        const icon = header.find(`.section-toggle-icon`);
-
-        // Restore state from local storage on load
-        const isCollapsed = localStorage.getItem(localStorageKey) === 'true';
-        if (isCollapsed) {
-            content.hide();
-            icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
-            header.addClass('collapsed');
-        } else {
-            content.show();
-            icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
-            header.removeClass('collapsed');
-        }
-
-        header.on('click', function (e) {
-            // Prevent event from propagating if a child (like the "New Folder" button or clear button) is clicked
-            if ($(e.target).is('button') || $(e.target).closest('button').length) {
-                return;
-            }
-
-            content.slideToggle(200, function () {
-                const nowCollapsed = !$(this).is(':visible');
-                localStorage.setItem(localStorageKey, nowCollapsed);
-                if (nowCollapsed) {
-                    icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
-                    header.addClass('collapsed');
-                } else {
-                    icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
-                    header.removeClass('collapsed');
-                }
-            });
-        });
-    }
-
-    $('textarea[data-autogrow="true"]').each(function () {
-        autoGrowTextarea(this);
-    }).on('input', function () {
-        autoGrowTextarea(this);
-    });
-
-    $('#userPromptForm').submit(function (event) {
-        const userPrompt = $('textarea[name="user_prompt"]').val().trim();
-        if (!userPrompt) {
-            showError('Please enter a query before searching.');
-            event.preventDefault(); // Prevent form submission
-            return;
-        }
-
-        $('#loading-overlay-text').text('Loading, please wait...');
-        $('#loading-overlay').removeClass('hidden');
-
-        const searchButton = $('#searchButton');
-        const searchText = $('#searchText');
-        const searchSpinner = $('#searchSpinner');
-
-        // Show loading state on button
-        searchButton.prop('disabled', true);
-        searchText.addClass('hidden');
-        searchSpinner.removeClass('hidden');
-    });
-
-    $('#clearButton').click(function () {
-        showConfirmationModal(
-            'Clear All History',
-            'Are you sure you want to delete all search history? This action cannot be undone.',
-            'Delete All',
-            function () {
-                $.ajax({
-                    url: '/history/clear/',
-                    type: 'DELETE',
-                    headers: { 'X-CSRFToken': csrftoken },
-                    success: function () {
-                        window.location.href = "/";
-                    },
-                    error: function (xhr, status, error) {
-                        showError('Failed to clear history.');
-                    }
-                });
-            }
-        );
-    });
-
-    loadModels();
-
-    $('#newSearchButton').click(function () {
-        window.location.href = "/";
-    });
-
-    // Modal cancel button
-    $('#modalCancelButton').click(function () {
-        $('#confirmationModal').addClass('hidden');
-    });
-
-    // Error toast close button
-    $('#error-toast-close').click(function () {
-        clearTimeout(errorToastTimeout);
-        $('#error-toast').addClass('hidden');
-    });
-
-    // Set dynamic copyright year
-    $('#copyright-year').text(new Date().getFullYear());
-
-    $('#closePanelIcon').click(function () {
-        hideContentPanel(selectedRowId);
-    });
-
-    // Initialize collapsible sections
-    toggleSection('folder-header', 'folder-content', 'folderSectionState');
-    toggleSection('searches-header', 'searches-content', 'searchesSectionState');
-
-    $('#newFolderButton').click(function () {
-
-        $('#newFolderModal').removeClass('hidden');
-
-        $('#newFolderName').val(''); // Clear input on open
-
-        $('#newFolderError').text('').addClass('hidden'); // Clear and hide error
-
-        // Reset color picker to default
-
-        const defaultColor = '#6c757d';
-
-        $('#newFolderColor').val(defaultColor);
-
-        $('#newFolderColorTrigger span').css('color', defaultColor);
-
-        $('#newFolderColorPalette').addClass('hidden');
-
-    });
-
-    $('#closeNewFolderModalButton').click(function () {
-
-        $('#newFolderModal').addClass('hidden');
-
-        $('#newFolderError').text('').addClass('hidden'); // Clear and hide error on cancel
-
-        $('#newFolderColorPalette').addClass('hidden');
-
-    });
-
-    $('#newFolderName').on('input', function () {
-
-        $('#newFolderError').text('').addClass('hidden'); // Clear error when typing
-
-    });
-
-    $('#newFolderColorTrigger').on('click', function (e) {
-
-        e.stopPropagation();
-
-        $('#newFolderColorPalette').toggleClass('hidden');
-
-    });
-
-    $(document).on('click', '.color-swatch', function () {
-
-        const selectedColor = $(this).data('color');
-
-        $('#newFolderColor').val(selectedColor);
-
-        $('#newFolderColorTrigger span').css('color', selectedColor);
-
-        $('#newFolderColorPalette').addClass('hidden');
-
-    });
-
-    // Hide palette if clicking outside the modal content
-
-    $(document).on('click', function (e) {
-
-        if (!$('#newFolderColorPalette').hasClass('hidden') && !$(e.target).closest('.relative').length) {
-
-            $('#newFolderColorPalette').addClass('hidden');
-
-        }
-
-    });
-
-    $('#createFolderButton').click(function () {
-
-        const folderName = $('#newFolderName').val().trim();
-
-        const folderColor = $('#newFolderColor').val();
-
-        const newFolderErrorSpan = $('#newFolderError');
-
-        newFolderErrorSpan.text('').addClass('hidden'); // Clear previous errors
-
-        if (!folderName) {
-
-            newFolderErrorSpan.text('Folder name cannot be empty.').removeClass('hidden');
-
-            return;
-
-        }
-
-        // Client-side check for duplicate folder names
-
-        $.ajax({
-
-            url: '/api/folders/',
-
-            type: 'GET',
-
-            success: function (existingFolders) {
-
-                const isDuplicate = existingFolders.some(folder => folder.name.toLowerCase() === folderName.toLowerCase());
-
-                if (isDuplicate) {
-
-                    newFolderErrorSpan.text(`A folder with the name "${folderName}" already exists.`).removeClass('hidden');
-
-                    return;
-
-                }
-
-                // If not a duplicate, proceed with creating the folder
-
-                $.ajax({
-
-                    url: '/api/folders/create/',
-
-                    type: 'POST',
-
-                    headers: { 'X-CSRFToken': csrftoken },
-
-                    contentType: 'application/json',
-
-                    data: JSON.stringify({ name: folderName, color: folderColor }),
-
-                    success: function () {
-
-                        $('#newFolderModal').addClass('hidden');
-
-                        $('#newFolderName').val('');
-
-                        newFolderErrorSpan.text('').addClass('hidden'); // Clear and hide error on success
-
-                        // Reset color picker to default after successful creation
-
-                        const defaultColor = '#6c757d';
-
-                        $('#newFolderColor').val(defaultColor);
-
-                        $('#newFolderColorTrigger span').css('color', defaultColor);
-
-                        $('#newFolderColorPalette').addClass('hidden');
-
-                        loadPromptHistory();
-
-                    },
-
-                    error: function (xhr) {
-
-                        let errorMessage = 'Failed to create folder.';
-
-                        if (xhr.responseJSON && xhr.responseJSON.error) {
-
-                            errorMessage = xhr.responseJSON.error;
-
-                            // Display server-side validation errors directly in the modal
-
-                            newFolderErrorSpan.text(errorMessage).removeClass('hidden');
-
-                        } else if (xhr.responseText) {
-
-                            try {
-
-                                const response = JSON.parse(xhr.responseText);
-
-                                if (response.error) {
-
-                                    errorMessage = response.error;
-
-                                    newFolderErrorSpan.text(errorMessage).removeClass('hidden');
-
-                                }
-
-                            } catch (e) {
-
-                                // Fallback to global error message for unexpected formats
-
-                                showError(errorMessage);
-
-                            }
-
-                        } else {
-
-                            // Fallback to global error message for generic errors
-
-                            showError(errorMessage);
-
-                        }
-
-                    }
-
-                });
-
-            },
-
-            error: function () {
-
-                // If fetching existing folders fails, use the global error toast
-
-                showError('Failed to fetch existing folders for validation.');
-
-            }
-
-        });
-
-    });
-
-    // Sidebar filter: debounced input that filters folders and history items
-    function debounce(fn, delay) {
-        let timer = null;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-    }
-
-    function applySidebarFilter(query) {
-        const q = query.trim().toLowerCase();
-        // Reset when empty: show all and restore persisted open state
-        if (!q) {
-            $('#folderList > .flex').show().each(function () {
-                const f = $(this);
-                const content = f.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'none');
-                f.find('.section-toggle-icon').removeClass('rotate-90');
-            });
-            $('#userPromptHistory').children().show();
-            // restore the open folders the user had before filtering
-            setTimeout(restoreFolderState, 50);
-            $('#sidebarFilterClear').addClass('hidden');
-            return;
-        }
-
-        // Show clear button
-        $('#sidebarFilterClear').removeClass('hidden');
-
-        // Filter top-level history items
-        $('#userPromptHistory').children().each(function () {
-            const el = $(this);
-            const title = el.find('.truncate').first().text().toLowerCase();
-            if (title.indexOf(q) !== -1) el.show(); else el.hide();
-        });
-
-        // Filter folders: show folder if folder name matches OR any child item matches
-        $('#folderList > .flex').each(function () {
-            const folder = $(this);
-            const name = folder.find('.folder-name-text').text().toLowerCase();
-            let matches = name.indexOf(q) !== -1;
-
-            // Check items inside the folder
-            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function () {
-                const t = $(this).text().toLowerCase();
-                if (t.indexOf(q) !== -1) matches = true;
-            });
-
-            if (matches) {
-                folder.show();
-                // expand folder to reveal matching items
-                const content = folder.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'flex');
-                folder.find('.section-toggle-icon').addClass('rotate-90');
-            } else {
-                folder.hide();
-            }
-        });
-
-        // Hide empty message while filtering
-        $('#emptyHistory').hide();
-    }
-
-    const debouncedFilter = debounce(function () {
-        applySidebarFilter($('#sidebarFilter').val() || '');
-    }, 180);
-
-    $('#sidebarFilter').on('input', debouncedFilter);
-    $('#sidebarFilterClear').on('click', function () {
-        $('#sidebarFilter').val('');
-        $(this).addClass('hidden');
-        $('#sidebarFilter').trigger('input');
-        $('#sidebarFilter').focus();
-    });
-
-    // Folder header toggles are bound after folder list is built (see loadPromptHistory)
-});
-
-let selectedRowId = '';
-function display_contents(id, title, page_contents, page_contents_not_used_by_llm) {
-
-    if (selectedRowId != '') {
-        $("#row-" + selectedRowId).removeClass('bg-primary/20');
-    }
-    selectedRowId = id;
-
-    $("#row-" + id).addClass('bg-primary/20');
-
-    clearDocumentContent();
-
-    if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm))) {
-
-        $('#documentContentsPanel').removeClass('hidden');
-        let formattedTitle = title.length > 80 ? `${title.substring(0, 77)}...` : title;
-        $('#documentContentsTitle').html(formattedTitle);
-
-        $.each(page_contents, function (index, value) {
-            $('#documentContents').append(`<p><strong>... ${value} ...</strong></p>`)
-        });
-        $.each(page_contents_not_used_by_llm, function (index, value) {
-            $('#documentContents').append(`<p>... ${value} ...</p>`)
-        });
-
-    } else {
-        hideContentPanel(id);
-    }
-}
-
-function hideContentPanel(id) {
-    clearDocumentContent();
-    $('#documentContentsPanel').addClass('hidden');
-    $('#row-' + id).removeClass("bg-primary/20");
-}
-
-function clearDocumentContent() {
-    $('#documentContents').empty();
-    $('#documentContentsTitle').empty();
-}
-
-$(window).on('load', function () {
-    loadPromptHistory();
-});
-
-let errorToastTimeout; // Global variable for the timeout
-
-function showError(message) {
-    clearTimeout(errorToastTimeout); // Clear any existing timeouts
-
-    const toast = $('#error-toast');
-    const loader = $('#error-toast-loader');
-
-    $('#error-toast-message').text(message);
-    toast.removeClass('hidden');
-
-    // Reset and start animation
-    loader.css('width', '100%');
-    // Force a reflow to restart the animation
-    loader.get(0).offsetHeight;
-    loader.css('width', '0%');
-
-    errorToastTimeout = setTimeout(() => {
-        toast.addClass('hidden');
-    }, 5000);
-}
-
-function showConfirmationModal(title, body, confirmText, onConfirm) {
-    $('#modalTitle').text(title);
-    $('#modalBody').text(body);
-    $('#modalConfirmButton').text(confirmText);
-
-    // Use .off() to prevent multiple handlers from being attached
-    $('#modalConfirmButton').off('click').on('click', function () {
-        onConfirm();
-        $('#confirmationModal').addClass('hidden');
-    });
-
-    $('#confirmationModal').removeClass('hidden');
-}
-
-async function loadModels() {
-    const ollamaModelsDropdown = $('#ollamaModels');
-    ollamaModelsDropdown.html('<option>Loading models…</option>');
-    ollamaModelsDropdown.prop('disabled', true);
-
-    try {
-        const result = await fetch('/api/ollama/models/');
-        const data = await result.json();
-        if (!result.ok) throw new Error(data.error || 'Failed to fetch models');
-
-        const availableModels = data.models || [];
-        if (availableModels.length === 0) {
-            showError('No models found. Is Ollama running? Try `ollama serve` and `ollama pull <model>`.');
-            return;
-        }
-        ollamaModelsDropdown.html(availableModels.map(n => `<option value="${n}">${n}</option>`).join(''));
-        ollamaModelsDropdown.prop('disabled', false); // important: enabled so it gets submitted
-    } catch (e) {
-        ollamaModelsDropdown.html('<option value="">Error loading models</option>');
-        showError('Could not reach Ollama. Check your Docker compose and OLLAMA_BASE_URL.');
-    }
-}
-
 function moveHistoryItem(historyId, targetFolderId) {
     $.ajax({
         url: `/api/history/${historyId}/move/`,
@@ -581,26 +41,6 @@ function deletePrompt(promptId) {
     );
 }
 
-function timeAgo(isoString) {
-    const date = new Date(isoString);
-    const now = new Date();
-    const seconds = Math.round((now - date) / 1000);
-    const minutes = Math.round(seconds / 60);
-    const hours = Math.round(minutes / 60);
-    const days = Math.round(hours / 24);
-    const weeks = Math.round(days / 7);
-    const months = Math.round(days / 30.44);
-    const years = Math.round(days / 365.25);
-
-    if (seconds < 60) return `Just now`;
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    if (weeks < 5) return `${weeks}w ago`;
-    if (months < 12) return `${months}mo ago`;
-    return `${years}y ago`;
-}
-
 function loadPromptHistory() {
     const activeHistoryId = parseInt($('body').attr('data-history-id'), 10);
 
@@ -618,27 +58,16 @@ function loadPromptHistory() {
 
         const folderMap = new Map();
 
-        // Update the "Folders" header with the total count
-        $('#folder-header h3').html(`
-            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>
-            Folders
-            <span class="ml-2 inline-flex items-center rounded-full bg-blue-100 px-1 py-0 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                ${folders.length}
-            </span>
-        `);
-
         folders.forEach(folder => {
-            console.log("Folder object received by frontend:", folder); // Debugging line
-            const color = folder.color;
-            folderMap.set(folder.id, $(
-                `<div class="flex flex-col gap-1 rounded-lg" id="folder-${folder.id}">
-                    <div class="flex items-center justify-between px-2 group folder-header rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50">
-                        <h4 class="text-sm font-medium text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                            <span class="material-symbols-outlined section-toggle-icon text-slate-400 text-lg cursor-pointer">chevron_right</span>
-                            <span class="w-3 h-3 rounded-full mr-0 shrink-0" style="background-color: ${color};"></span>
-                            <span class="folder-name-text truncate cursor-pointer">${folder.name}</span>
-                        </h4>
-                        <div class="flex items-center gap-2">
+            folderMap.set(folder.id, $(`
+                <div class="flex flex-col">
+                    <div class="folder-header flex items-center justify-between gap-2 pl-2 pr-1 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer" id="folder-${folder.id}">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${folder.color};"></span>
+                            <span class="folder-name-text text-sm font-medium text-slate-600 dark:text-slate-300 truncate">${folder.name}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
                             <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-opacity transition-colors focus:outline-none">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                             </button>
@@ -759,67 +188,37 @@ function loadPromptHistory() {
             const folderContent = header.next('.flex-col.gap-1.ml-4');
             folderContent.slideToggle(200, function () {
                 const isVisible = $(this).is(':visible');
-                const folderElement = $(this).closest('[id^="folder-"]');
+                const folderElement = header;
                 const folderId = folderElement.attr('id');
                 const icon = header.find('.section-toggle-icon');
-
                 if (isVisible) {
-                    icon.addClass('rotate-90'); // Expanded state
+                    icon.addClass('rotate-90');
                     addOpenFolder(folderId);
                 } else {
-                    icon.removeClass('rotate-90'); // Collapsed state
+                    icon.removeClass('rotate-90');
                     removeOpenFolder(folderId);
                 }
             });
         });
 
-        // Attach direct click handlers to folder delete buttons so stopPropagation runs
-        // before any ancestor click handlers (prevents toggling when clicking delete)
-        $('#folderList').find('.folder-delete-btn').off('click').on('click', function (e) {
-            e.stopPropagation();
-            const folderNumericId = $(this).data('folder-id');
-            const folderName = $(this).closest('.folder-header').find('.folder-name-text').text();
-            showConfirmationModal(
-                'Delete Folder',
-                `Are you sure you want to delete the folder "${folderName}"? All items will be moved back to Recent Searches.`,
-                'Delete',
-                function () {
-                    $.ajax({
-                        url: `/api/folders/${folderNumericId}/delete/`,
-                        type: 'DELETE',
-                        headers: { 'X-CSRFToken': csrftoken },
-                        success: function () {
-                            // Ensure any saved open state for this folder is removed
-                            removeOpenFolder('folder-' + folderNumericId);
-                            // Reload lists so items reappear in recent history
-                            loadPromptHistory();
-                        },
-                        error: function () {
-                            showError('Failed to delete folder.');
-                        }
-                    });
-                }
-            );
-        });
-
-        // Drag and drop functionality
+        // Enable drag and drop of history items to folders
         let draggedItem = null;
 
-        $('[draggable="true"]').on('dragstart', function (e) {
+        $('#userPromptHistory, #folderList').off('dragstart', '[data-history-id]').on('dragstart', '[data-history-id]', function (e) {
             draggedItem = this;
-            e.originalEvent.dataTransfer.effectAllowed = 'move';
-            e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
-            $(this).addClass('opacity-50 border border-primary'); // Add visual feedback
-        }).on('dragend', function () {
-            $(this).removeClass('opacity-50 border border-primary'); // Remove visual feedback
+            $(this).addClass('opacity-50');
+            e.originalEvent.dataTransfer.setData('text/plain', $(this).data('history-id'));
+        }).off('dragend', '[data-history-id]').on('dragend', '[data-history-id]', function () {
+            $(this).removeClass('opacity-50');
+            draggedItem = null;
         });
 
-        $('#folderList > div').on('dragover', function (e) {
+        $('.folder-header').off('dragover').on('dragover', function (e) {
             e.preventDefault();
             $(this).addClass('border-2 border-primary');
-        }).on('dragleave', function () {
+        }).off('dragleave').on('dragleave', function () {
             $(this).removeClass('border-2 border-primary');
-        }).on('drop', function (e) {
+        }).off('drop').on('drop', function (e) {
             e.preventDefault();
             $(this).removeClass('border-2 border-primary');
             if (draggedItem) {
@@ -830,15 +229,15 @@ function loadPromptHistory() {
         });
 
         // Drag and drop to move items back to Recent Searches
-        $('#userPromptHistory').on('dragover', function (e) {
+        $('#userPromptHistory').off('dragover').on('dragover', function (e) {
             e.preventDefault();
             // Only highlight if the dragged item is currently in a folder
             if (draggedItem && $(draggedItem).closest('[id^="folder-"]').length > 0) {
                 $(this).addClass('border-2 border-primary');
             }
-        }).on('dragleave', function () {
+        }).off('dragleave').on('dragleave', function () {
             $(this).removeClass('border-2 border-primary');
-        }).on('drop', function (e) {
+        }).off('drop').on('drop', function (e) {
             e.preventDefault();
             $(this).removeClass('border-2 border-primary');
             if (draggedItem) {
@@ -856,9 +255,9 @@ function loadPromptHistory() {
             const parentFolderContent = activeItem.closest('.flex-col.gap-1.ml-4');
             if (parentFolderContent.length > 0) {
                 parentFolderContent.css('display', 'flex');
-                const parentFolder = parentFolderContent.parent();
-                const leftIcon = parentFolder.find('.section-toggle-icon');
-                const rightIcon = parentFolder.find('.folder-delete-btn .material-symbols-outlined');
+                const folderHeader = parentFolderContent.prev('.folder-header');
+                const leftIcon = folderHeader.find('.section-toggle-icon');
+                const rightIcon = folderHeader.find('.folder-delete-btn .material-symbols-outlined');
                 leftIcon.text('expand_less'); // show expanded state for expand icon
                 rightIcon.text('delete'); // ensure delete icon remains delete
             }
@@ -1185,3 +584,7 @@ function restoreFolderState() {
 }
 
 // removed global folder-element click handler to avoid a large clickable area; toggles are delegated in `loadPromptHistory`
+
+$(window).on('load', function () {
+    loadPromptHistory();
+});

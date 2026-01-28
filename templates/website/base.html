@@ -19,7 +19,10 @@
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     </script>
 
-    <script src="{% static 'website/assets/js/main.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.utils.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.models.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.history.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.ui.js' %}?v={% now "U" %}" type="text/javascript"></script>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 flex" {% block body_attributes %}{% endblock %}>
@@ -35,89 +38,7 @@
             
             {% block new_search_button_area %}{% endblock %}
             
-            <!-- Sidebar Content -->
-            <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
-                
-                <!-- Sidebar Filter -->
-                <div class="mb-3 px-2 pt-2">
-                    <div class="relative">
-                        <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-                        <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Section: Folders -->
-                <div class="mb-4">
-                    <div id="folder-header" class="px-2 flex items-center justify-between cursor-pointer group">
-                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
-                        </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="newFolderButton">New Folder</button>
-                    </div>
-                    <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
-                        <div class="flex flex-col gap-1" id="folderList">
-                            <!-- Folder items will be injected here by JavaScript -->
-                        </div>
-                        <div id="emptyFolders" class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400" style="display: none;">
-                            <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">folder_open</span>
-                            <p class="font-medium">No folders created yet.</p>
-                            <p class="text-xs mt-1">Create a folder to organize your searches.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section: History -->
-                <div>
-                    <div id="searches-header" class="px-2 flex items-center justify-between cursor-pointer group">
-                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
-                        </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="clearButton">Clear</button>
-                    </div>
-                    <div id="searches-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
-                        <div class="flex flex-col gap-1" id="userPromptHistory">
-                            <!-- History items will be injected here by JavaScript -->
-                        </div>
-                        <div id="emptyHistory" class="flex flex-col items-center justify-center p-4 text-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20" style="display: none;">
-                            <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-2">history_toggle_off</span>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">No recent searches yet.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Section: user profile -->
-            <div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark">
-                <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
-                    <div class="relative">
-                        <img alt="User Avatar Profile Picture"
-                            class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
-                    </div>
-                    <div class="flex flex-1 flex-col overflow-hidden">
-                        <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
-                    </div>
-                    <div class="relative">
-                        <button id="userActionsButton" aria-label="User actions"
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none">
-                            <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                        </button>
-                        <div id="userActionsMenu"
-                            class="absolute left-0 bottom-full mb-2 w-44 origin-bottom-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-[2000] hidden">
-                            <a href="{% url 'settings' %}#preferences"
-                                class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">settings</span>
-                                Settings
-                            </a>
-                            <button
-                                class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">logout</span>
-                                Sign Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include "website/partials/sidebar_left_content.html" %}
         </aside>
         <!-- Main Content Area -->
         <main class="flex flex-1 flex-col relative h-full">
@@ -227,38 +148,7 @@
         </main>
 
         <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
-            
-            <div class="flex flex-col flex-1 overflow-y-auto">
-
-
-                <!-- Publications Section -->
-                <div class="flex-1 min-h-0 flex flex-col">
-                    <div class="px-6 py-4">
-                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Planetary boundaries News</h3>
-                    </div>
-                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
-                        <ul id="latest-publications-list">
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Divider between publications and alerts -->
-                <div class="my-2 border-t-2 border-slate-300 dark:border-slate-700"></div>
-
-                <!-- Alerts Section -->
-                <div class="flex-grow-0 flex-shrink-0 basis-[30%] flex flex-col min-h-0">
-                    <div class="px-6 py-4">
-                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Alerts</h3>
-                    </div>
-                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
-                        <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
-                            <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
-                            <p class="font-medium">No new alerts.</p>
-                        <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-primary hover:text-primary/80 transition-colors">Set up alerts in settings.</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include "website/partials/sidebar_right_content.html" %}
         </aside>
     </div>
 
@@ -266,57 +156,7 @@
     {% include "website/partials/confirmation_modal.html" with modal_class="fixed inset-0 z-[4000] hidden" %}
 
     <!-- New Folder Modal -->
-    <div id="newFolderModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="p-6">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-white leading-6" id="newFolderModalTitle">New Folder</h3>
-                                <div class="mt-2 relative">
-                                    <div class="relative flex items-center">
-                                        <button type="button" id="newFolderColorTrigger" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-colors text-slate-400 hover:bg-slate-700">
-                                            <span class="material-symbols-outlined text-lg" style="color: #6c757d;">palette</span>
-                                        </button>
-                                        <input type="text" id="newFolderName" class="w-full bg-surface-highlight rounded-lg border border-[#3b4754] pl-11 pr-4 py-2.5 text-white placeholder-text-secondary focus:ring-primary focus:border-primary" placeholder="Folder name">
-                                        <input type="hidden" id="newFolderColor" value="#6c757d">
-                                    </div>
-                                    <div id="newFolderColorPalette" class="absolute left-0 mt-2 z-10 w-full rounded-lg bg-surface-highlight border border-[#3b4754] p-2 hidden">
-                                        <div class="flex flex-wrap gap-1">
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f87171;" data-color="#f87171"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #fb923c;" data-color="#fb923c"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #facc15;" data-color="#facc15"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #4ade80;" data-color="#4ade80"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #38bdf8;" data-color="#38bdf8"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #818cf8;" data-color="#818cf8"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #c084fc;" data-color="#c084fc"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f472b6;" data-color="#f472b6"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #6c757d;" data-color="#6c757d"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span id="newFolderError" class="text-red-400 text-sm mt-1 hidden"></span>
-                            </div>
-                            <!-- X button added here -->
-                            <button type="button" id="closeNewFolderModalButton" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
-                                <span class="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-                            <button id="createFolderButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 sm:w-auto transition-colors"
-                                type="button">
-                                Create Folder
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include "website/partials/new_folder_modal.html" %}
                     </div>
                 </div>
             </div>

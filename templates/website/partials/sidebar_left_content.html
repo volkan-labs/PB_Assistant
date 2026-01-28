@@ -1,0 +1,82 @@
+<!-- Sidebar Content -->
+<div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
+    <!-- Sidebar Filter -->
+    <div class="mb-3 px-2 pt-2">
+        <div class="relative">
+            <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
+            <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+    </div>
+    <!-- Section: Folders -->
+    <div class="mb-4">
+        <div id="folder-header" class="px-2 flex items-center justify-between cursor-pointer group">
+            <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
+            </h3>
+            <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="newFolderButton">New Folder</button>
+        </div>
+        <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
+            <div class="flex flex-col gap-1" id="folderList">
+                <!-- Folder items will be injected here by JavaScript -->
+            </div>
+            <div id="emptyFolders" class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400" style="display: none;">
+                <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">folder_open</span>
+                <p class="font-medium">No folders created yet.</p>
+                <p class="text-xs mt-1">Create a folder to organize your searches.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: History -->
+    <div>
+        <div id="searches-header" class="px-2 flex items-center justify-between cursor-pointer group">
+            <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
+            </h3>
+            <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="clearButton">Clear</button>
+        </div>
+        <div id="searches-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
+            <div class="flex flex-col gap-1" id="userPromptHistory">
+                <!-- History items will be injected here by JavaScript -->
+            </div>
+            <div id="emptyHistory" class="flex flex-col items-center justify-center p-4 text-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20" style="display: none;">
+                <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-2">history_toggle_off</span>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">No recent searches yet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Section: user profile -->
+<div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark">
+    <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
+        <div class="relative">
+            <img alt="User Avatar Profile Picture"
+                class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
+        </div>
+        <div class="flex flex-1 flex-col overflow-hidden">
+            <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
+        </div>
+        <div class="relative">
+            <button id="userActionsButton" aria-label="User actions"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none">
+                <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+            <div id="userActionsMenu"
+                class="absolute left-0 bottom-full mb-2 w-44 origin-bottom-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-[2000] hidden">
+                <a href="{% url 'settings' %}#preferences"
+                    class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">settings</span>
+                    Settings
+                </a>
+                <button
+                    class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
