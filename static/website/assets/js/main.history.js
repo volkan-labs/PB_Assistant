@@ -524,10 +524,10 @@ function formatTitle(title) {
 
 function saveFolderState() {
     const openFolders = [];
-    $('#folderList > .flex').each(function () {
+    $('#folderList .folder-header').each(function () {
         const folderId = $(this).attr('id');
-        const folderContent = $(this).find('.flex-col.gap-1.ml-4');
-        if (folderContent.is(':visible')) {
+        const folderContent = $(this).next('.flex-col.gap-1.ml-4');
+        if (folderId && folderContent.is(':visible')) {
             openFolders.push(folderId);
         }
     });
@@ -569,15 +569,15 @@ function restoreFolderState() {
 
         if (!folderSelector) return;
 
-        const folderElement = $(folderSelector);
-        console.debug('[restoreFolderState] trying selector', folderSelector, 'found:', folderElement.length);
-        if (folderElement.length === 0) return;
+        const folderHeader = $(folderSelector);
+        console.debug('[restoreFolderState] trying selector', folderSelector, 'found:', folderHeader.length);
+        if (folderHeader.length === 0) return;
 
-        const folderContent = folderElement.find('.flex-col.gap-1.ml-4');
+        const folderContent = folderHeader.next('.flex-col.gap-1.ml-4');
         console.debug('[restoreFolderState] folderContent length for', folderSelector, folderContent.length);
         if (folderContent.length > 0) {
             folderContent.css('display', 'flex');
-            const icon = folderElement.find('.section-toggle-icon');
+            const icon = folderHeader.find('.section-toggle-icon');
             if (icon.length) icon.addClass('rotate-90');
         }
     });
