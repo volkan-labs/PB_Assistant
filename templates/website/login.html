@@ -8,43 +8,10 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Earth System Science AI Assistant</title>
-    <script src="{% static '/website/assets/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    {% include "website/partials/head_common_scripts.html" %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#5FA8A3",
-                        "background-light": "#F6F8FA",
-                        "background-dark": "#0D1117",
-                        "surface-dark": "#161B22",
-                        "surface-highlight": "#21262D",
-                        "text-secondary": "#57606A",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.375rem", // Bootstrap rounded-md approx
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
+    {% include "website/partials/material_symbols.html" with include_fill_variant=False %}
+    {% include "website/partials/tailwind_config.html" %}
 
 </head>
 
@@ -60,30 +27,7 @@
         </div>
     </div>
     <!-- Theme Toggle -->
-    <div
-        class="absolute top-8 right-8 z-50 flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10">
-        <input class="peer/light sr-only" id="theme-light" name="theme-toggle" type="radio" value="light">
-        <input checked="" class="peer/dark sr-only" id="theme-dark" name="theme-toggle" type="radio" value="dark">
-        <input class="peer/system sr-only" id="theme-system" name="theme-toggle" type="radio" value="system">
-        <div
-            class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
-        </div>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-primary peer-checked/light:dark:text-primary"
-            for="theme-light">
-            <span class="material-symbols-outlined text-[20px]">light_mode</span>
-        </label>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-primary peer-checked/dark:dark:text-primary"
-            for="theme-dark">
-            <span class="material-symbols-outlined text-[20px]">dark_mode</span>
-        </label>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-primary peer-checked/system:dark:text-primary"
-            for="theme-system">
-            <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
-        </label>
-    </div>
+    {% include "website/partials/theme_toggle.html" with wrapper_class="absolute top-8 right-8 z-50 flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
     <main class="w-full flex items-center justify-center p-4 md:p-6 z-10">
         <div class="layout-content-container flex flex-col max-w-[1000px] w-full">
             <div
@@ -375,60 +319,8 @@
         </div>
     </main>
 
-    <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        const storedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (storedTheme === 'dark' || (storedTheme === 'system' && prefersDark) || (!storedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <script>
-        $(document).ready(function() {
-            const themeRadios = $('input[name="theme-toggle"]');
-            
-            function applyTheme(theme) {
-                if (theme === 'system') {
-                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                        $('html').addClass('dark');
-                    } else {
-                        $('html').removeClass('dark');
-                    }
-                } else if (theme === 'dark') {
-                    $('html').addClass('dark');
-                } else { // 'light'
-                    $('html').removeClass('dark');
-                }
-            }
-
-            function initializeTheme() {
-                const storedTheme = localStorage.getItem('theme') || 'system';
-                const targetRadio = $(`input[name="theme-toggle"][value="${storedTheme}"]`);
-                if (targetRadio.length) { // Check if element exists
-                    targetRadio.prop('checked', true);
-                }
-                applyTheme(storedTheme);
-            }
-
-            initializeTheme();
-
-            themeRadios.on('change', function() {
-                const selectedTheme = $(this).val();
-                localStorage.setItem('theme', selectedTheme);
-                applyTheme(selectedTheme);
-            });
-
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                const storedTheme = localStorage.getItem('theme') || 'system';
-                if (storedTheme === 'system') {
-                    applyTheme('system');
-                }
-            });
-        });
-    </script>
+    {% include "website/partials/theme_init_script.html" %}
+    {% include "website/partials/theme_toggle_script.html" %}
 </body>
 
 </html>

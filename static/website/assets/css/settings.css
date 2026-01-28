@@ -1,0 +1,50 @@
+body {
+    font-family: 'Manrope', sans-serif;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#tab-documents:checked ~ .tab-content-documents {
+    display: flex;
+}
+
+#tab-preferences:checked ~ .tab-content-preferences {
+    display: flex;
+}
+
+#tab-alerts:checked ~ .tab-content-alerts {
+    display: flex;
+}
+
+#tab-documents:checked ~ .tabs-container #label-documents,
+#tab-preferences:checked ~ .tabs-container #label-preferences,
+#tab-alerts:checked ~ .tabs-container #label-alerts {
+    border-color: #135bec; /* primary color */
+    color: #111418;
+}
+
+.dark #tab-documents:checked ~ .tabs-container #label-documents,
+.dark #tab-preferences:checked ~ .tabs-container #label-preferences,
+.dark #tab-alerts:checked ~ .tabs-container #label-alerts {
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.drop-zone:hover {
+    border-color: #135bec;
+    background-color: rgba(19, 91, 236, 0.04);
+}
+
+.dark .drop-zone:hover {
+    background-color: rgba(19, 91, 236, 0.08);
+}
