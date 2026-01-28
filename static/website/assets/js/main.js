@@ -28,7 +28,16 @@ $(document).ready(function () {
 
     function autoGrowTextarea(textarea) {
         textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
+        const styles = window.getComputedStyle(textarea);
+        const maxHeight = parseFloat(styles.maxHeight);
+        const targetHeight = Number.isFinite(maxHeight) ? Math.min(textarea.scrollHeight, maxHeight) : textarea.scrollHeight;
+        textarea.style.height = `${targetHeight}px`;
+
+        if (Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight + 1) {
+            textarea.classList.remove('no-scrollbar');
+        } else {
+            textarea.classList.add('no-scrollbar');
+        }
     }
 
     // Generic function to handle collapsible sections
