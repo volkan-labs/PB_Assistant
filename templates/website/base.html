@@ -52,15 +52,7 @@
                     class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark max-sm:order-1">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <nav class="flex items-center space-x-4 max-sm:order-3 max-sm:w-full max-sm:justify-center">
-                    <a href="{% url 'knowledge_library' %}" 
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium 
-                              text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-surface-highlight 
-                              hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                        <span class="material-symbols-outlined text-base">library_books</span>
-                        Knowledge Library
-                    </a>
-                </nav>
+                <div class="max-sm:order-3 max-sm:w-full"></div>
                 <!-- Theme Toggle -->
                 <div class="max-sm:order-2 max-sm:self-center">
                     {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
@@ -169,6 +161,31 @@
 
 
     {% include "website/partials/loading_overlay.html" with overlay_class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[5000] flex items-center justify-center hidden" %}
+    <!-- Spotlight Search -->
+    <div id="spotlightOverlay" class="fixed inset-0 z-[4500] hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="relative mx-auto mt-[10vh] w-[92%] max-w-2xl rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 shadow-2xl">
+            <div class="flex items-center gap-3 border-b border-slate-200/70 dark:border-slate-700/70 px-4 py-3">
+                <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">search</span>
+                <input id="spotlightInput" type="text" placeholder="Search chats..." autocomplete="off"
+                    class="w-full bg-transparent text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none" />
+                <button type="button" id="spotlightClose" aria-label="Close search"
+                    class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+            <div id="spotlightResults" class="max-h-[60vh] overflow-y-auto py-2">
+                <button type="button" id="spotlightNewSearch"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        New search
+                    </div>
+                </button>
+                <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Start typing to search your history.</div>
+            </div>
+        </div>
+    </div>
 {% include "website/partials/theme_toggle_script.html" %}
 <script>
     $(document).ready(function() {

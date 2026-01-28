@@ -312,15 +312,52 @@ function loadPromptHistory() {
         if (activeItem.length > 0) {
             const parentFolderContent = activeItem.closest('.flex-col.gap-1.ml-4');
             if (parentFolderContent.length > 0) {
+                // Ensure the main Folders section is expanded
+                const folderSection = $('#folder-content');
+                const folderSectionHeader = $('#folder-header');
+                const folderSectionIcon = folderSectionHeader.find('.section-toggle-icon');
+                if (folderSection.length && folderSectionHeader.length) {
+                    folderSection.show();
+                    folderSectionIcon.addClass('rotate-90');
+                    folderSectionHeader.attr('aria-expanded', 'true').removeClass('collapsed');
+                    localStorage.setItem('folderSectionState', 'false');
+                }
                 parentFolderContent.css('display', 'flex');
                 const folderHeader = parentFolderContent.prev('.folder-header');
                 const leftIcon = folderHeader.find('.section-toggle-icon');
                 leftIcon.addClass('rotate-90');
+                const folderId = folderHeader.attr('id');
+                if (folderId) addOpenFolder(folderId);
                 folderHeader.attr('aria-expanded', 'true');
+            } else {
+                // Active item is in "Your searches" section
+                const searchesSection = $('#searches-content');
+                const searchesHeader = $('#searches-header');
+                const searchesIcon = searchesHeader.find('.section-toggle-icon');
+                if (searchesSection.length && searchesHeader.length) {
+                    searchesSection.show();
+                    searchesIcon.addClass('rotate-90');
+                    searchesHeader.attr('aria-expanded', 'true').removeClass('collapsed');
+                    localStorage.setItem('searchesSectionState', 'false');
+                }
             }
         }
         // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
         setTimeout(restoreFolderState, 50);
+
+        // Ensure active item is visible in the sidebar scroll area
+        setTimeout(function () {
+            const active = $('.bg-primary\\/20').first();
+            const container = $('#sidebarScrollArea');
+            if (active.length && container.length) {
+                const top = active.position().top;
+                const bottom = top + active.outerHeight();
+                const viewHeight = container.innerHeight();
+                if (top < 0 || bottom > viewHeight) {
+                    container.scrollTop(container.scrollTop() + top - 40);
+                }
+            }
+        }, 120);
 
         // Action Menu Logic
 

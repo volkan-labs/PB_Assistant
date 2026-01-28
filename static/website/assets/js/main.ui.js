@@ -60,6 +60,165 @@ $(document).ready(function () {
         });
     }
 
+    // Spotlight search
+    const spotlightOverlay = $('#spotlightOverlay');
+    const spotlightInput = $('#spotlightInput');
+    const spotlightResults = $('#spotlightResults');
+    const spotlightOpen = $('#spotlightOpen');
+    const spotlightNewSearch = $('#spotlightNewSearch');
+    const spotlightHint = $('#spotlightHint');
+    const spotlightClose = $('#spotlightClose');
+    let spotlightItems = [];
+    let spotlightIndex = -1;
+
+    function renderSpotlight(items) {
+        spotlightResults.empty();
+        spotlightResults.append(`
+            <button type="button" id="spotlightNewSearch"
+                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                    New search
+                </div>
+            </button>
+        `);
+        if (!items.length) {
+            spotlightResults.append('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>');
+            return;
+        }
+        items.forEach((item, idx) => {
+            const isActive = idx === spotlightIndex;
+            const row = $(`
+                <button type="button" class="w-full text-left px-4 py-3 transition-colors ${isActive ? 'bg-primary/10' : 'hover:bg-slate-100 dark:hover:bg-slate-800/60'} focus:outline-none">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="truncate text-sm font-medium text-slate-700 dark:text-slate-200">${item.title}</div>
+                            <div class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(item.timestamp)}</div>
+                        </div>
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">arrow_forward</span>
+                    </div>
+                </button>
+            `);
+            row.on('click', () => {
+                if (item.folder_id) {
+                    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+                    const folderKey = `folder-${item.folder_id}`;
+                    if (!openFolders.includes(folderKey)) {
+                        openFolders.push(folderKey);
+                        localStorage.setItem('openFolders', JSON.stringify(openFolders));
+                    }
+                }
+                window.location.href = `/history-item/${item.id}`;
+            });
+            spotlightResults.append(row);
+        });
+    }
+
+    function filterSpotlight() {
+        const q = (spotlightInput.val() || '').trim().toLowerCase();
+        if (!q) {
+            spotlightIndex = -1;
+            renderSpotlight(spotlightItems.slice(0, 10));
+            return;
+        }
+        const filtered = spotlightItems.filter(item => (item.title || '').toLowerCase().includes(q));
+        spotlightIndex = filtered.length ? 0 : -1;
+        renderSpotlight(filtered.slice(0, 20));
+    }
+
+    function openSpotlight() {
+        spotlightOverlay.removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+        setTimeout(() => spotlightInput.trigger('focus'), 50);
+        if (!spotlightItems.length) {
+        spotlightResults.html(`
+            <button type="button" id="spotlightNewSearch"
+                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                    New search
+                </div>
+            </button>
+            <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>
+        `);
+            $.getJSON('/history/').done(function (data) {
+                spotlightItems = Array.isArray(data) ? data : [];
+                filterSpotlight();
+            }).fail(function () {
+                spotlightResults.html('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Failed to load history.</div>');
+            });
+        } else {
+            filterSpotlight();
+        }
+    }
+
+    function closeSpotlight() {
+        spotlightOverlay.addClass('hidden');
+        $('body').removeClass('overflow-hidden');
+        spotlightInput.val('');
+        spotlightIndex = -1;
+    }
+
+    if (spotlightOpen.length) {
+        spotlightOpen.on('click', function () {
+            openSpotlight();
+        });
+    }
+
+    if (spotlightHint.length) {
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        if (!isMac) {
+            spotlightHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Ctrl K</span>');
+        }
+    }
+
+    if (spotlightClose.length) {
+        spotlightClose.on('click', function () {
+            closeSpotlight();
+        });
+    }
+
+    spotlightResults.on('click', '#spotlightNewSearch', function () {
+        closeSpotlight();
+        window.location.href = '/';
+    });
+
+    spotlightOverlay.on('click', function (e) {
+        if ($(e.target).is('#spotlightOverlay, #spotlightOverlay > .absolute')) {
+            closeSpotlight();
+        }
+    });
+
+    spotlightInput.on('input', function () {
+        filterSpotlight();
+    });
+
+    $(document).on('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            openSpotlight();
+        }
+        if (e.key === 'Escape' && !spotlightOverlay.hasClass('hidden')) {
+            e.preventDefault();
+            closeSpotlight();
+        }
+        if (!spotlightOverlay.hasClass('hidden')) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                spotlightIndex = Math.min(spotlightIndex + 1, spotlightResults.children('button').length - 1);
+                filterSpotlight();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                spotlightIndex = Math.max(spotlightIndex - 1, 0);
+                filterSpotlight();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const active = spotlightResults.children('button').eq(spotlightIndex);
+                if (active.length) active.trigger('click');
+            }
+        }
+    });
+
     function autoGrowTextarea(textarea) {
         textarea.style.height = 'auto';
         const styles = window.getComputedStyle(textarea);
