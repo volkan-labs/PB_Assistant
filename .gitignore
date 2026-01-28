@@ -4,3 +4,5 @@
 .\\ollama_data/
 __pycache__/
 .DS_Store
+node_modules/
+test-results/

@@ -8,141 +8,26 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Earth System Science AI Assistant</title>
-    <script src="{% static '/website/assets/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700;FILL@0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#111418",
-                        "surface-highlight": "#283039",
-                        "text-secondary": "#9dabb9",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.375rem", // Bootstrap rounded-md approx
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-    <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        const storedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (storedTheme === 'dark' || (storedTheme === 'system' && prefersDark) || (!storedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            text-rendering: optimizeLegibility;
-            font-family: 'Material Symbols Outlined' !important;
-        }
-
-        .icon-filled {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        /* Custom scrollbar variables */
-        :root {
-            --scrollbar-track-color: #f3f4f6; /* bg-gray-100 */
-            --scrollbar-thumb-color: #9ca3af; /* bg-gray-400 */
-            --scrollbar-thumb-hover-color: #6b7280; /* bg-gray-500 */
-        }
-
-        html.dark {
-            --scrollbar-track-color: #111418; /* surface-dark */
-            --scrollbar-thumb-color: #283039; /* surface-highlight */
-            --scrollbar-thumb-hover-color: #3b4754; /* a bit lighter than surface-highlight */
-        }
-
-        /* Custom scrollbar for webkit browsers */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--scrollbar-track-color);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-thumb-hover-color);
-        }
-
-        #error-toast-loader {
-            transition: width 5s linear;
-        }
-        input[type="search"]::-webkit-search-cancel-button {
-            -webkit-appearance: none;
-        }
-        .ollama-select {
-            background-image: none;
-            background-origin: border-box;
-            background-clip: padding-box;
-            background-repeat: no-repeat;
-            background-position: 0 0;
-            background-size: auto;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-        html.dark .ollama-select {
-            background-image: none;
-        }
-        .ollama-select:focus-visible {
-            box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.25);
-        }
-        .ollama-select::-ms-expand {
-            display: none;
-        }
-        .dropdown-caret {
-            text-shadow: none;
-            filter: none;
-            -webkit-text-stroke: 0;
-        }
-    </style>
+    {% include "website/partials/head_common_scripts.html" %}
+    {% include "website/partials/material_symbols.html" with include_fill_variant=True %}
+    {% include "website/partials/tailwind_config.html" %}
+    {% include "website/partials/theme_init_script.html" %}
+    <link href="{% static 'website/assets/css/base.css' %}" rel="stylesheet" />
 
     {% csrf_token %}
     <script>
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     </script>
 
-    <script src="{% static 'website/assets/js/main.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.utils.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.models.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.history.js' %}?v={% now "U" %}" type="text/javascript"></script>
+    <script src="{% static 'website/assets/js/main.ui.js' %}?v={% now "U" %}" type="text/javascript"></script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-white flex" {% block body_attributes %}{% endblock %}>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 flex" {% block body_attributes %}{% endblock %}>
     <div class="flex w-full flex-row">
-        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0 relative z-[1000] transform">
+        <aside id="leftSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 md:sticky md:top-0 md:relative md:z-[1000] max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-[3000] max-md:shadow-2xl max-md:-translate-x-full max-md:transition-transform max-md:duration-200 max-md:ease-out">
             <!-- Sidebar Header / Branding -->
             <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-800/50">
                 <a href="/" class="flex items-center gap-3">
@@ -153,141 +38,32 @@
             
             {% block new_search_button_area %}{% endblock %}
             
-            <!-- Sidebar Content -->
-            <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
-                
-                <!-- Sidebar Filter -->
-                <div class="mb-3 px-2 pt-2">
-                    <div class="relative">
-                        <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-                        <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Section: Folders -->
-                <div class="mb-4">
-                    <div id="folder-header" class="px-2 flex items-center justify-between cursor-pointer group">
-                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
-                        </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80" id="newFolderButton">New Folder</button>
-                    </div>
-                    <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
-                        <div class="flex flex-col gap-1" id="folderList">
-                            <!-- Folder items will be injected here by JavaScript -->
-                        </div>
-                        <div id="emptyFolders" class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400" style="display: none;">
-                            <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">folder_open</span>
-                            <p class="font-medium">No folders created yet.</p>
-                            <p class="text-xs mt-1">Create a folder to organize your searches.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section: History -->
-                <div>
-                    <div id="searches-header" class="px-2 flex items-center justify-between cursor-pointer group">
-                        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
-                        </h3>
-                        <button class="text-xs font-medium text-primary hover:text-primary/80" id="clearButton">Clear</button>
-                    </div>
-                    <div id="searches-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
-                        <div class="flex flex-col gap-1" id="userPromptHistory">
-                            <!-- History items will be injected here by JavaScript -->
-                        </div>
-                        <div id="emptyHistory" class="flex flex-col items-center justify-center p-4 text-center rounded-lg bg-primary/10 transition-colors hover:bg-primary/20" style="display: none;">
-                            <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-2">history_toggle_off</span>
-                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">No recent searches yet.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Section: user profile -->
-            <div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark">
-                <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
-                    <div class="relative">
-                        <img alt="User Avatar Profile Picture"
-                            class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
-                    </div>
-                    <div class="flex flex-1 flex-col overflow-hidden">
-                        <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
-                    </div>
-                    <div class="relative">
-                        <button id="userActionsButton" aria-label="User actions"
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none">
-                            <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                        </button>
-                        <div id="userActionsMenu"
-                            class="absolute left-0 bottom-full mb-2 w-44 origin-bottom-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-[2000] hidden">
-                            <a href="{% url 'settings' %}#preferences"
-                                class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">settings</span>
-                                Settings
-                            </a>
-                            <button
-                                class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">logout</span>
-                                Sign Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include "website/partials/sidebar_left_content.html" %}
         </aside>
         <!-- Main Content Area -->
-        <main class="flex flex-1 flex-col relative h-full">
+        <main class="flex flex-1 flex-col relative min-h-screen">
             <!-- Error Toast -->
-            <div id="error-toast" class="hidden absolute top-4 right-4 z-50 bg-red-600 text-white p-4 rounded-lg shadow-lg">
-                <div class="flex items-center gap-4">
-                    <span id="error-toast-message"></span>
-                    <button id="error-toast-close" class="text-white">&times;</button>
-                </div>
-                <div class="absolute bottom-0 left-0 h-1 bg-white/30" id="error-toast-loader" style="width: 100%;"></div>
-            </div>
+            {% include "website/partials/error_toast.html" with toast_class="hidden absolute top-4 right-4 z-50 bg-red-600 text-white p-4 rounded-lg shadow-lg" %}
 
             <!-- Top Navigation (Minimal) -->
-            <header class="flex w-full items-center justify-between px-8 py-5">
+            <header class="flex w-full flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
                 <!-- Mobile Menu Trigger (Hidden on Desktop) -->
-                <button
-                    class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">
+                <button id="sidebarToggle"
+                    class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark max-sm:order-1">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <nav class="flex items-center space-x-4">
+                <nav class="flex items-center space-x-4 max-sm:order-3 max-sm:w-full max-sm:justify-center">
                     <a href="{% url 'knowledge_library' %}" 
                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium 
                               text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-surface-highlight 
-                              hover:text-primary transition-colors">
+                              hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                         <span class="material-symbols-outlined text-base">library_books</span>
                         Knowledge Library
                     </a>
                 </nav>
                 <!-- Theme Toggle -->
-                <div
-                    class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10">
-                    <input class="peer/light sr-only" id="theme-light" name="theme-toggle" type="radio" value="light">
-                    <input checked="" class="peer/dark sr-only" id="theme-dark" name="theme-toggle" type="radio" value="dark">
-                    <input class="peer/system sr-only" id="theme-system" name="theme-toggle" type="radio" value="system">
-                    <div
-                        class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
-                    </div>
-                    <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-amber-500 peer-checked/light:dark:text-amber-400"
-                        for="theme-light">
-                        <span class="material-symbols-outlined text-[20px]">light_mode</span>
-                    </label>
-                    <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-blue-600 peer-checked/dark:dark:text-blue-400"
-                        for="theme-dark">
-                        <span class="material-symbols-outlined text-[20px]">dark_mode</span>
-                    </label>
-                    <label
-                        class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-purple-600 peer-checked/system:dark:text-purple-400"
-                        for="theme-system">
-                        <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
-                    </label>
+                <div class="max-sm:order-2 max-sm:self-center">
+                    {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
                 </div>
             </header>
             <!-- Center Content -->
@@ -367,140 +143,24 @@
                 </div>
             </div> -->
             <!-- Footer Links -->
-            <footer class="flex flex-col items-center justify-center py-6 text-[10px] text-slate-500 dark:text-slate-500">
+            <footer class="mt-auto flex flex-col items-center justify-center py-6 text-[10px] text-slate-500 dark:text-slate-500">
                 <p>&copy; <span id="copyright-year">2025</span> Earth System Science AI Assistant. All rights reserved.</p>
-                <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ <a class="hover:text-primary transition-colors" href="https://www.pik-potsdam.de/en" target="_blank" rel="noopener noreferrer">The Potsdam Institute for Climate Impact Research (PIK)</a></p>
+                <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ <a class="text-primary hover:text-primary/80 transition-colors" href="https://www.pik-potsdam.de/en" target="_blank" rel="noopener noreferrer">The Potsdam Institute for Climate Impact Research (PIK)</a></p>
             </footer>
         </main>
 
         <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
-            
-            <div class="flex flex-col flex-1 overflow-y-auto">
-
-
-                <!-- Publications Section -->
-                <div class="flex-1 min-h-0 flex flex-col">
-                    <div class="px-6 py-4">
-                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Planetary boundaries News</h3>
-                    </div>
-                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
-                        <ul id="latest-publications-list">
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Divider between publications and alerts -->
-                <div class="my-2 border-t-2 border-slate-300 dark:border-slate-700"></div>
-
-                <!-- Alerts Section -->
-                <div class="flex-grow-0 flex-shrink-0 basis-[30%] flex flex-col min-h-0">
-                    <div class="px-6 py-4">
-                        <h3 class="text-md font-semibold text-slate-900 dark:text-white mb-2">Alerts</h3>
-                    </div>
-                    <div class="px-6 pb-4 flex-1 overflow-y-auto">
-                        <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
-                            <span class="material-symbols-outlined text-slate-400 text-[48px] opacity-50 mb-2">notifications</span>
-                            <p class="font-medium">No new alerts.</p>
-                        <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-primary hover:underline">Set up alerts in settings.</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include "website/partials/sidebar_right_content.html" %}
         </aside>
     </div>
 
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden z-[2990] md:hidden" aria-hidden="true"></div>
+
     <!-- Confirmation Modal -->
-    <div id="confirmationModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="p-6">
-                        <div class="flex items-start gap-4">
-                            <div
-                                class="flex-shrink-0 flex items-center justify-center size-10 rounded-full bg-red-500/10">
-                                <span class="material-symbols-outlined text-red-500">warning</span>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-white leading-6" id="modalTitle">Delete Item</h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-text-secondary leading-relaxed" id="modalBody">
-                                        Are you sure you want to delete this? This action cannot be undone.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-                            <button id="modalConfirmButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto transition-colors"
-                                type="button">
-                                Confirm
-                            </button>
-                            <button id="modalCancelButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-transparent px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-[#3b4754] hover:bg-[#3b4754] sm:w-auto transition-colors"
-                                type="button">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include "website/partials/confirmation_modal.html" with modal_class="fixed inset-0 z-[4000] hidden" %}
 
     <!-- New Folder Modal -->
-    <div id="newFolderModal" aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[4000] hidden" role="dialog">
-        <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-xl bg-surface-dark border border-[#3b4754] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="p-6">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-white leading-6" id="newFolderModalTitle">New Folder</h3>
-                                <div class="mt-2 relative">
-                                    <div class="relative flex items-center">
-                                        <button type="button" id="newFolderColorTrigger" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-colors text-slate-400 hover:bg-slate-700">
-                                            <span class="material-symbols-outlined text-lg" style="color: #6c757d;">palette</span>
-                                        </button>
-                                        <input type="text" id="newFolderName" class="w-full bg-surface-highlight rounded-lg border border-[#3b4754] pl-11 pr-4 py-2.5 text-white placeholder-text-secondary focus:ring-primary focus:border-primary" placeholder="Folder name">
-                                        <input type="hidden" id="newFolderColor" value="#6c757d">
-                                    </div>
-                                    <div id="newFolderColorPalette" class="absolute left-0 mt-2 z-10 w-full rounded-lg bg-surface-highlight border border-[#3b4754] p-2 hidden">
-                                        <div class="flex flex-wrap gap-1">
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f87171;" data-color="#f87171"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #fb923c;" data-color="#fb923c"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #facc15;" data-color="#facc15"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #4ade80;" data-color="#4ade80"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #38bdf8;" data-color="#38bdf8"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #818cf8;" data-color="#818cf8"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #c084fc;" data-color="#c084fc"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #f472b6;" data-color="#f472b6"></div>
-                                            <div class="color-swatch w-6 h-6 rounded-full cursor-pointer" style="background-color: #6c757d;" data-color="#6c757d"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span id="newFolderError" class="text-red-400 text-sm mt-1 hidden"></span>
-                            </div>
-                            <!-- X button added here -->
-                            <button type="button" id="closeNewFolderModalButton" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
-                                <span class="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
-                            <button id="createFolderButton"
-                                class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 sm:w-auto transition-colors"
-                                type="button">
-                                Create Folder
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include "website/partials/new_folder_modal.html" %}
                     </div>
                 </div>
             </div>
@@ -508,55 +168,8 @@
     </div>
 
 
-    <div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[5000] flex items-center justify-center hidden">
-        <div class="flex flex-col items-center">
-            <div class="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin"></div>
-            <p class="text-white mt-4" id="loading-overlay-text">Saving...</p>
-        </div>
-    </div>
-<script>
-    $(document).ready(function() {
-        const themeRadios = $('input[name="theme-toggle"]');
-        
-        function applyTheme(theme) {
-            if (theme === 'system') {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    $('html').addClass('dark');
-                } else {
-                    $('html').removeClass('dark');
-                }
-            } else if (theme === 'dark') {
-                $('html').addClass('dark');
-            } else { // 'light'
-                $('html').removeClass('dark');
-            }
-        }
-
-        function initializeTheme() {
-            const storedTheme = localStorage.getItem('theme') || 'system';
-            const targetRadio = $(`input[name="theme-toggle"][value="${storedTheme}"]`);
-            if (targetRadio.length) { // Check if element exists
-                targetRadio.prop('checked', true);
-            }
-            applyTheme(storedTheme);
-        }
-
-        initializeTheme();
-
-        themeRadios.on('change', function() {
-            const selectedTheme = $(this).val();
-            localStorage.setItem('theme', selectedTheme);
-            applyTheme(selectedTheme);
-        });
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            const storedTheme = localStorage.getItem('theme') || 'system';
-            if (storedTheme === 'system') {
-                applyTheme('system');
-            }
-        });
-    });
-</script>
+    {% include "website/partials/loading_overlay.html" with overlay_class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[5000] flex items-center justify-center hidden" %}
+{% include "website/partials/theme_toggle_script.html" %}
 <script>
     $(document).ready(function() {
         const list = $('#latest-publications-list');
@@ -571,7 +184,7 @@
                 }
                 if (data.length === 0) {
                     const settingsUrl = "{% url 'settings' %}";
-                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:underline">Configure RSS feeds in settings.</a></li>');
+                    list.html('<li class="text-xs text-text-secondary">No publications found. <br> <a href="' + settingsUrl + '" class="text-primary hover:text-primary/80 transition-colors">Configure RSS feeds in settings.</a></li>');
                 } else {
                     data.forEach(item => {
                         const metaParts = [];
@@ -584,7 +197,7 @@
                         const metaLine = metaParts.length ? `<p class="text-[11px] text-text-secondary mt-1">${metaParts.join(' · ')}</p>` : '';
                         const listItem = `
                             <li class="mb-4">
-                                <a href="${item.link}" target="_blank" class="text-sm text-primary hover:underline">${item.title}</a>
+                                <a href="${item.link}" target="_blank" class="text-sm text-primary hover:text-primary/80 transition-colors">${item.title}</a>
                                 ${metaLine}
                                 <p class="text-xs text-text-secondary">${item.description}</p>
                             </li>

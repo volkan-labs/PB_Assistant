@@ -8,48 +8,16 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Earth System Science AI Assistant</title>
-    <script src="{% static '/website/assets/lib/jquery/jquery.min.js' %}" type="text/javascript"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    {% include "website/partials/head_common_scripts.html" %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#111418",
-                        "surface-highlight": "#283039",
-                        "text-secondary": "#9dabb9",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.375rem", // Bootstrap rounded-md approx
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
+    {% include "website/partials/material_symbols.html" with include_fill_variant=True %}
+    {% include "website/partials/tailwind_config.html" %}
+    {% include "website/partials/theme_init_script.html" %}
 
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased font-display min-h-screen flex flex-col items-center justify-center relative selection:bg-primary/30">
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display min-h-screen flex flex-col items-center justify-center relative selection:bg-primary/30">
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-[#1a2333] via-[#0d1117] to-black opacity-80"></div>
         <div
@@ -60,34 +28,11 @@
         </div>
     </div>
     <!-- Theme Toggle -->
-    <div
-        class="absolute top-8 right-8 z-50 flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10">
-        <input class="peer/light sr-only" id="theme-light" name="theme-toggle" type="radio" value="light">
-        <input checked="" class="peer/dark sr-only" id="theme-dark" name="theme-toggle" type="radio" value="dark">
-        <input class="peer/system sr-only" id="theme-system" name="theme-toggle" type="radio" value="system">
-        <div
-            class="absolute top-1 bottom-1 left-1 w-8 rounded-full bg-white dark:bg-[#374151] shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0 peer-checked/light:translate-x-0 peer-checked/dark:translate-x-full peer-checked/system:translate-x-[200%]">
-        </div>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/light:text-amber-500 peer-checked/light:dark:text-amber-400"
-            for="theme-light">
-            <span class="material-symbols-outlined text-[20px]">light_mode</span>
-        </label>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/dark:text-blue-600 peer-checked/dark:dark:text-blue-400"
-            for="theme-dark">
-            <span class="material-symbols-outlined text-[20px]">dark_mode</span>
-        </label>
-        <label
-            class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full cursor-pointer transition-colors duration-200 text-[#637588] dark:text-[#94a3b8] hover:text-[#111418] dark:hover:text-white peer-checked/system:text-purple-600 peer-checked/system:dark:text-purple-400"
-            for="theme-system">
-            <span class="material-symbols-outlined text-[20px]">settings_system_daydream</span>
-        </label>
-    </div>
+    {% include "website/partials/theme_toggle.html" with wrapper_class="absolute top-8 right-8 z-50 flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
     <main class="w-full flex items-center justify-center p-4 md:p-6 z-10">
         <div class="layout-content-container flex flex-col max-w-[1000px] w-full">
             <div
-                class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-[#2a3649] rounded-2xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col lg:flex-row min-h-[600px]">
+                class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-[#2a3649] rounded-2xl overflow-hidden shadow-xl shadow-black/40 flex flex-col lg:flex-row min-h-[600px]">
                 <div
                     class="relative w-full lg:w-1/2 bg-slate-100 dark:bg-[#0b0e14] overflow-hidden flex items-center justify-center min-h-[400px] lg:min-h-auto group order-2 lg:order-1">
                     <div class="absolute inset-0 opacity-20 dark:opacity-10"
@@ -111,7 +56,7 @@
                             <span class="material-symbols-outlined text-red-500 text-xs">thermostat</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Climate Change</span>
                             <div
-                                class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0F131D]/95 border-l border-t border-white/10 rotate-45">
                                 </div>
@@ -133,7 +78,7 @@
                             <span class="material-symbols-outlined text-red-500 text-xs">emoji_nature</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Biosphere</span>
                             <div
-                                class="absolute top-full right-0 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-full right-0 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -top-1.5 right-6 w-3 h-3 bg-[#0F131D]/95 border-l border-t border-white/10 rotate-45">
                                 </div>
@@ -156,7 +101,7 @@
                             <span class="material-symbols-outlined text-amber-500 text-xs">landscape</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Land System</span>
                             <div
-                                class="absolute top-1/2 right-full -translate-y-1/2 mr-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-1/2 right-full -translate-y-1/2 mr-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 bg-[#0F131D]/95 border-r border-t border-white/10 rotate-45">
                                 </div>
@@ -179,7 +124,7 @@
                             <span class="material-symbols-outlined text-amber-500 text-xs">water_drop</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Freshwater</span>
                             <div
-                                class="absolute bottom-full right-0 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute bottom-full right-0 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom-right scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -bottom-1.5 right-6 w-3 h-3 bg-[#0F131D]/95 border-r border-b border-white/10 rotate-45">
                                 </div>
@@ -200,7 +145,7 @@
                             <span class="material-symbols-outlined text-red-500 text-xs">science</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Biogeochemical</span>
                             <div
-                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0F131D]/95 border-r border-b border-white/10 rotate-45">
                                 </div>
@@ -222,7 +167,7 @@
                             <span class="material-symbols-outlined text-amber-500 text-xs">waves</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Ocean Acid.</span>
                             <div
-                                class="absolute bottom-full left-0 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute bottom-full left-0 mb-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-bottom-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -bottom-1.5 left-6 w-3 h-3 bg-[#0F131D]/95 border-r border-b border-white/10 rotate-45">
                                 </div>
@@ -245,7 +190,7 @@
                             <span class="material-symbols-outlined text-red-500 text-xs">biotech</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Novel Entities</span>
                             <div
-                                class="absolute top-1/2 left-full -translate-y-1/2 ml-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-1/2 left-full -translate-y-1/2 ml-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 bg-[#0F131D]/95 border-b border-l border-white/10 rotate-45">
                                 </div>
@@ -267,7 +212,7 @@
                             <span class="material-symbols-outlined text-emerald-400 text-xs">blur_on</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Aerosol</span>
                             <div
-                                class="absolute top-1/2 left-full -translate-y-1/2 ml-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-1/2 left-full -translate-y-1/2 ml-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 bg-[#0F131D]/95 border-b border-l border-white/10 rotate-45">
                                 </div>
@@ -288,7 +233,7 @@
                             <span class="material-symbols-outlined text-emerald-500 text-xs">wb_sunny</span>
                             <span class="text-[10px] font-bold text-white tracking-wide uppercase">Ozone Layer</span>
                             <div
-                                class="absolute top-full left-0 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
+                                class="absolute top-full left-0 mt-3 w-64 p-4 bg-[#0F131D]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover/label:opacity-100 group-hover/label:visible transition-all duration-300 transform origin-top-left scale-95 group-hover/label:scale-100 pointer-events-none text-left z-50">
                                 <div
                                     class="absolute -top-1.5 left-6 w-3 h-3 bg-[#0F131D]/95 border-l border-t border-white/10 rotate-45">
                                 </div>
@@ -375,60 +320,7 @@
         </div>
     </main>
 
-    <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-        const storedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (storedTheme === 'dark' || (storedTheme === 'system' && prefersDark) || (!storedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
-    <script>
-        $(document).ready(function() {
-            const themeRadios = $('input[name="theme-toggle"]');
-            
-            function applyTheme(theme) {
-                if (theme === 'system') {
-                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                        $('html').addClass('dark');
-                    } else {
-                        $('html').removeClass('dark');
-                    }
-                } else if (theme === 'dark') {
-                    $('html').addClass('dark');
-                } else { // 'light'
-                    $('html').removeClass('dark');
-                }
-            }
-
-            function initializeTheme() {
-                const storedTheme = localStorage.getItem('theme') || 'system';
-                const targetRadio = $(`input[name="theme-toggle"][value="${storedTheme}"]`);
-                if (targetRadio.length) { // Check if element exists
-                    targetRadio.prop('checked', true);
-                }
-                applyTheme(storedTheme);
-            }
-
-            initializeTheme();
-
-            themeRadios.on('change', function() {
-                const selectedTheme = $(this).val();
-                localStorage.setItem('theme', selectedTheme);
-                applyTheme(selectedTheme);
-            });
-
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                const storedTheme = localStorage.getItem('theme') || 'system';
-                if (storedTheme === 'system') {
-                    applyTheme('system');
-                }
-            });
-        });
-    </script>
+    {% include "website/partials/theme_toggle_script.html" %}
 </body>
 
 </html>

@@ -1,0 +1,43 @@
+<script>
+    $(document).ready(function() {
+        const themeRadios = $('input[name="theme-toggle"]');
+        
+        function applyTheme(theme) {
+            if (theme === 'system') {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    $('html').addClass('dark');
+                } else {
+                    $('html').removeClass('dark');
+                }
+            } else if (theme === 'dark') {
+                $('html').addClass('dark');
+            } else { // 'light'
+                $('html').removeClass('dark');
+            }
+        }
+
+        function initializeTheme() {
+            const storedTheme = localStorage.getItem('theme') || 'system';
+            const targetRadio = $(`input[name="theme-toggle"][value="${storedTheme}"]`);
+            if (targetRadio.length) { // Check if element exists
+                targetRadio.prop('checked', true);
+            }
+            applyTheme(storedTheme);
+        }
+
+        initializeTheme();
+
+        themeRadios.on('change', function() {
+            const selectedTheme = $(this).val();
+            localStorage.setItem('theme', selectedTheme);
+            applyTheme(selectedTheme);
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            const storedTheme = localStorage.getItem('theme') || 'system';
+            if (storedTheme === 'system') {
+                applyTheme('system');
+            }
+        });
+    });
+</script>
