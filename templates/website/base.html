@@ -34,10 +34,6 @@
                     <img src="{% static '/website/assets/images/ess-ai-logo.png' %}" alt="Logo" class="h-20" />
                 </a>
             </div>
-            <!-- Sticky new search button -->
-            
-            {% block new_search_button_area %}{% endblock %}
-            
             {% include "website/partials/sidebar_left_content.html" %}
         </aside>
         <!-- Main Content Area -->
@@ -175,13 +171,6 @@
                 </button>
             </div>
             <div id="spotlightResults" class="max-h-[60vh] overflow-y-auto py-2">
-                <button type="button" id="spotlightNewSearch"
-                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
-                        New search
-                    </div>
-                </button>
                 <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Start typing to search your history.</div>
             </div>
         </div>

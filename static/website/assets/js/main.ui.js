@@ -65,23 +65,14 @@ $(document).ready(function () {
     const spotlightInput = $('#spotlightInput');
     const spotlightResults = $('#spotlightResults');
     const spotlightOpen = $('#spotlightOpen');
-    const spotlightNewSearch = $('#spotlightNewSearch');
     const spotlightHint = $('#spotlightHint');
+    const newChatHint = $('#newChatHint');
     const spotlightClose = $('#spotlightClose');
     let spotlightItems = [];
     let spotlightIndex = -1;
 
     function renderSpotlight(items) {
         spotlightResults.empty();
-        spotlightResults.append(`
-            <button type="button" id="spotlightNewSearch"
-                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
-                    New search
-                </div>
-            </button>
-        `);
         if (!items.length) {
             spotlightResults.append('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>');
             return;
@@ -131,16 +122,7 @@ $(document).ready(function () {
         $('body').addClass('overflow-hidden');
         setTimeout(() => spotlightInput.trigger('focus'), 50);
         if (!spotlightItems.length) {
-        spotlightResults.html(`
-            <button type="button" id="spotlightNewSearch"
-                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
-                    New search
-                </div>
-            </button>
-            <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>
-        `);
+        spotlightResults.html('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>');
             $.getJSON('/history/').done(function (data) {
                 spotlightItems = Array.isArray(data) ? data : [];
                 filterSpotlight();
@@ -171,6 +153,12 @@ $(document).ready(function () {
             spotlightHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Ctrl K</span>');
         }
     }
+    if (newChatHint.length) {
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        if (!isMac) {
+            newChatHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Shift Ctrl O</span>');
+        }
+    }
 
     if (spotlightClose.length) {
         spotlightClose.on('click', function () {
@@ -178,10 +166,6 @@ $(document).ready(function () {
         });
     }
 
-    spotlightResults.on('click', '#spotlightNewSearch', function () {
-        closeSpotlight();
-        window.location.href = '/';
-    });
 
     spotlightOverlay.on('click', function (e) {
         if ($(e.target).is('#spotlightOverlay, #spotlightOverlay > .absolute')) {
@@ -197,6 +181,10 @@ $(document).ready(function () {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
             e.preventDefault();
             openSpotlight();
+        }
+        if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'o') {
+            e.preventDefault();
+            window.location.href = '/index';
         }
         if (e.key === 'Escape' && !spotlightOverlay.hasClass('hidden')) {
             e.preventDefault();
@@ -561,84 +549,6 @@ $(document).ready(function () {
 
         });
 
-    });
-
-    // Sidebar filter: debounced input that filters folders and history items
-    function debounce(fn, delay) {
-        let timer = null;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-    }
-
-    function applySidebarFilter(query) {
-        const q = query.trim().toLowerCase();
-        // Reset when empty: show all and restore persisted open state
-        if (!q) {
-            $('#folderList > .flex').show().each(function () {
-                const f = $(this);
-                const content = f.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'none');
-                const header = f.find('.folder-header');
-                f.find('.section-toggle-icon').removeClass('rotate-90');
-                header.attr('aria-expanded', 'false');
-            });
-            $('#userPromptHistory').children().show();
-            // restore the open folders the user had before filtering
-            setTimeout(restoreFolderState, 50);
-            $('#sidebarFilterClear').addClass('hidden');
-            return;
-        }
-
-        // Show clear button
-        $('#sidebarFilterClear').removeClass('hidden');
-
-        // Filter top-level history items
-        $('#userPromptHistory').children().each(function () {
-            const el = $(this);
-            const title = el.find('.truncate').first().text().toLowerCase();
-            if (title.indexOf(q) !== -1) el.show(); else el.hide();
-        });
-
-        // Filter folders: show folder if folder name matches OR any child item matches
-        $('#folderList > .flex').each(function () {
-            const folder = $(this);
-            const name = folder.find('.folder-name-text').text().toLowerCase();
-            let matches = name.indexOf(q) !== -1;
-
-            // Check items inside the folder
-            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function () {
-                const t = $(this).text().toLowerCase();
-                if (t.indexOf(q) !== -1) matches = true;
-            });
-
-            if (matches) {
-                folder.show();
-                // expand folder to reveal matching items
-                const content = folder.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'flex');
-                folder.find('.section-toggle-icon').addClass('rotate-90');
-                folder.find('.folder-header').attr('aria-expanded', 'true');
-            } else {
-                folder.hide();
-            }
-        });
-
-        // Hide empty message while filtering
-        $('#emptyHistory').hide();
-    }
-
-    const debouncedFilter = debounce(function () {
-        applySidebarFilter($('#sidebarFilter').val() || '');
-    }, 180);
-
-    $('#sidebarFilter').on('input', debouncedFilter);
-    $('#sidebarFilterClear').on('click', function () {
-        $('#sidebarFilter').val('');
-        $(this).addClass('hidden');
-        $('#sidebarFilter').trigger('input');
-        $('#sidebarFilter').focus();
     });
 
     // Folder header toggles are bound after folder list is built (see loadPromptHistory)
