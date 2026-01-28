@@ -27,7 +27,7 @@
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 flex" {% block body_attributes %}{% endblock %}>
     <div class="flex w-full flex-row">
-        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0 relative z-[1000] transform">
+        <aside id="leftSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 md:sticky md:top-0 md:relative md:z-[1000] max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-[3000] max-md:shadow-2xl max-md:-translate-x-full max-md:transition-transform max-md:duration-200 max-md:ease-out">
             <!-- Sidebar Header / Branding -->
             <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-800/50">
                 <a href="/" class="flex items-center gap-3">
@@ -41,18 +41,18 @@
             {% include "website/partials/sidebar_left_content.html" %}
         </aside>
         <!-- Main Content Area -->
-        <main class="flex flex-1 flex-col relative h-full">
+        <main class="flex flex-1 flex-col relative min-h-screen">
             <!-- Error Toast -->
             {% include "website/partials/error_toast.html" with toast_class="hidden absolute top-4 right-4 z-50 bg-red-600 text-white p-4 rounded-lg shadow-lg" %}
 
             <!-- Top Navigation (Minimal) -->
-            <header class="flex w-full items-center justify-between px-8 py-5">
+            <header class="flex w-full flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
                 <!-- Mobile Menu Trigger (Hidden on Desktop) -->
-                <button
-                    class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                <button id="sidebarToggle"
+                    class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark max-sm:order-1">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <nav class="flex items-center space-x-4">
+                <nav class="flex items-center space-x-4 max-sm:order-3 max-sm:w-full max-sm:justify-center">
                     <a href="{% url 'knowledge_library' %}" 
                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium 
                               text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-surface-highlight 
@@ -62,7 +62,9 @@
                     </a>
                 </nav>
                 <!-- Theme Toggle -->
-                {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
+                <div class="max-sm:order-2 max-sm:self-center">
+                    {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
+                </div>
             </header>
             <!-- Center Content -->
             <div class="flex flex-1 flex-col items-center px-4">
@@ -141,7 +143,7 @@
                 </div>
             </div> -->
             <!-- Footer Links -->
-            <footer class="flex flex-col items-center justify-center py-6 text-[10px] text-slate-500 dark:text-slate-500">
+            <footer class="mt-auto flex flex-col items-center justify-center py-6 text-[10px] text-slate-500 dark:text-slate-500">
                 <p>&copy; <span id="copyright-year">2025</span> Earth System Science AI Assistant. All rights reserved.</p>
                 <p class="mt-2">Developed by <a class="hover:text-slate-800 dark:hover:text-slate-300" href="https://github.com/ozgeozge/PB_Assistant" target="_blank" rel="noopener noreferrer">PB Science Lab</a> @ <a class="text-primary hover:text-primary/80 transition-colors" href="https://www.pik-potsdam.de/en" target="_blank" rel="noopener noreferrer">The Potsdam Institute for Climate Impact Research (PIK)</a></p>
             </footer>
@@ -151,6 +153,8 @@
             {% include "website/partials/sidebar_right_content.html" %}
         </aside>
     </div>
+
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden z-[2990] md:hidden" aria-hidden="true"></div>
 
     <!-- Confirmation Modal -->
     {% include "website/partials/confirmation_modal.html" with modal_class="fixed inset-0 z-[4000] hidden" %}
