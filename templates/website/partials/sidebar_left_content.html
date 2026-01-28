@@ -1,23 +1,23 @@
 <!-- Sidebar Content -->
 <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
-    <!-- Sidebar Filter -->
-    <div class="mb-3 px-2 pt-2">
-        <div class="relative">
-            <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-            <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
+<!-- Sidebar Filter -->
+<div class="mb-4 px-2 pt-2">
+    <div class="relative">
+        <input id="sidebarFilter" type="search" placeholder="Filter folders & searches" aria-label="Filter" class="w-full bg-slate-100 dark:bg-surface-highlight rounded-md border border-slate-300 dark:border-slate-700 px-3 py-2 pr-10 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/50" />
+        <button id="sidebarFilterClear" aria-label="Clear filter" class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-white hidden">
+            <span class="material-symbols-outlined">close</span>
+        </button>
     </div>
-    <!-- Section: Folders -->
-    <div class="mb-4">
-        <div id="folder-header" class="px-2 flex items-center justify-between cursor-pointer group">
-            <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
-            </h3>
-            <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="newFolderButton">New Folder</button>
-        </div>
-        <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
+</div>
+<!-- Section: Folders -->
+<div class="mb-1">
+    <div id="folder-header" class="px-2 pb-2 flex items-center justify-between cursor-pointer group">
+        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
+        </h3>
+        <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="newFolderButton">New Folder</button>
+    </div>
+    <div id="folder-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
             <div class="flex flex-col gap-1" id="folderList">
                 <!-- Folder items will be injected here by JavaScript -->
             </div>
@@ -29,14 +29,14 @@
         </div>
     </div>
 
-    <!-- Section: History -->
-    <div>
-        <div id="searches-header" class="px-2 flex items-center justify-between cursor-pointer group">
-            <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
-            </h3>
-            <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="clearButton">Clear</button>
-        </div>
+<!-- Section: History -->
+<div class="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700/70">
+    <div id="searches-header" class="px-2 pb-2 flex items-center justify-between cursor-pointer group">
+        <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
+        </h3>
+        <button class="text-xs font-medium text-primary hover:text-primary/80 transition-colors" id="clearButton">Clear</button>
+    </div>
         <div id="searches-content" class="bg-white/3 dark:bg-surface-dark/60 border border-slate-200/5 dark:border-[#283039] rounded-lg p-2">
             <div class="flex flex-col gap-1" id="userPromptHistory">
                 <!-- History items will be injected here by JavaScript -->
