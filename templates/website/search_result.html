@@ -5,7 +5,7 @@
 
 {% block new_search_button_area %}
 <div class="px-2 pb-4 py-2">
-    <button id="newSearchButton" class="w-full justify-center text-primary hover:text-white bg-primary/10 hover:bg-primary font-bold transition-all px-4 py-2.5 rounded-xl flex items-center gap-2">
+    <button id="newSearchButton" class="w-full justify-center text-primary hover:text-white bg-primary/10 hover:bg-primary font-bold transition-all px-4 py-2.5 rounded-xl flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
         <span class="material-symbols-outlined text-base">add_notes</span>
         <span class="text-[12px]">New Search</span>
     </button>
@@ -208,7 +208,7 @@
                     <div class="flex rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 shadow-xl flex-col">
                         <div class="p-4 bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754] flex justify-between items-center">
                             <h2 id="documentContentsTitle" class="text-lg font-bold text-gray-900 dark:text-white"></h2>
-                            <button id="closePanelIcon" class="text-black dark:text-white hover:text-primary">
+                        <button id="closePanelIcon" class="text-black dark:text-white hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                                 <span class="material-symbols-outlined">close</span>
                             </button>
                         </div>
