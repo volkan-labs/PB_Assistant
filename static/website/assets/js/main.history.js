@@ -60,20 +60,20 @@ function loadPromptHistory() {
 
         folders.forEach(folder => {
             folderMap.set(folder.id, $(`
-                <div class="flex flex-col">
-                    <div class="folder-header flex items-center justify-between gap-2 pl-2 pr-1 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer" id="folder-${folder.id}">
+                <div class="folder-item flex flex-col">
+                    <div class="folder-header flex items-center justify-between gap-2 pl-2 pr-1 py-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" id="folder-${folder.id}" tabindex="0" role="button" aria-controls="folder-content-${folder.id}" aria-expanded="false">
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>
                             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${folder.color};"></span>
                             <span class="folder-name-text text-sm font-medium text-slate-600 dark:text-slate-300 truncate">${folder.name}</span>
                         </div>
                         <div class="flex items-center gap-1">
-                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-opacity transition-colors focus:outline-none">
+                            <button aria-label="Delete folder" data-folder-id="${folder.id}" class="folder-delete-btn flex h-8 w-8 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-opacity transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                             </button>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-1 ml-4" style="display: none;">
+                    <div class="flex flex-col gap-1 ml-4" id="folder-content-${folder.id}" style="display: none;">
                         <div class="folder-empty text-sm text-slate-400 dark:text-slate-500 italic px-3 py-2">No items in this folder.</div>
                     </div>
                 </div>`
@@ -101,8 +101,8 @@ function loadPromptHistory() {
                 }
 
                 const historyElement = `
-                    <div class="${classes} relative" draggable="true" data-history-id="${value.id}">
-                        <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0">
+                    <div class="${classes} relative focus-within:ring-2 focus-within:ring-primary/40 focus-within:ring-offset-2 focus-within:ring-offset-background-light dark:focus-within:ring-offset-background-dark" draggable="true" data-history-id="${value.id}" tabindex="0">
+                        <a href="/history-item/${value.id}" class="flex flex-1 items-center gap-3 py-2 text-left min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark rounded-md">
                             <div class="flex flex-col min-w-0">
                                 <span
                                     class="truncate text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white">${formatTitle(value.title)}</span>
@@ -111,7 +111,7 @@ function loadPromptHistory() {
                         </a>
                         <div class="relative">
                             <button aria-label="Item actions" id="itemActionsButton-${value.id}"
-                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none">
+                                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
                             </button>
                             <div id="itemActionsMenu-${value.id}" data-history-id="${value.id}"
@@ -119,7 +119,7 @@ function loadPromptHistory() {
                                 role="menu" aria-orientation="vertical" aria-labelledby="itemActionsButton-${value.id}" tabindex="-1">
                                 <div class="py-1" role="none">
                                 <div class="relative">
-                                    <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem" tabindex="-1" id="moveToFolderOption-${value.id}">
+                                    <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" tabindex="-1" id="moveToFolderOption-${value.id}">
                                         <span class="material-symbols-outlined text-[18px]">drive_file_move</span>
                                         Move to folder
                                         <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-sm">chevron_right</span>
@@ -132,14 +132,14 @@ function loadPromptHistory() {
                                                 <!-- Folders will be dynamically inserted here -->
                                             </div>
                                             <div class="border-t border-slate-300 dark:border-gray-700 my-1" role="none"></div>
-                                            <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem" tabindex="-1" id="createNewFolderInMenu-${value.id}">
+                                            <button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" tabindex="-1" id="createNewFolderInMenu-${value.id}">
                                                 <span class="material-symbols-outlined text-[18px]">create_new_folder</span>
                                                 Create new folder
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                    <button class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2" role="menuitem" tabindex="-1" id="deleteItemButton-${value.id}">
+                                    <button class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" tabindex="-1" id="deleteItemButton-${value.id}">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                         Delete
                                     </button>
@@ -181,24 +181,82 @@ function loadPromptHistory() {
             $('#clearButton').hide();
         }
 
-        // Bind toggle only to the expand icon and folder name text to avoid large clickable areas
-        $('#folderList').off('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text').on('click', '.folder-header .section-toggle-icon, .folder-header .folder-name-text', function (e) {
-            const clicked = $(this);
-            const header = clicked.closest('.folder-header');
-            const folderContent = header.next('.flex-col.gap-1.ml-4');
+        // Bind toggle to the folder header, excluding the delete button
+        $('#folderList').off('click', '.folder-header').on('click', '.folder-header', function (e) {
+            if ($(e.target).closest('.folder-delete-btn').length) return;
+            const header = $(this);
+            const folderContent = header.closest('.folder-item').children('.flex-col.gap-1.ml-4');
             folderContent.slideToggle(200, function () {
                 const isVisible = $(this).is(':visible');
-                const folderElement = header;
-                const folderId = folderElement.attr('id');
+                const folderId = header.attr('id');
                 const icon = header.find('.section-toggle-icon');
                 if (isVisible) {
                     icon.addClass('rotate-90');
+                    header.attr('aria-expanded', 'true');
                     addOpenFolder(folderId);
                 } else {
                     icon.removeClass('rotate-90');
+                    header.attr('aria-expanded', 'false');
                     removeOpenFolder(folderId);
                 }
             });
+        });
+
+        $('#folderList').off('click.folderHeaderFocus').on('click.folderHeaderFocus', '.folder-header', function () {
+            $(this).focus();
+        });
+
+        // Keyboard toggle for folder headers (Enter/Space/ArrowRight/ArrowLeft)
+        $('#folderList').off('keydown', '.folder-header').on('keydown', '.folder-header', function (e) {
+            const header = $(this);
+            const folderContent = header.closest('.folder-item').children('.flex-col.gap-1.ml-4');
+            const icon = header.find('.section-toggle-icon');
+            const folderId = header.attr('id');
+            const isOpen = folderContent.is(':visible');
+            const focusPrev = () => {
+                const prev = header.closest('.folder-item').prevAll('.folder-item').first().find('.folder-header');
+                if (prev.length) prev.focus();
+            };
+            const focusNext = () => {
+                const next = header.closest('.folder-item').nextAll('.folder-item').first().find('.folder-header');
+                if (next.length) next.focus();
+            };
+
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                folderContent.slideToggle(200, function () {
+                    const nowOpen = $(this).is(':visible');
+                    if (nowOpen) {
+                        icon.addClass('rotate-90');
+                        header.attr('aria-expanded', 'true');
+                        addOpenFolder(folderId);
+                    } else {
+                        icon.removeClass('rotate-90');
+                        header.attr('aria-expanded', 'false');
+                        removeOpenFolder(folderId);
+                    }
+                });
+            } else if (e.key === 'ArrowRight' && !isOpen) {
+                e.preventDefault();
+                folderContent.slideDown(200, function () {
+                    icon.addClass('rotate-90');
+                    header.attr('aria-expanded', 'true');
+                    addOpenFolder(folderId);
+                });
+            } else if (e.key === 'ArrowLeft' && isOpen) {
+                e.preventDefault();
+                folderContent.slideUp(200, function () {
+                    icon.removeClass('rotate-90');
+                    header.attr('aria-expanded', 'false');
+                    removeOpenFolder(folderId);
+                });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                focusPrev();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                focusNext();
+            }
         });
 
         // Enable drag and drop of history items to folders
@@ -257,9 +315,8 @@ function loadPromptHistory() {
                 parentFolderContent.css('display', 'flex');
                 const folderHeader = parentFolderContent.prev('.folder-header');
                 const leftIcon = folderHeader.find('.section-toggle-icon');
-                const rightIcon = folderHeader.find('.folder-delete-btn .material-symbols-outlined');
-                leftIcon.text('expand_less'); // show expanded state for expand icon
-                rightIcon.text('delete'); // ensure delete icon remains delete
+                leftIcon.addClass('rotate-90');
+                folderHeader.attr('aria-expanded', 'true');
             }
         }
         // After building folders, restore any previously saved open folders (async to avoid race with other handlers)
@@ -436,7 +493,7 @@ function loadPromptHistory() {
 
                     folders.forEach(folder => {
 
-                        const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2" role="menuitem" data-folder-id="${folder.id}"><span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${folder.color};"></span>${folder.name}</button>`;
+                        const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" data-folder-id="${folder.id}"><span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${folder.color};"></span>${folder.name}</button>`;
 
                         const $folderButton = $(folderButtonHtml); // Convert to jQuery object
 
@@ -526,7 +583,7 @@ function saveFolderState() {
     const openFolders = [];
     $('#folderList .folder-header').each(function () {
         const folderId = $(this).attr('id');
-        const folderContent = $(this).next('.flex-col.gap-1.ml-4');
+        const folderContent = $(this).closest('.folder-item').children('.flex-col.gap-1.ml-4');
         if (folderId && folderContent.is(':visible')) {
             openFolders.push(folderId);
         }
@@ -573,12 +630,13 @@ function restoreFolderState() {
         console.debug('[restoreFolderState] trying selector', folderSelector, 'found:', folderHeader.length);
         if (folderHeader.length === 0) return;
 
-        const folderContent = folderHeader.next('.flex-col.gap-1.ml-4');
+        const folderContent = folderHeader.closest('.folder-item').children('.flex-col.gap-1.ml-4');
         console.debug('[restoreFolderState] folderContent length for', folderSelector, folderContent.length);
         if (folderContent.length > 0) {
             folderContent.css('display', 'flex');
             const icon = folderHeader.find('.section-toggle-icon');
             if (icon.length) icon.addClass('rotate-90');
+            folderHeader.attr('aria-expanded', 'true');
         }
     });
 }

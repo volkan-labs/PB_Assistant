@@ -52,10 +52,28 @@ $(document).ready(function () {
             content.hide();
             icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
             header.addClass('collapsed');
+            header.attr('aria-expanded', 'false');
         } else {
             content.show();
             icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
             header.removeClass('collapsed');
+            header.attr('aria-expanded', 'true');
+        }
+
+        function toggleContent() {
+            content.slideToggle(200, function () {
+                const nowCollapsed = !$(this).is(':visible');
+                localStorage.setItem(localStorageKey, nowCollapsed);
+                if (nowCollapsed) {
+                    icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
+                    header.addClass('collapsed');
+                    header.attr('aria-expanded', 'false');
+                } else {
+                    icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
+                    header.removeClass('collapsed');
+                    header.attr('aria-expanded', 'true');
+                }
+            });
         }
 
         header.on('click', function (e) {
@@ -63,18 +81,14 @@ $(document).ready(function () {
             if ($(e.target).is('button') || $(e.target).closest('button').length) {
                 return;
             }
+            toggleContent();
+        });
 
-            content.slideToggle(200, function () {
-                const nowCollapsed = !$(this).is(':visible');
-                localStorage.setItem(localStorageKey, nowCollapsed);
-                if (nowCollapsed) {
-                    icon.removeClass('rotate-90'); // No rotation for collapsed state (arrow pointing right/expand)
-                    header.addClass('collapsed');
-                } else {
-                    icon.addClass('rotate-90'); // Rotated for expanded state (arrow pointing down/collapse)
-                    header.removeClass('collapsed');
-                }
-            });
+        header.on('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleContent();
+            }
         });
     }
 
@@ -373,7 +387,9 @@ $(document).ready(function () {
                 const f = $(this);
                 const content = f.find('.flex-col.gap-1.ml-4');
                 content.css('display', 'none');
+                const header = f.find('.folder-header');
                 f.find('.section-toggle-icon').removeClass('rotate-90');
+                header.attr('aria-expanded', 'false');
             });
             $('#userPromptHistory').children().show();
             // restore the open folders the user had before filtering
@@ -410,6 +426,7 @@ $(document).ready(function () {
                 const content = folder.find('.flex-col.gap-1.ml-4');
                 content.css('display', 'flex');
                 folder.find('.section-toggle-icon').addClass('rotate-90');
+                folder.find('.folder-header').attr('aria-expanded', 'true');
             } else {
                 folder.hide();
             }
