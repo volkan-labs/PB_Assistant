@@ -101,6 +101,24 @@ html.dark .ollama-select {
 }
 
 #leftSidebar .sidebar-icon-slot {
+    width: 36px;
+    height: 36px;
+}
+
+#leftSidebar .sidebar-toggle-icon,
+#leftSidebar .sidebar-collapsed-logo {
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin: 0 auto;
+    object-position: center;
+}
+
+html.dark #leftSidebar .sidebar-toggle-icon {
+    filter: brightness(0) invert(1);
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-collapsed-logo {
     width: 32px;
     height: 32px;
 }
@@ -121,7 +139,6 @@ body.sidebar-collapsed #leftSidebar .sidebar-collapse-toggle {
     position: absolute;
     right: 8px;
     top: 8px;
-    transform: rotate(180deg);
     opacity: 0;
     pointer-events: none;
 }
@@ -282,6 +299,39 @@ body.sidebar-collapsed #leftSidebar .sidebar-section-title {
 
 #leftSidebar .nav-tooltip {
     display: none;
+}
+
+ #leftSidebar .sidebar-action-tooltip {
+    display: none;
+}
+
+#leftSidebar .sidebar-collapse-toggle:hover .sidebar-action-tooltip,
+#leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip {
+    display: block;
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #111827;
+    color: #f9fafb;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    z-index: 40;
+}
+
+html.dark #leftSidebar .sidebar-collapse-toggle:hover .sidebar-action-tooltip,
+html.dark #leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip {
+    background: #0d1117;
+    color: #e5e7eb;
+    border: 1px solid #2b2f36;
+}
+
+#leftSidebar .sidebar-action-tooltip::before {
+    content: attr(data-tooltip);
 }
 
 body.sidebar-collapsed #leftSidebar .nav-item {
