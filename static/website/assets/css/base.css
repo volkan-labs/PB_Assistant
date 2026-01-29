@@ -284,6 +284,10 @@ body.right-sidebar-collapsed #rightSidebar .right-sidebar-header {
 body.right-sidebar-collapsed #rightSidebar .right-pin-icon {
     transform: rotate(0deg);
 }
+
+html.dark #rightSidebar .right-pin-icon {
+    filter: brightness(0) invert(1);
+}
 #leftSidebar .nav-label {
     display: inline-block;
     max-width: 180px;
