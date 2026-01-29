@@ -160,27 +160,27 @@
     <!-- Spotlight Search -->
     <div id="spotlightOverlay" class="fixed inset-0 z-[4500] hidden">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative mx-auto mt-[10vh] w-[92%] max-w-2xl rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 shadow-2xl">
-            <div class="flex items-center gap-3 border-b border-slate-200/70 dark:border-slate-700/70 px-4 py-3">
+        <div class="relative mx-auto mt-[10vh] w-[92%] max-w-2xl rounded-2xl border border-slate-200/70 dark:border-[#2b2f36] bg-white/95 dark:bg-[#25343F] shadow-2xl">
+            <div class="flex items-center gap-3 border-b border-slate-200/70 dark:border-[#2b2f36] px-4 py-3">
                 <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">search</span>
                 <input id="spotlightInput" type="text" placeholder="Search chats..." autocomplete="off"
                     class="w-full bg-transparent text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none" />
                 <button type="button" id="spotlightClose" aria-label="Close search"
-                    class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-[#1b1f25] dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                     <span class="material-symbols-outlined text-[18px]">close</span>
                 </button>
             </div>
-            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200/70 dark:border-slate-700/70 px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200/70 dark:border-[#2b2f36] px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
                 <button type="button" data-spotlight-filter="all"
-                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
                     All
                 </button>
                 <button type="button" data-spotlight-filter="folders"
-                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
                     In folders
                 </button>
                 <button type="button" data-spotlight-filter="unfiled"
-                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
                     Unfiled
                 </button>
             </div>
