@@ -32,6 +32,9 @@
                 if (localStorage.getItem('sidebarCollapsed') === 'true') {
                     document.body.classList.add('sidebar-collapsed');
                 }
+                if (localStorage.getItem('rightSidebarCollapsed') === 'true') {
+                    document.body.classList.add('right-sidebar-collapsed');
+                }
             } catch (e) {}
         })();
     </script>
@@ -153,7 +156,7 @@
             </footer>
         </main>
 
-        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
+        <aside id="rightSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
             {% include "website/partials/sidebar_right_content.html" %}
         </aside>
     </div>

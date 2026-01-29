@@ -39,6 +39,7 @@ $(document).ready(function () {
     const leftSidebar = $('#leftSidebar');
     const sidebarBackdrop = $('#sidebarBackdrop');
     const sidebarCollapseToggle = $('#sidebarCollapseToggle');
+    const rightSidebarCollapseToggle = $('#rightSidebarCollapseToggle');
 
     function closeSidebar() {
         leftSidebar.addClass('max-md:-translate-x-full').removeClass('max-md:translate-x-0').attr('aria-hidden', 'true');
@@ -90,6 +91,26 @@ $(document).ready(function () {
         setSidebarCollapsed(storedCollapsed);
         sidebarCollapseToggle.on('click', function () {
             setSidebarCollapsed(!$('body').hasClass('sidebar-collapsed'));
+        });
+    }
+
+    function setRightSidebarCollapsed(isCollapsed) {
+        const body = $('body');
+        if (isCollapsed) {
+            body.addClass('right-sidebar-collapsed');
+            rightSidebarCollapseToggle.attr('aria-label', 'Expand right sidebar').attr('aria-pressed', 'true');
+        } else {
+            body.removeClass('right-sidebar-collapsed');
+            rightSidebarCollapseToggle.attr('aria-label', 'Collapse right sidebar').attr('aria-pressed', 'false');
+        }
+        localStorage.setItem('rightSidebarCollapsed', isCollapsed ? 'true' : 'false');
+    }
+
+    if (rightSidebarCollapseToggle.length) {
+        const storedRightCollapsed = localStorage.getItem('rightSidebarCollapsed') === 'true';
+        setRightSidebarCollapsed(storedRightCollapsed);
+        rightSidebarCollapseToggle.on('click', function () {
+            setRightSidebarCollapsed(!$('body').hasClass('right-sidebar-collapsed'));
         });
     }
 

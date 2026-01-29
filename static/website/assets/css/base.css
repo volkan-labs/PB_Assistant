@@ -172,6 +172,36 @@ body.sidebar-collapsed #leftSidebar .sidebar-user-section .user-actions-button {
     display: none;
 }
 
+#rightSidebar {
+    transition: width 200ms ease;
+}
+
+body.right-sidebar-collapsed #rightSidebar {
+    width: 64px;
+}
+
+body.right-sidebar-collapsed #rightSidebar .right-sidebar-content,
+body.right-sidebar-collapsed #rightSidebar .right-sidebar-title {
+    display: none;
+}
+
+body.right-sidebar-collapsed #rightSidebar .right-sidebar-header {
+    justify-content: center;
+}
+
+#rightSidebar .right-sidebar-header {
+    position: relative;
+}
+
+#rightSidebar .right-pin-icon {
+    transition: transform 160ms ease;
+    transform: rotate(45deg);
+    transform-origin: center;
+}
+
+body.right-sidebar-collapsed #rightSidebar .right-pin-icon {
+    transform: rotate(0deg);
+}
 #leftSidebar .nav-label {
     display: inline-block;
     max-width: 180px;
