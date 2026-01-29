@@ -96,6 +96,11 @@ html.dark .ollama-select {
     position: relative;
 }
 
+#leftSidebar .sidebar-header-collapsed {
+    display: none;
+    position: relative;
+}
+
 #leftSidebar .sidebar-logo-collapsed {
     display: none;
 }
@@ -131,29 +136,41 @@ body.sidebar-collapsed #leftSidebar .sidebar-logo-full {
     display: none;
 }
 
-body.sidebar-collapsed #leftSidebar .sidebar-logo-collapsed {
-    display: flex;
+body.sidebar-collapsed #leftSidebar .sidebar-header {
+    display: none;
 }
 
-body.sidebar-collapsed #leftSidebar .sidebar-collapse-toggle {
+body.sidebar-collapsed #leftSidebar .sidebar-header-collapsed {
+    display: flex;
+    justify-content: center;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-collapse-toggle-collapsed {
     position: absolute;
-    right: 8px;
-    top: 8px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     opacity: 0;
     pointer-events: none;
 }
 
-body.sidebar-collapsed #leftSidebar .sidebar-header {
-    justify-content: center;
+body.sidebar-collapsed #leftSidebar .sidebar-header-collapsed:hover .sidebar-collapsed-logo {
+    opacity: 0;
 }
 
-body.sidebar-collapsed #leftSidebar .sidebar-header:hover .sidebar-logo-collapsed {
-    display: none;
-}
-
-body.sidebar-collapsed #leftSidebar .sidebar-header:hover .sidebar-collapse-toggle {
+body.sidebar-collapsed #leftSidebar .sidebar-header-collapsed:hover .sidebar-collapse-toggle-collapsed {
     opacity: 1;
     pointer-events: auto;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-collapsed-logo {
+    display: block;
+    transition: opacity 140ms ease;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-collapse-toggle {
+    opacity: 0;
+    pointer-events: none;
 }
 
 body.sidebar-collapsed #leftSidebar #sidebarScrollArea {
@@ -306,7 +323,9 @@ body.sidebar-collapsed #leftSidebar .sidebar-section-title {
 }
 
 #leftSidebar .sidebar-collapse-toggle:hover .sidebar-action-tooltip,
-#leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip {
+#leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip,
+#leftSidebar .sidebar-collapse-toggle-collapsed:hover .sidebar-action-tooltip,
+#leftSidebar .sidebar-collapse-toggle-collapsed:focus-visible .sidebar-action-tooltip {
     display: block;
     position: absolute;
     left: calc(100% + 8px);
@@ -324,7 +343,9 @@ body.sidebar-collapsed #leftSidebar .sidebar-section-title {
 }
 
 html.dark #leftSidebar .sidebar-collapse-toggle:hover .sidebar-action-tooltip,
-html.dark #leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip {
+html.dark #leftSidebar .sidebar-collapse-toggle:focus-visible .sidebar-action-tooltip,
+html.dark #leftSidebar .sidebar-collapse-toggle-collapsed:hover .sidebar-action-tooltip,
+html.dark #leftSidebar .sidebar-collapse-toggle-collapsed:focus-visible .sidebar-action-tooltip {
     background: #0d1117;
     color: #e5e7eb;
     border: 1px solid #2b2f36;

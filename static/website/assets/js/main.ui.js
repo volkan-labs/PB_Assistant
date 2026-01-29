@@ -39,6 +39,7 @@ $(document).ready(function () {
     const leftSidebar = $('#leftSidebar');
     const sidebarBackdrop = $('#sidebarBackdrop');
     const sidebarCollapseToggle = $('#sidebarCollapseToggle');
+    const sidebarCollapseToggleCollapsed = $('#sidebarCollapseToggleCollapsed');
     const rightSidebarCollapseToggle = $('#rightSidebarCollapseToggle');
 
     function closeSidebar() {
@@ -86,11 +87,14 @@ $(document).ready(function () {
         localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
     }
 
-    if (sidebarCollapseToggle.length) {
+    if (sidebarCollapseToggle.length || sidebarCollapseToggleCollapsed.length) {
         const storedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
         setSidebarCollapsed(storedCollapsed);
         sidebarCollapseToggle.on('click', function () {
             setSidebarCollapsed(!$('body').hasClass('sidebar-collapsed'));
+        });
+        sidebarCollapseToggleCollapsed.on('click', function () {
+            setSidebarCollapsed(false);
         });
     }
 
