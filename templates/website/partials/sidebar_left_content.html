@@ -71,13 +71,16 @@
 <!-- Section: user profile -->
 <div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark sidebar-user-section">
     <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
-        <div class="relative user-menu-anchor flex items-center gap-2">
-            <button id="userAvatarButton" type="button" aria-label="User menu"
-                class="relative h-9 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                <img alt="User Avatar Profile Picture"
-                    class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
-            </button>
+        <button id="userAvatarButton" type="button" aria-label="User menu"
+            class="relative h-9 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+            <img alt="User Avatar Profile Picture"
+                class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
+        </button>
+        <div class="flex flex-1 flex-col overflow-hidden user-meta">
+            <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
+        </div>
+        <div class="relative">
             <button id="userActionsButton" aria-label="User actions"
                 class="user-actions-button flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
@@ -95,9 +98,6 @@
                     Sign Out
                 </button>
             </div>
-        </div>
-        <div class="flex flex-1 flex-col overflow-hidden user-meta">
-            <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
         </div>
     </div>
 </div>

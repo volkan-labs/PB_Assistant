@@ -156,15 +156,61 @@ body.sidebar-collapsed #leftSidebar .sidebar-section:not(.sidebar-nav) {
 
 body.sidebar-collapsed #leftSidebar .nav-item {
     justify-content: center;
-    padding: 10px;
+    padding: 10px 0;
+    width: 100%;
+}
+
+body.sidebar-collapsed #leftSidebar .nav-item {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    gap: 0;
+}
+
+body.sidebar-collapsed #leftSidebar .nav-icon {
+    display: block;
+    margin: 0 auto;
 }
 
 body.sidebar-collapsed #leftSidebar .nav-item .nav-icon {
     font-size: 20px;
+    margin: 0;
 }
 
 body.sidebar-collapsed #leftSidebar .sidebar-user-section .group {
     justify-content: center;
+    width: 100%;
+    padding: 0;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-user-section #userAvatarButton {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-user-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-user-section .group {
+    flex: 0 0 auto;
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-user-section #userAvatarButton {
+    display: block;
+    margin: 0 auto;
+}
+
+body.sidebar-collapsed #leftSidebar .sidebar-user-section .group {
+    align-items: center;
 }
 
 body.sidebar-collapsed #leftSidebar .sidebar-user-section .user-meta,
@@ -223,6 +269,7 @@ body.sidebar-collapsed #leftSidebar .nav-label {
     opacity: 0;
     transform: translateX(-6px);
     max-width: 0;
+    display: none !important;
 }
 
 body.sidebar-collapsed #leftSidebar .sidebar-section-title {
