@@ -4,12 +4,21 @@ $(document).ready(function () {
 
     const userActionsButton = $('#userActionsButton');
     const userActionsMenu = $('#userActionsMenu');
+    const userAvatarButton = $('#userAvatarButton');
 
     if (userActionsButton.length && userActionsMenu.length) {
         userActionsButton.on('click', function (e) {
             e.stopPropagation();
             userActionsMenu.toggleClass('hidden');
         });
+
+        if (userAvatarButton.length) {
+            userAvatarButton.on('click', function (e) {
+                if (!$('body').hasClass('sidebar-collapsed')) return;
+                e.stopPropagation();
+                userActionsMenu.toggleClass('hidden');
+            });
+        }
 
         userActionsMenu.on('click', function (e) {
             e.stopPropagation();
@@ -29,6 +38,9 @@ $(document).ready(function () {
     const sidebarToggle = $('#sidebarToggle');
     const leftSidebar = $('#leftSidebar');
     const sidebarBackdrop = $('#sidebarBackdrop');
+    const sidebarCollapseToggle = $('#sidebarCollapseToggle');
+    const sidebarCollapseToggleCollapsed = $('#sidebarCollapseToggleCollapsed');
+    const rightSidebarCollapseToggle = $('#rightSidebarCollapseToggle');
 
     function closeSidebar() {
         leftSidebar.addClass('max-md:-translate-x-full').removeClass('max-md:translate-x-0').attr('aria-hidden', 'true');
@@ -57,6 +69,52 @@ $(document).ready(function () {
             if (e.key === 'Escape') {
                 closeSidebar();
             }
+        });
+    }
+
+    function setSidebarCollapsed(isCollapsed) {
+        const body = $('body');
+        const icon = sidebarCollapseToggle.find('.material-symbols-outlined');
+        if (isCollapsed) {
+            body.addClass('sidebar-collapsed');
+            sidebarCollapseToggle.attr('aria-label', 'Expand sidebar').attr('aria-pressed', 'true');
+            if (icon.length) icon.text('menu');
+        } else {
+            body.removeClass('sidebar-collapsed');
+            sidebarCollapseToggle.attr('aria-label', 'Collapse sidebar').attr('aria-pressed', 'false');
+            if (icon.length) icon.text('menu');
+        }
+        localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+    }
+
+    if (sidebarCollapseToggle.length || sidebarCollapseToggleCollapsed.length) {
+        const storedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        setSidebarCollapsed(storedCollapsed);
+        sidebarCollapseToggle.on('click', function () {
+            setSidebarCollapsed(!$('body').hasClass('sidebar-collapsed'));
+        });
+        sidebarCollapseToggleCollapsed.on('click', function () {
+            setSidebarCollapsed(false);
+        });
+    }
+
+    function setRightSidebarCollapsed(isCollapsed) {
+        const body = $('body');
+        if (isCollapsed) {
+            body.addClass('right-sidebar-collapsed');
+            rightSidebarCollapseToggle.attr('aria-label', 'Expand right sidebar').attr('aria-pressed', 'true');
+        } else {
+            body.removeClass('right-sidebar-collapsed');
+            rightSidebarCollapseToggle.attr('aria-label', 'Collapse right sidebar').attr('aria-pressed', 'false');
+        }
+        localStorage.setItem('rightSidebarCollapsed', isCollapsed ? 'true' : 'false');
+    }
+
+    if (rightSidebarCollapseToggle.length) {
+        const storedRightCollapsed = localStorage.getItem('rightSidebarCollapsed') === 'true';
+        setRightSidebarCollapsed(storedRightCollapsed);
+        rightSidebarCollapseToggle.on('click', function () {
+            setRightSidebarCollapsed(!$('body').hasClass('right-sidebar-collapsed'));
         });
     }
 
@@ -192,6 +250,17 @@ $(document).ready(function () {
             newChatHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Shift + Ctrl + O</span>');
         }
     }
+
+    $('.nav-tooltip').each(function () {
+        const tooltip = $(this);
+        const base = tooltip.data('tooltip');
+        const mac = tooltip.data('shortcut-mac');
+        const win = tooltip.data('shortcut-win');
+        if (!base) return;
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        const shortcut = isMac ? mac : win;
+        tooltip.text(shortcut ? `${base} · ${shortcut}` : base);
+    });
 
     if (spotlightClose.length) {
         spotlightClose.on('click', function () {

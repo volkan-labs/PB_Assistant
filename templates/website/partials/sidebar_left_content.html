@@ -1,33 +1,36 @@
 <!-- Sidebar Content -->
 <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
 <!-- Sidebar Navigation -->
-<div class="px-2 pt-2 pb-3">
-    <h3 class="px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+<div class="px-2 pt-2 pb-3 sidebar-section sidebar-nav">
+    <h3 class="px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 sidebar-section-title">
         Navigation
     </h3>
     <div class="mt-2 flex flex-col gap-1">
-        <a id="newChatLink" href="/index" class="group relative flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-            <span class="material-symbols-outlined text-base">add</span>
-            <span class="flex-1 text-left">New chat</span>
+        <a id="newChatLink" href="/index" aria-label="New chat" class="nav-item group relative flex items-center justify-start gap-2 rounded-md px-3 py-2 pr-10 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+            <span class="material-symbols-outlined text-base nav-icon">add</span>
+            <span class="flex-1 text-left nav-label">New chat</span>
             <span id="newChatHint" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:inline-flex group-focus-visible:inline-flex items-center gap-1">
                 <span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">⇧ ⌘ O</span>
             </span>
+            <span class="nav-tooltip" data-tooltip="Start a new chat" data-shortcut-mac="⇧ ⌘ O" data-shortcut-win="Shift + Ctrl + O"></span>
         </a>
-        <button id="spotlightOpen" type="button" class="group relative flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-            <span class="material-symbols-outlined text-base">search</span>
-            <span class="flex-1 text-left">Search</span>
+        <button id="spotlightOpen" type="button" aria-label="Search chats" class="nav-item group relative flex items-center justify-start gap-2 rounded-md px-3 py-2 pr-10 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+            <span class="material-symbols-outlined text-base nav-icon">search</span>
+            <span class="flex-1 text-left nav-label">Search</span>
             <span id="spotlightHint" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:inline-flex group-focus-visible:inline-flex items-center gap-1">
                 <span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">⌘ K</span>
             </span>
+            <span class="nav-tooltip" data-tooltip="Search your chats" data-shortcut-mac="⌘ K" data-shortcut-win="Ctrl + K"></span>
         </button>
-        <a href="{% url 'knowledge_library' %}" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-            <span class="material-symbols-outlined text-base">library_books</span>
-            Knowledge Library
+        <a href="{% url 'knowledge_library' %}" aria-label="Knowledge Library" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+            <span class="material-symbols-outlined text-base nav-icon">library_books</span>
+            <span class="nav-label">Knowledge Library</span>
+            <span class="nav-tooltip" data-tooltip="Manage your documents"></span>
         </a>
     </div>
 </div>
 <!-- Section: Folders -->
-<div class="mb-1">
+<div class="mb-1 sidebar-section">
     <div id="folder-header" class="px-2 pb-2 flex items-center justify-between cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="button" tabindex="0" aria-controls="folder-content" aria-expanded="true">
         <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
             <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Folders
@@ -47,7 +50,7 @@
     </div>
 
 <!-- Section: History -->
-<div class="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700/70">
+<div class="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700/70 sidebar-section">
     <div id="searches-header" class="px-2 pb-2 flex items-center justify-between cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="button" tabindex="0" aria-controls="searches-content" aria-expanded="true">
         <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
             <span class="material-symbols-outlined text-base transition-transform duration-300 section-toggle-icon">chevron_right</span>Your searches
@@ -66,19 +69,20 @@
     </div>
 </div>
 <!-- Section: user profile -->
-<div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark">
+<div class="border-t border-gray-200 dark:border-[#1e293b] p-3 bg-background-light dark:bg-surface-dark sidebar-user-section">
     <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
-        <div class="relative">
+        <button id="userAvatarButton" type="button" aria-label="User menu"
+            class="relative h-9 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
             <img alt="User Avatar Profile Picture"
                 class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
-        </div>
-        <div class="flex flex-1 flex-col overflow-hidden">
+        </button>
+        <div class="flex flex-1 flex-col overflow-hidden user-meta">
             <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
         </div>
         <div class="relative">
             <button id="userActionsButton" aria-label="User actions"
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                class="user-actions-button flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
             </button>
             <div id="userActionsMenu"

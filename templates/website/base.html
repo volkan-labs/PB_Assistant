@@ -26,13 +26,38 @@
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 flex" {% block body_attributes %}{% endblock %}>
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+                if (localStorage.getItem('rightSidebarCollapsed') === 'true') {
+                    document.body.classList.add('right-sidebar-collapsed');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <div class="flex w-full flex-row">
         <aside id="leftSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 md:sticky md:top-0 md:relative md:z-[1000] max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-[3000] max-md:shadow-2xl max-md:-translate-x-full max-md:transition-transform max-md:duration-200 max-md:ease-out">
             <!-- Sidebar Header / Branding -->
-            <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-800/50">
-                <a href="/" class="flex items-center gap-3">
-                    <img src="{% static '/website/assets/images/ess-ai-logo.png' %}" alt="Logo" class="h-20" />
+            <div class="sidebar-header flex items-center justify-between gap-3 px-4 py-4 border-b border-slate-100 dark:border-slate-800/50">
+                <a href="/index" class="flex items-center gap-3 sidebar-logo-full">
+                    <img src="{% static '/website/assets/images/logo.svg' %}" alt="PB Science logo" class="h-8 w-8 object-contain" />
                 </a>
+                <button id="sidebarCollapseToggle" type="button" aria-label="Collapse sidebar"
+                    class="sidebar-collapse-toggle sidebar-icon-slot relative flex h-9 w-9 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark opacity-100">
+                    <img src="{% static '/website/assets/images/collapse-menu.svg' %}" alt="Toggle sidebar" class="sidebar-toggle-icon object-contain" />
+                    <span class="sidebar-action-tooltip" data-tooltip="Close sidebar"></span>
+                </button>
+            </div>
+            <div class="sidebar-header-collapsed flex items-center justify-center px-4 py-4 border-b border-slate-100 dark:border-slate-800/50" >
+                <img src="{% static '/website/assets/images/logo.svg' %}" alt="PB Science logo" class="sidebar-collapsed-logo object-contain" />
+                <button id="sidebarCollapseToggleCollapsed" type="button" aria-label="Expand sidebar"
+                    class="sidebar-collapse-toggle-collapsed sidebar-icon-slot relative flex h-9 w-9 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800/60 dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark opacity-100">
+                    <img src="{% static '/website/assets/images/expand-menu.svg' %}" alt="Expand sidebar" class="sidebar-toggle-icon object-contain" />
+                    <span class="sidebar-action-tooltip" data-tooltip="Open sidebar"></span>
+                </button>
             </div>
             {% include "website/partials/sidebar_left_content.html" %}
         </aside>
@@ -137,7 +162,7 @@
             </footer>
         </main>
 
-        <aside class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
+        <aside id="rightSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
             {% include "website/partials/sidebar_right_content.html" %}
         </aside>
     </div>
