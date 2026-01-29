@@ -60,6 +60,206 @@ $(document).ready(function () {
         });
     }
 
+    // Spotlight search
+    const spotlightOverlay = $('#spotlightOverlay');
+    const spotlightInput = $('#spotlightInput');
+    const spotlightResults = $('#spotlightResults');
+    const spotlightOpen = $('#spotlightOpen');
+    const spotlightHint = $('#spotlightHint');
+    const newChatHint = $('#newChatHint');
+    const spotlightClose = $('#spotlightClose');
+    const spotlightFilterButtons = $('[data-spotlight-filter]');
+    let spotlightItems = [];
+    let spotlightIndex = -1;
+    let spotlightFilter = 'all';
+
+    function renderSpotlight(items, showNewChat) {
+        spotlightResults.empty();
+        if (showNewChat) {
+            spotlightResults.append(`
+                <button type="button" id="spotlightNewChat"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        New chat
+                    </div>
+                </button>
+            `);
+        }
+        if (!items.length) {
+            spotlightResults.append('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>');
+            return;
+        }
+        items.forEach((item, idx) => {
+            const isActive = idx === spotlightIndex;
+            const row = $(`
+                <button type="button" class="w-full text-left px-4 py-3 transition-colors ${isActive ? 'bg-primary/10' : 'hover:bg-slate-100 dark:hover:bg-slate-800/60'} focus:outline-none">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="truncate text-sm font-medium text-slate-700 dark:text-slate-200">${item.title}</div>
+                            <div class="text-xs text-slate-400 dark:text-slate-500">${timeAgo(item.timestamp)}</div>
+                        </div>
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">arrow_forward</span>
+                    </div>
+                </button>
+            `);
+            row.on('click', () => {
+                if (item.folder_id) {
+                    const openFolders = JSON.parse(localStorage.getItem('openFolders') || '[]');
+                    const folderKey = `folder-${item.folder_id}`;
+                    if (!openFolders.includes(folderKey)) {
+                        openFolders.push(folderKey);
+                        localStorage.setItem('openFolders', JSON.stringify(openFolders));
+                    }
+                }
+                window.location.href = `/history-item/${item.id}`;
+            });
+            spotlightResults.append(row);
+        });
+    }
+
+    function filterSpotlight() {
+        const q = (spotlightInput.val() || '').trim().toLowerCase();
+        let filtered = spotlightItems;
+
+        if (spotlightFilter === 'folders') {
+            filtered = filtered.filter(item => item.folder_id);
+        } else if (spotlightFilter === 'unfiled') {
+            filtered = filtered.filter(item => !item.folder_id);
+        }
+
+        const showNewChat = !q;
+        if (q) {
+            filtered = filtered.filter(item => (item.title || '').toLowerCase().includes(q));
+        }
+
+        spotlightIndex = filtered.length ? 0 : -1;
+        const limit = q ? 20 : 10;
+        renderSpotlight(filtered.slice(0, limit), showNewChat);
+    }
+
+    function openSpotlight() {
+        spotlightOverlay.removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+        setTimeout(() => spotlightInput.trigger('focus'), 50);
+        if (spotlightFilterButtons.length) {
+            setSpotlightFilter('all');
+        }
+        if (!spotlightItems.length) {
+        spotlightResults.html(`
+            <button type="button" id="spotlightNewChat"
+                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                    New chat
+                </div>
+            </button>
+            <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>
+        `);
+            $.getJSON('/history/').done(function (data) {
+                spotlightItems = Array.isArray(data) ? data : [];
+                filterSpotlight();
+            }).fail(function () {
+                spotlightResults.html('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Failed to load history.</div>');
+            });
+        } else {
+            filterSpotlight();
+        }
+    }
+
+    function closeSpotlight() {
+        spotlightOverlay.addClass('hidden');
+        $('body').removeClass('overflow-hidden');
+        spotlightInput.val('');
+        spotlightIndex = -1;
+    }
+
+    if (spotlightOpen.length) {
+        spotlightOpen.on('click', function () {
+            openSpotlight();
+        });
+    }
+
+    if (spotlightHint.length) {
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        if (!isMac) {
+            spotlightHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Ctrl + K</span>');
+        }
+    }
+    if (newChatHint.length) {
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        if (!isMac) {
+            newChatHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Shift + Ctrl + O</span>');
+        }
+    }
+
+    if (spotlightClose.length) {
+        spotlightClose.on('click', function () {
+            closeSpotlight();
+        });
+    }
+
+    function setSpotlightFilter(filter) {
+        spotlightFilter = filter;
+        spotlightFilterButtons.removeClass('bg-primary/15 text-primary border-primary/30');
+        spotlightFilterButtons.filter(`[data-spotlight-filter="${filter}"]`)
+            .addClass('bg-primary/15 text-primary border-primary/30');
+        filterSpotlight();
+    }
+
+    if (spotlightFilterButtons.length) {
+        setSpotlightFilter('all');
+        spotlightFilterButtons.on('click', function () {
+            setSpotlightFilter($(this).data('spotlight-filter'));
+        });
+    }
+
+
+    spotlightOverlay.on('click', function (e) {
+        if ($(e.target).is('#spotlightOverlay, #spotlightOverlay > .absolute')) {
+            closeSpotlight();
+        }
+    });
+
+    spotlightInput.on('input', function () {
+        filterSpotlight();
+    });
+
+    spotlightResults.on('click', '#spotlightNewChat', function () {
+        closeSpotlight();
+        window.location.href = '/index';
+    });
+
+    $(document).on('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            openSpotlight();
+        }
+        if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'o') {
+            e.preventDefault();
+            window.location.href = '/index';
+        }
+        if (e.key === 'Escape' && !spotlightOverlay.hasClass('hidden')) {
+            e.preventDefault();
+            closeSpotlight();
+        }
+        if (!spotlightOverlay.hasClass('hidden')) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                spotlightIndex = Math.min(spotlightIndex + 1, spotlightResults.children('button').length - 1);
+                filterSpotlight();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                spotlightIndex = Math.max(spotlightIndex - 1, 0);
+                filterSpotlight();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const active = spotlightResults.children('button').eq(spotlightIndex);
+                if (active.length) active.trigger('click');
+            }
+        }
+    });
+
     function autoGrowTextarea(textarea) {
         textarea.style.height = 'auto';
         const styles = window.getComputedStyle(textarea);
@@ -402,84 +602,6 @@ $(document).ready(function () {
 
         });
 
-    });
-
-    // Sidebar filter: debounced input that filters folders and history items
-    function debounce(fn, delay) {
-        let timer = null;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-    }
-
-    function applySidebarFilter(query) {
-        const q = query.trim().toLowerCase();
-        // Reset when empty: show all and restore persisted open state
-        if (!q) {
-            $('#folderList > .flex').show().each(function () {
-                const f = $(this);
-                const content = f.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'none');
-                const header = f.find('.folder-header');
-                f.find('.section-toggle-icon').removeClass('rotate-90');
-                header.attr('aria-expanded', 'false');
-            });
-            $('#userPromptHistory').children().show();
-            // restore the open folders the user had before filtering
-            setTimeout(restoreFolderState, 50);
-            $('#sidebarFilterClear').addClass('hidden');
-            return;
-        }
-
-        // Show clear button
-        $('#sidebarFilterClear').removeClass('hidden');
-
-        // Filter top-level history items
-        $('#userPromptHistory').children().each(function () {
-            const el = $(this);
-            const title = el.find('.truncate').first().text().toLowerCase();
-            if (title.indexOf(q) !== -1) el.show(); else el.hide();
-        });
-
-        // Filter folders: show folder if folder name matches OR any child item matches
-        $('#folderList > .flex').each(function () {
-            const folder = $(this);
-            const name = folder.find('.folder-name-text').text().toLowerCase();
-            let matches = name.indexOf(q) !== -1;
-
-            // Check items inside the folder
-            folder.find('.flex-col.gap-1.ml-4 .truncate').each(function () {
-                const t = $(this).text().toLowerCase();
-                if (t.indexOf(q) !== -1) matches = true;
-            });
-
-            if (matches) {
-                folder.show();
-                // expand folder to reveal matching items
-                const content = folder.find('.flex-col.gap-1.ml-4');
-                content.css('display', 'flex');
-                folder.find('.section-toggle-icon').addClass('rotate-90');
-                folder.find('.folder-header').attr('aria-expanded', 'true');
-            } else {
-                folder.hide();
-            }
-        });
-
-        // Hide empty message while filtering
-        $('#emptyHistory').hide();
-    }
-
-    const debouncedFilter = debounce(function () {
-        applySidebarFilter($('#sidebarFilter').val() || '');
-    }, 180);
-
-    $('#sidebarFilter').on('input', debouncedFilter);
-    $('#sidebarFilterClear').on('click', function () {
-        $('#sidebarFilter').val('');
-        $(this).addClass('hidden');
-        $('#sidebarFilter').trigger('input');
-        $('#sidebarFilter').focus();
     });
 
     // Folder header toggles are bound after folder list is built (see loadPromptHistory)

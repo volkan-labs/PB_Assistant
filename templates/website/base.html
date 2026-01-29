@@ -34,10 +34,6 @@
                     <img src="{% static '/website/assets/images/ess-ai-logo.png' %}" alt="Logo" class="h-20" />
                 </a>
             </div>
-            <!-- Sticky new search button -->
-            
-            {% block new_search_button_area %}{% endblock %}
-            
             {% include "website/partials/sidebar_left_content.html" %}
         </aside>
         <!-- Main Content Area -->
@@ -52,15 +48,7 @@
                     class="lg:hidden rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark max-sm:order-1">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <nav class="flex items-center space-x-4 max-sm:order-3 max-sm:w-full max-sm:justify-center">
-                    <a href="{% url 'knowledge_library' %}" 
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium 
-                              text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-surface-highlight 
-                              hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                        <span class="material-symbols-outlined text-base">library_books</span>
-                        Knowledge Library
-                    </a>
-                </nav>
+                <div class="max-sm:order-3 max-sm:w-full"></div>
                 <!-- Theme Toggle -->
                 <div class="max-sm:order-2 max-sm:self-center">
                     {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
@@ -169,6 +157,45 @@
 
 
     {% include "website/partials/loading_overlay.html" with overlay_class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[5000] flex items-center justify-center hidden" %}
+    <!-- Spotlight Search -->
+    <div id="spotlightOverlay" class="fixed inset-0 z-[4500] hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="relative mx-auto mt-[10vh] w-[92%] max-w-2xl rounded-2xl border border-slate-200/70 dark:border-[#2b2f36] bg-white/95 dark:bg-[#25343F] shadow-2xl">
+            <div class="flex items-center gap-3 border-b border-slate-200/70 dark:border-[#2b2f36] px-4 py-3">
+                <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">search</span>
+                <input id="spotlightInput" type="text" placeholder="Search chats..." autocomplete="off"
+                    class="w-full bg-transparent text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none" />
+                <button type="button" id="spotlightClose" aria-label="Close search"
+                    class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-[#1b1f25] dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200/70 dark:border-[#2b2f36] px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <button type="button" data-spotlight-filter="all"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
+                    All
+                </button>
+                <button type="button" data-spotlight-filter="folders"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
+                    In folders
+                </button>
+                <button type="button" data-spotlight-filter="unfiled"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-[#2b2f36] px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-[#1b1f25]">
+                    Unfiled
+                </button>
+            </div>
+            <div id="spotlightResults" class="max-h-[60vh] overflow-y-auto py-2">
+                <button type="button" id="spotlightNewChat"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        New chat
+                    </div>
+                </button>
+                <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Start typing to search your history.</div>
+            </div>
+        </div>
+    </div>
 {% include "website/partials/theme_toggle_script.html" %}
 <script>
     $(document).ready(function() {
