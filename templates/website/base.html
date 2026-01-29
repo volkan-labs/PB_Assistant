@@ -170,7 +170,28 @@
                     <span class="material-symbols-outlined text-[18px]">close</span>
                 </button>
             </div>
+            <div class="flex flex-wrap items-center gap-2 border-b border-slate-200/70 dark:border-slate-700/70 px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <button type="button" data-spotlight-filter="all"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    All
+                </button>
+                <button type="button" data-spotlight-filter="folders"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    In folders
+                </button>
+                <button type="button" data-spotlight-filter="unfiled"
+                    class="spotlight-filter-btn rounded-full border border-slate-200/70 dark:border-slate-700/70 px-3 py-1 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/60">
+                    Unfiled
+                </button>
+            </div>
             <div id="spotlightResults" class="max-h-[60vh] overflow-y-auto py-2">
+                <button type="button" id="spotlightNewChat"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        New chat
+                    </div>
+                </button>
                 <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Start typing to search your history.</div>
             </div>
         </div>

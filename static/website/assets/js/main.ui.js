@@ -68,11 +68,24 @@ $(document).ready(function () {
     const spotlightHint = $('#spotlightHint');
     const newChatHint = $('#newChatHint');
     const spotlightClose = $('#spotlightClose');
+    const spotlightFilterButtons = $('[data-spotlight-filter]');
     let spotlightItems = [];
     let spotlightIndex = -1;
+    let spotlightFilter = 'all';
 
-    function renderSpotlight(items) {
+    function renderSpotlight(items, showNewChat) {
         spotlightResults.empty();
+        if (showNewChat) {
+            spotlightResults.append(`
+                <button type="button" id="spotlightNewChat"
+                    class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                    <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        New chat
+                    </div>
+                </button>
+            `);
+        }
         if (!items.length) {
             spotlightResults.append('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">No matches found.</div>');
             return;
@@ -107,22 +120,42 @@ $(document).ready(function () {
 
     function filterSpotlight() {
         const q = (spotlightInput.val() || '').trim().toLowerCase();
-        if (!q) {
-            spotlightIndex = -1;
-            renderSpotlight(spotlightItems.slice(0, 10));
-            return;
+        let filtered = spotlightItems;
+
+        if (spotlightFilter === 'folders') {
+            filtered = filtered.filter(item => item.folder_id);
+        } else if (spotlightFilter === 'unfiled') {
+            filtered = filtered.filter(item => !item.folder_id);
         }
-        const filtered = spotlightItems.filter(item => (item.title || '').toLowerCase().includes(q));
+
+        const showNewChat = !q;
+        if (q) {
+            filtered = filtered.filter(item => (item.title || '').toLowerCase().includes(q));
+        }
+
         spotlightIndex = filtered.length ? 0 : -1;
-        renderSpotlight(filtered.slice(0, 20));
+        const limit = q ? 20 : 10;
+        renderSpotlight(filtered.slice(0, limit), showNewChat);
     }
 
     function openSpotlight() {
         spotlightOverlay.removeClass('hidden');
         $('body').addClass('overflow-hidden');
         setTimeout(() => spotlightInput.trigger('focus'), 50);
+        if (spotlightFilterButtons.length) {
+            setSpotlightFilter('all');
+        }
         if (!spotlightItems.length) {
-        spotlightResults.html('<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>');
+        spotlightResults.html(`
+            <button type="button" id="spotlightNewChat"
+                class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                    New chat
+                </div>
+            </button>
+            <div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">Loading history...</div>
+        `);
             $.getJSON('/history/').done(function (data) {
                 spotlightItems = Array.isArray(data) ? data : [];
                 filterSpotlight();
@@ -150,19 +183,34 @@ $(document).ready(function () {
     if (spotlightHint.length) {
         const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
         if (!isMac) {
-            spotlightHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Ctrl K</span>');
+            spotlightHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Ctrl + K</span>');
         }
     }
     if (newChatHint.length) {
         const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
         if (!isMac) {
-            newChatHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Shift Ctrl O</span>');
+            newChatHint.html('<span class="rounded border border-slate-300/70 dark:border-slate-600/70 px-2 py-0.5">Shift + Ctrl + O</span>');
         }
     }
 
     if (spotlightClose.length) {
         spotlightClose.on('click', function () {
             closeSpotlight();
+        });
+    }
+
+    function setSpotlightFilter(filter) {
+        spotlightFilter = filter;
+        spotlightFilterButtons.removeClass('bg-primary/15 text-primary border-primary/30');
+        spotlightFilterButtons.filter(`[data-spotlight-filter="${filter}"]`)
+            .addClass('bg-primary/15 text-primary border-primary/30');
+        filterSpotlight();
+    }
+
+    if (spotlightFilterButtons.length) {
+        setSpotlightFilter('all');
+        spotlightFilterButtons.on('click', function () {
+            setSpotlightFilter($(this).data('spotlight-filter'));
         });
     }
 
@@ -175,6 +223,11 @@ $(document).ready(function () {
 
     spotlightInput.on('input', function () {
         filterSpotlight();
+    });
+
+    spotlightResults.on('click', '#spotlightNewChat', function () {
+        closeSpotlight();
+        window.location.href = '/index';
     });
 
     $(document).on('keydown', function (e) {
