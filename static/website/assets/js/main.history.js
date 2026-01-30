@@ -317,10 +317,12 @@ function loadPromptHistory() {
                 const folderSectionHeader = $('#folder-header');
                 const folderSectionIcon = folderSectionHeader.find('.section-toggle-icon');
                 if (folderSection.length && folderSectionHeader.length) {
-                    folderSection.show();
-                    folderSectionIcon.addClass('rotate-90');
-                    folderSectionHeader.attr('aria-expanded', 'true').removeClass('collapsed');
-                    localStorage.setItem('folderSectionState', 'false');
+                    const isCollapsed = localStorage.getItem('folderSectionState') === 'true';
+                    if (!isCollapsed) {
+                        folderSection.show();
+                        folderSectionIcon.addClass('rotate-90');
+                        folderSectionHeader.attr('aria-expanded', 'true').removeClass('collapsed');
+                    }
                 }
                 parentFolderContent.css('display', 'flex');
                 const folderHeader = parentFolderContent.prev('.folder-header');
@@ -335,10 +337,12 @@ function loadPromptHistory() {
                 const searchesHeader = $('#searches-header');
                 const searchesIcon = searchesHeader.find('.section-toggle-icon');
                 if (searchesSection.length && searchesHeader.length) {
-                    searchesSection.show();
-                    searchesIcon.addClass('rotate-90');
-                    searchesHeader.attr('aria-expanded', 'true').removeClass('collapsed');
-                    localStorage.setItem('searchesSectionState', 'false');
+                    const isCollapsed = localStorage.getItem('searchesSectionState') === 'true';
+                    if (!isCollapsed) {
+                        searchesSection.show();
+                        searchesIcon.addClass('rotate-90');
+                        searchesHeader.attr('aria-expanded', 'true').removeClass('collapsed');
+                    }
                 }
             }
         }

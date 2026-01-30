@@ -29,9 +29,9 @@
         </div>
         <div class="px-6 pb-4 flex-1 overflow-y-auto">
             <div class="flex flex-col items-center justify-center p-4 text-center rounded-lg text-sm text-slate-500 dark:text-slate-400">
-                <img src="{% static '/website/assets/images/alert.svg' %}" alt="Alerts" class="h-12 w-12 opacity-60 mb-2" />
+                <span class="material-symbols-outlined text-[40px] text-slate-300 dark:text-slate-500 mb-2">notifications_active</span>
                 <p class="font-medium">No new alerts.</p>
-                <p class="text-xs mt-1"><a href="{% url 'settings' %}#alerts" class="text-primary hover:text-primary/80 transition-colors">Set up alerts in settings.</a></p>
+                <p class="text-xs mt-1"><a href="{% url 'alerts' %}" class="text-primary hover:text-primary/80 transition-colors">Manage alerts</a></p>
             </div>
         </div>
     </div>

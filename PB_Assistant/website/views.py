@@ -116,6 +116,10 @@ def clear_history(request):
 def settings_view(request):
     return render(request, 'website/settings.html')
 
+@require_GET
+def alerts_view(request):
+    return render(request, 'website/alerts.html')
+
 @require_POST
 def save_preferences(request):
     try:
