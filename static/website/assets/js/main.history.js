@@ -206,6 +206,35 @@ function loadPromptHistory() {
             $(this).focus();
         });
 
+        // Delete folder
+        $('#folderList').off('click', '.folder-delete-btn').on('click', '.folder-delete-btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const folderId = $(this).data('folder-id');
+            if (!folderId) return;
+            const folderName = $(this).closest('.folder-header').find('.folder-name-text').text().trim();
+            const label = folderName ? `Delete "${folderName}"? Items will move back to "Your searches".` : 'Delete this folder? Items will move back to "Your searches".';
+            showConfirmationModal(
+                'Delete Folder',
+                label,
+                'Delete',
+                function () {
+                    $.ajax({
+                        url: `/api/folders/${folderId}/delete/`,
+                        type: 'DELETE',
+                        headers: { 'X-CSRFToken': csrftoken },
+                        success: function () {
+                            removeOpenFolder(`folder-${folderId}`);
+                            loadPromptHistory();
+                        },
+                        error: function () {
+                            showErrorToast('Failed to delete folder. Please try again.');
+                        }
+                    });
+                }
+            );
+        });
+
         // Keyboard toggle for folder headers (Enter/Space/ArrowRight/ArrowLeft)
         $('#folderList').off('keydown', '.folder-header').on('keydown', '.folder-header', function (e) {
             const header = $(this);
