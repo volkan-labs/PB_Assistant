@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/rss-feed/', views.rss_feed, name='rss_feed'),
     path('knowledge-library/', views.knowledge_library_view, name='knowledge_library'),
     path('settings/', views.settings_view, name='settings'),
+    path('alerts/', views.alerts_view, name='alerts'),
 ]

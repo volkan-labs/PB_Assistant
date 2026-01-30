@@ -74,10 +74,7 @@
                     <span class="material-symbols-outlined">menu</span>
                 </button>
                 <div class="max-sm:order-3 max-sm:w-full"></div>
-                <!-- Theme Toggle -->
-                <div class="max-sm:order-2 max-sm:self-center">
-                    {% include "website/partials/theme_toggle.html" with wrapper_class="relative flex items-center bg-[#f3f4f6] dark:bg-[#1a2230] rounded-full p-1 border border-[#e5e7eb] dark:border-[#2a3447] h-10" %}
-                </div>
+                <div class="max-sm:order-2 max-sm:self-center"></div>
             </header>
             <!-- Center Content -->
             <div class="flex flex-1 flex-col items-center px-4">
@@ -394,7 +391,6 @@
             </div>
         </div>
     </div>
-{% include "website/partials/theme_toggle_script.html" %}
 <script>
     $(document).ready(function() {
         const list = $('#latest-publications-list');

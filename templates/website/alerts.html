@@ -1,0 +1,118 @@
+{% extends "website/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="w-full max-w-5xl pb-16">
+    <div class="flex flex-col gap-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Alerts</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Create and manage AI alerts for key topics.</p>
+            </div>
+            <button id="createAlertButton" type="button"
+                class="rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-105 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40">
+                Create Alert
+            </button>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 dark:border-[#283039] bg-white/70 dark:bg-surface-dark/80 p-4 shadow-sm">
+            <div class="grid grid-cols-[2fr_1fr_1fr_auto] items-center gap-4 px-3 pb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <span>Alert</span>
+                <span>Threshold</span>
+                <span>Status</span>
+                <span class="justify-self-end">Actions</span>
+            </div>
+            <div id="alertsList" class="flex flex-col gap-2">
+                <!-- Alert rows injected via JS -->
+            </div>
+            <div id="alertsEmptyState" class="hidden flex flex-col items-center justify-center py-12 text-center text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined text-[56px] text-slate-300 dark:text-slate-600 mb-3">notifications_off</span>
+                <p class="text-sm font-semibold">No alerts yet</p>
+                <p class="text-xs mt-2">Create an alert to monitor new findings.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertsModal" class="fixed inset-0 z-[4700] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-alerts-overlay></div>
+    <div class="relative mx-auto mt-[10vh] w-full max-w-2xl rounded-2xl bg-background-light dark:bg-surface-dark shadow-2xl border border-slate-200 dark:border-[#283039] overflow-hidden">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-[#283039] px-6 py-4">
+            <div>
+                <h2 id="alertsModalTitle" class="text-lg font-semibold text-slate-900 dark:text-white">Create Alert</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Define what you want to monitor.</p>
+            </div>
+            <button id="alertsModalClose" aria-label="Close alerts modal"
+                class="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-surface-highlight transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <form id="alertsForm" class="space-y-4 px-6 py-6">
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Alert name</label>
+                <input id="alertNameInput" type="text" placeholder="e.g. Climate tipping points"
+                    class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
+                <p id="alertNameError" class="mt-1 hidden text-xs text-red-500">Alert name is required.</p>
+            </div>
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Query / description</label>
+                <textarea id="alertDescriptionInput" rows="4" placeholder="Describe the topic or query"
+                    class="mt-2 w-full resize-none rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"></textarea>
+                <p id="alertDescriptionError" class="mt-1 hidden text-xs text-red-500">Description is required.</p>
+            </div>
+            <div class="rounded-xl border border-slate-200 dark:border-[#283039] bg-slate-50 dark:bg-surface-highlight px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Similarity Threshold</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">How close new results should be to your query.</p>
+                    </div>
+                    <div class="text-sm font-semibold text-slate-700 dark:text-slate-200"><span id="alertThresholdValue">70</span>%</div>
+                </div>
+                <input id="alertThresholdInput" type="range" min="0" max="100" value="70"
+                    class="mt-3 w-full accent-primary" />
+            </div>
+            <div class="flex items-center justify-between rounded-xl border border-slate-200 dark:border-[#283039] bg-slate-50 dark:bg-surface-highlight px-4 py-3">
+                <div>
+                    <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Active</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Receive alerts when matches are found.</p>
+                </div>
+                <label class="relative inline-flex cursor-pointer items-center">
+                    <input id="alertActiveToggle" type="checkbox" class="peer sr-only" checked />
+                    <span class="h-5 w-9 rounded-full bg-slate-300 peer-checked:bg-primary/70 dark:bg-slate-600 transition-colors"></span>
+                    <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span>
+                </label>
+            </div>
+        </form>
+        <div class="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-[#283039] px-6 py-4">
+            <button id="alertsModalCancel" type="button"
+                class="rounded-lg border border-slate-200 dark:border-[#334155] px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                Cancel
+            </button>
+            <button id="alertsModalSave" type="button"
+                class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                Create Alert
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="alertsUnsavedDialog" class="fixed inset-0 z-[4800] hidden">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="relative mx-auto mt-[18vh] w-full max-w-md rounded-2xl bg-background-light dark:bg-surface-dark shadow-2xl border border-slate-200 dark:border-[#283039] p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Discard changes?</h3>
+        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">You have unsaved changes. Do you want to discard them?</p>
+        <div class="mt-5 flex justify-end gap-3">
+            <button id="alertsUnsavedCancel" type="button"
+                class="rounded-lg border border-slate-200 dark:border-[#334155] px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight transition-colors">
+                Continue editing
+            </button>
+            <button id="alertsUnsavedDiscard" type="button"
+                class="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition-colors">
+                Discard
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'website/assets/js/main.alerts.js' %}?v={% now "U" %}" type="text/javascript"></script>
+{% endblock %}
