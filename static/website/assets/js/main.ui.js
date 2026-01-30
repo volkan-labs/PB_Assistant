@@ -84,11 +84,12 @@ $(document).ready(function () {
             sidebarCollapseToggle.attr('aria-label', 'Collapse sidebar').attr('aria-pressed', 'false');
             if (icon.length) icon.text('menu');
         }
-        localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+        localStorage.setItem('uiCollapseNavigation', isCollapsed ? 'true' : 'false');
+        $('#uiCollapseNavigationToggle').prop('checked', isCollapsed);
     }
 
     if (sidebarCollapseToggle.length || sidebarCollapseToggleCollapsed.length) {
-        const storedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        const storedCollapsed = localStorage.getItem('uiCollapseNavigation') === 'true';
         setSidebarCollapsed(storedCollapsed);
         sidebarCollapseToggle.on('click', function () {
             setSidebarCollapsed(!$('body').hasClass('sidebar-collapsed'));
@@ -107,16 +108,36 @@ $(document).ready(function () {
             body.removeClass('right-sidebar-collapsed');
             rightSidebarCollapseToggle.attr('aria-label', 'Collapse right sidebar').attr('aria-pressed', 'false');
         }
-        localStorage.setItem('rightSidebarCollapsed', isCollapsed ? 'true' : 'false');
+        localStorage.setItem('uiCollapseInsights', isCollapsed ? 'true' : 'false');
+        $('#uiCollapseInsightsToggle').prop('checked', isCollapsed);
     }
 
     if (rightSidebarCollapseToggle.length) {
-        const storedRightCollapsed = localStorage.getItem('rightSidebarCollapsed') === 'true';
+        const storedRightCollapsed = localStorage.getItem('uiCollapseInsights') === 'true';
         setRightSidebarCollapsed(storedRightCollapsed);
         rightSidebarCollapseToggle.on('click', function () {
             setRightSidebarCollapsed(!$('body').hasClass('right-sidebar-collapsed'));
         });
     }
+
+    // UI behavior toggles (persist immediately)
+    $('#uiCollapseInsightsToggle').on('change', function () {
+        const isCollapsed = $(this).is(':checked');
+        localStorage.setItem('uiCollapseInsights', isCollapsed);
+        setRightSidebarCollapsed(isCollapsed);
+    });
+
+    $('#uiCollapseNavigationToggle').on('change', function () {
+        const isCollapsed = $(this).is(':checked');
+        localStorage.setItem('uiCollapseNavigation', isCollapsed);
+        setSidebarCollapsed(isCollapsed);
+    });
+
+    $('#uiSyncLayoutToggle').on('change', function () {
+        if ($(this).is(':disabled')) return; // coming soon
+        const enabled = $(this).is(':checked');
+        localStorage.setItem('uiSyncLayout', enabled);
+    });
 
     // Spotlight search
     const spotlightOverlay = $('#spotlightOverlay');
@@ -262,6 +283,12 @@ $(document).ready(function () {
         tooltip.text(shortcut ? `${base} · ${shortcut}` : base);
     });
 
+    const settingsShortcutHint = $('#settingsShortcutHint');
+    if (settingsShortcutHint.length) {
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        settingsShortcutHint.text(isMac ? '⌘ ⇧ S' : 'Ctrl + Shift + S');
+    }
+
     if (spotlightClose.length) {
         spotlightClose.on('click', function () {
             closeSpotlight();
@@ -283,6 +310,196 @@ $(document).ready(function () {
         });
     }
 
+    const settingsModal = $('#settingsModal');
+    const settingsModalClose = $('#settingsModalClose');
+    const openSettingsModal = $('#openSettingsModal');
+    const settingsTabButtons = $('.settings-tab-btn');
+
+    function openSettings() {
+        settingsModal.removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+        const active = settingsTabButtons.first();
+        if (active.length) {
+            settingsTabButtons.removeClass('settings-tab-active');
+            active.addClass('settings-tab-active');
+            const panel = active.data('settings-tab');
+            $('.settings-panel').addClass('hidden');
+            $(`[data-settings-panel="${panel}"]`).removeClass('hidden');
+        }
+        // Initialize UI behavior toggles from localStorage
+        const uiCollapseInsights = localStorage.getItem('uiCollapseInsights') === 'true';
+        const uiCollapseNavigation = localStorage.getItem('uiCollapseNavigation') === 'true';
+        const uiSyncLayout = localStorage.getItem('uiSyncLayout') === 'true';
+        $('#uiCollapseInsightsToggle').prop('checked', uiCollapseInsights);
+        $('#uiCollapseNavigationToggle').prop('checked', uiCollapseNavigation);
+        $('#uiSyncLayoutToggle').prop('checked', uiSyncLayout);
+    }
+
+    function closeSettings() {
+        settingsModal.addClass('hidden');
+        $('body').removeClass('overflow-hidden');
+    }
+
+    if (openSettingsModal.length) {
+        openSettingsModal.on('click', function (e) {
+            e.preventDefault();
+            openSettings();
+        });
+    }
+
+    if (settingsModalClose.length) {
+        settingsModalClose.on('click', function () {
+            closeSettings();
+        });
+    }
+
+    settingsTabButtons.on('click', function () {
+        const btn = $(this);
+        settingsTabButtons.removeClass('settings-tab-active');
+        btn.addClass('settings-tab-active');
+        const panel = btn.data('settings-tab');
+        $('.settings-panel').addClass('hidden');
+        $(`[data-settings-panel="${panel}"]`).removeClass('hidden');
+    });
+
+    const themeChoiceButtons = $('.theme-choice-btn');
+    function applyThemeChoice(choice) {
+        themeChoiceButtons.removeClass('bg-primary/15 text-primary border-primary/30');
+        themeChoiceButtons.filter(`[data-theme-choice="${choice}"]`)
+            .addClass('bg-primary/15 text-primary border-primary/30');
+    }
+
+    if (themeChoiceButtons.length) {
+        const storedTheme = localStorage.getItem('theme') || 'system';
+        applyThemeChoice(storedTheme);
+        themeChoiceButtons.on('click', function () {
+            const choice = $(this).data('theme-choice');
+            localStorage.setItem('theme', choice);
+            applyThemeChoice(choice);
+            if (choice === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else if (choice === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+        });
+    }
+
+    const defaultModelSelect = $('#defaultModelSelect');
+    if (defaultModelSelect.length) {
+        defaultModelSelect.html('<option>Loading models…</option>').prop('disabled', true);
+        fetch('/api/ollama/models/')
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok) throw new Error(data.error || 'Failed to fetch models');
+                const models = data.models || [];
+                if (!models.length) {
+                    defaultModelSelect.html('<option value="">No models found</option>');
+                    return;
+                }
+                const saved = localStorage.getItem('defaultLlmModel') || '';
+                defaultModelSelect.html(models.map(n => `<option value="${n}">${n}</option>`).join(''));
+                if (saved && models.includes(saved)) {
+                    defaultModelSelect.val(saved);
+                }
+                defaultModelSelect.prop('disabled', false);
+            })
+            .catch(() => {
+                defaultModelSelect.html('<option value="">Error loading models</option>');
+            });
+
+        defaultModelSelect.on('change', function () {
+            const val = $(this).val();
+            localStorage.setItem('defaultLlmModel', val);
+            const mainSelect = $('#ollamaModels');
+            if (mainSelect.length) {
+                mainSelect.val(val);
+                mainSelect.trigger('change');
+            }
+        });
+    }
+
+    const rssAlertsToggle = $('#rssAlertsToggle');
+    if (rssAlertsToggle.length) {
+        if (!rssAlertsToggle.is(':disabled')) {
+            const storedAlerts = localStorage.getItem('rssAlertsEnabled');
+            if (storedAlerts !== null) {
+                rssAlertsToggle.prop('checked', storedAlerts === 'true');
+            }
+            rssAlertsToggle.on('change', function () {
+                localStorage.setItem('rssAlertsEnabled', $(this).is(':checked'));
+            });
+        }
+    }
+
+    const searchBehaviorToggle = $('#searchBehaviorToggle');
+    if (searchBehaviorToggle.length) {
+        const storedBehavior = localStorage.getItem('searchBehaviorEnabled');
+        if (storedBehavior !== null) {
+            searchBehaviorToggle.prop('checked', storedBehavior === 'true');
+        }
+        searchBehaviorToggle.on('change', function () {
+            if ($(this).is(':disabled')) return; // coming soon
+            localStorage.setItem('searchBehaviorEnabled', $(this).is(':checked'));
+        });
+    }
+
+    const modalInterestsGrid = $('#modal-interests-planetary-boundaries-grid');
+
+    function createBoundaryChip(boundary) {
+        return `
+            <label class="relative cursor-pointer h-full">
+                <input class="peer sr-only" type="checkbox" name="interest_boundary" value="${boundary.name}" data-boundary-id="${boundary.id}" />
+                <div class="h-full min-h-[64px] px-4 py-3 rounded-xl text-sm font-medium border border-slate-200 dark:border-[#2a3447] bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-300 peer-checked:bg-primary/10 peer-checked:text-primary peer-checked:border-primary transition-all flex items-center justify-between gap-2 hover:border-primary/50">
+                    <span class="text-left leading-snug line-clamp-3">${boundary.name}</span>
+                    <span class="material-symbols-outlined text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity flex-shrink-0">check_circle</span>
+                </div>
+            </label>
+        `;
+    }
+
+    if (modalInterestsGrid.length) {
+        fetch('/api/planetary-boundaries/')
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok || !Array.isArray(data)) throw new Error('Failed to load boundaries');
+                modalInterestsGrid.html(data.map(createBoundaryChip).join(''));
+                modalInterestsGrid.on('change', 'input[name="interest_boundary"]', async function () {
+                    const selected = modalInterestsGrid.find('input[name="interest_boundary"]:checked')
+                        .map((_, cb) => cb.dataset.boundaryId).get();
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                    try {
+                        await fetch('/api/preferences/save/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+                            },
+                            body: JSON.stringify({
+                                default_llm: localStorage.getItem('defaultLlmModel'),
+                                interface_theme: localStorage.getItem('theme'),
+                                planetary_boundary_interests: selected
+                            })
+                        });
+                    } catch (e) {}
+                });
+            })
+            .catch(() => {
+                modalInterestsGrid.html('<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>');
+            });
+    }
+
+    settingsModal.on('click', function (e) {
+        if ($(e.target).is('#settingsModal, #settingsModal > .absolute')) {
+            closeSettings();
+        }
+    });
+
 
     spotlightOverlay.on('click', function (e) {
         if ($(e.target).is('#spotlightOverlay, #spotlightOverlay > .absolute')) {
@@ -299,35 +516,50 @@ $(document).ready(function () {
         window.location.href = '/index';
     });
 
-    $(document).on('keydown', function (e) {
-        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    // Capture shortcuts early to avoid conflicts with focused inputs or other handlers
+    document.addEventListener('keydown', function (e) {
+        const key = e.key.toLowerCase();
+        if ((e.metaKey || e.ctrlKey) && key === 'k') {
             e.preventDefault();
             openSpotlight();
+            return;
         }
-        if (e.shiftKey && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'o') {
+        if (e.shiftKey && (e.metaKey || e.ctrlKey) && key === 'o') {
             e.preventDefault();
             window.location.href = '/index';
+            return;
         }
-        if (e.key === 'Escape' && !spotlightOverlay.hasClass('hidden')) {
+        if (e.shiftKey && (e.metaKey || e.ctrlKey) && key === 's') {
             e.preventDefault();
-            closeSpotlight();
+            openSettings();
+            return;
+        }
+        if (key === 'escape') {
+            if (!spotlightOverlay.hasClass('hidden')) {
+                e.preventDefault();
+                closeSpotlight();
+            }
+            if (!settingsModal.hasClass('hidden')) {
+                e.preventDefault();
+                closeSettings();
+            }
         }
         if (!spotlightOverlay.hasClass('hidden')) {
-            if (e.key === 'ArrowDown') {
+            if (key === 'arrowdown') {
                 e.preventDefault();
                 spotlightIndex = Math.min(spotlightIndex + 1, spotlightResults.children('button').length - 1);
                 filterSpotlight();
-            } else if (e.key === 'ArrowUp') {
+            } else if (key === 'arrowup') {
                 e.preventDefault();
                 spotlightIndex = Math.max(spotlightIndex - 1, 0);
                 filterSpotlight();
-            } else if (e.key === 'Enter') {
+            } else if (key === 'enter') {
                 e.preventDefault();
                 const active = spotlightResults.children('button').eq(spotlightIndex);
                 if (active.length) active.trigger('click');
             }
         }
-    });
+    }, true);
 
     function autoGrowTextarea(textarea) {
         textarea.style.height = 'auto';

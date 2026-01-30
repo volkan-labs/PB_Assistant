@@ -14,6 +14,10 @@ async function loadModels() {
             return;
         }
         ollamaModelsDropdown.html(availableModels.map(n => `<option value="${n}">${n}</option>`).join(''));
+        const savedDefault = localStorage.getItem('defaultLlmModel');
+        if (savedDefault && availableModels.includes(savedDefault)) {
+            ollamaModelsDropdown.val(savedDefault);
+        }
         ollamaModelsDropdown.prop('disabled', false); // important: enabled so it gets submitted
     } catch (e) {
         ollamaModelsDropdown.html('<option value="">Error loading models</option>');

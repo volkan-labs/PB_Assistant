@@ -73,6 +73,13 @@ html.dark .ollama-select {
     background-image: none;
 }
 
+#defaultModelSelect {
+    background-image: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .ollama-select:focus-visible {
     box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.25);
 }
@@ -126,6 +133,20 @@ html.dark #leftSidebar .sidebar-toggle-icon {
 body.sidebar-collapsed #leftSidebar .sidebar-collapsed-logo {
     width: 32px;
     height: 32px;
+}
+
+#modal-interests-planetary-boundaries-grid {
+    align-items: stretch;
+}
+
+.settings-tab-btn.settings-tab-active {
+    background: rgba(59, 130, 246, 0.12);
+    color: #1f2937;
+}
+
+html.dark .settings-tab-btn.settings-tab-active {
+    background: rgba(59, 130, 246, 0.18);
+    color: #f8fafc;
 }
 
 body.sidebar-collapsed #leftSidebar {
@@ -322,6 +343,18 @@ body.sidebar-collapsed #leftSidebar .sidebar-section-title {
 
 #leftSidebar .nav-tooltip {
     display: none;
+}
+
+#leftSidebar #settingsShortcutHint {
+    display: inline-flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+}
+
+#leftSidebar .settings-link:hover #settingsShortcutHint,
+#leftSidebar .settings-link:focus-visible #settingsShortcutHint {
+    opacity: 1;
 }
 
  #leftSidebar .sidebar-action-tooltip {
