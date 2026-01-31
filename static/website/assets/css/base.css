@@ -299,13 +299,9 @@ body.right-sidebar-collapsed #rightSidebar .right-sidebar-header {
 #rightSidebar .right-pin-icon {
     width: 18px;
     height: 18px;
-    transition: transform 160ms ease;
-    transform: rotate(-45deg);
-    transform-origin: center;
 }
 
 body.right-sidebar-collapsed #rightSidebar .right-pin-icon {
-    transform: rotate(0deg);
 }
 
 html.dark #rightSidebar .right-pin-icon {

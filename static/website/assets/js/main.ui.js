@@ -101,12 +101,15 @@ $(document).ready(function () {
 
     function setRightSidebarCollapsed(isCollapsed) {
         const body = $('body');
+        const rightPinIcon = $('#rightSidebarCollapseToggle .right-pin-icon');
         if (isCollapsed) {
             body.addClass('right-sidebar-collapsed');
             rightSidebarCollapseToggle.attr('aria-label', 'Expand right sidebar').attr('aria-pressed', 'true');
+            if (rightPinIcon.length) rightPinIcon.text('keep');
         } else {
             body.removeClass('right-sidebar-collapsed');
             rightSidebarCollapseToggle.attr('aria-label', 'Collapse right sidebar').attr('aria-pressed', 'false');
+            if (rightPinIcon.length) rightPinIcon.text('keep_off');
         }
         localStorage.setItem('uiCollapseInsights', isCollapsed ? 'true' : 'false');
         $('#uiCollapseInsightsToggle').prop('checked', isCollapsed);
