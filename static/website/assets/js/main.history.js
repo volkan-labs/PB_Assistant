@@ -109,6 +109,9 @@ function loadPromptHistory() {
                 } else {
                     classes += " hover:bg-slate-100 dark:hover:bg-slate-800/50"; // Non-active hover state
                 }
+                const folderName = value.folder_id && folderMap.has(value.folder_id)
+                    ? folderMap.get(value.folder_id).find('.folder-name-text').text().trim()
+                    : '';
 
                 const historyElement = `
                     <div class="${classes} relative focus-within:ring-2 focus-within:ring-primary/40 focus-within:ring-offset-2 focus-within:ring-offset-background-light dark:focus-within:ring-offset-background-dark" draggable="true" data-history-id="${value.id}" tabindex="0">
@@ -149,6 +152,10 @@ function loadPromptHistory() {
                                         </div>
                                     </div>
                                 </div>
+                                <button class="remove-from-folder-btn text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark ${value.folder_id ? '' : 'hidden'}" role="menuitem" tabindex="-1" data-history-id="${value.id}" data-folder-name="${folderName}">
+                                    <span class="material-symbols-outlined text-[18px]">folder_delete</span>
+                                    Remove from ${folderName || 'folder'}
+                                </button>
                                     <button class="text-red-600 block w-full text-left px-4 py-2 text-sm hover:bg-red-50 dark:hover:bg-red-900 flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" tabindex="-1" id="deleteItemButton-${value.id}">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                         Delete
@@ -762,6 +769,17 @@ function loadPromptHistory() {
             moveHistoryItem(itemId, targetFolderId);
             $(`#itemActionsMenu-${itemId}`).addClass('hidden'); // Close main menu
             $(`#folderMoveSubmenu-${itemId}`).addClass('hidden'); // Close submenu
+            restoreActionsMenu(itemId);
+            openMenuId = null;
+            openSubMenuId = null;
+        });
+
+        $('.remove-from-folder-btn').off('click.removeFromFolder').on('click.removeFromFolder', function (e) {
+            e.stopPropagation();
+            const itemId = $(this).data('history-id');
+            moveHistoryItem(itemId, null);
+            $(`#itemActionsMenu-${itemId}`).addClass('hidden');
+            $(`#folderMoveSubmenu-${itemId}`).addClass('hidden');
             restoreActionsMenu(itemId);
             openMenuId = null;
             openSubMenuId = null;
