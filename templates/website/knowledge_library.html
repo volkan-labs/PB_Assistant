@@ -2,128 +2,50 @@
 {% load static %}
 
 {% block content %}
-<div class="w-full px-2 sm:px-0">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl mb-2">Knowledge Library</h1>
-    <p class="text-base text-gray-600 dark:text-gray-300 sm:text-lg mb-6">Manage your research documents</p>
-    
-    {% if documents %}
-    <div class="bg-white dark:bg-surface-dark shadow-md rounded-lg overflow-hidden" id="document-table-container">
-        <div class="overflow-x-auto hidden md:block">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-surface-highlight">
-            <thead class="bg-primary/20 dark:bg-primary/20">
-                <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                        File Name
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                        Size
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                        Uploaded At
-                    </th>
-                    <th scope="col" class="relative px-6 py-3 text-xs font-medium text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                        <span class="sr-only">Delete</span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-surface-dark divide-y divide-gray-200 dark:divide-surface-highlight">
-                {% for doc in documents %}
-                <tr id="doc-{{ forloop.counter }}" class="odd:bg-gray-50 dark:odd:bg-surface-highlight">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white max-w-xs truncate">
-                        {{ doc.name }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-text-secondary">
-                        {{ doc.size|filesizeformat }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-text-secondary">
-                        {{ doc.timestamp|date:"Y-m-d H:i" }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button data-filename="{{ doc.name }}" data-row-id="doc-{{ forloop.counter }}" class="delete-doc-btn text-red-600 hover:text-red-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="w-full max-w-5xl pb-16">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl mb-2">Knowledge Library</h1>
+        <p class="text-base text-slate-600 dark:text-slate-300 sm:text-lg">Browse and filter your research documents.</p>
+    </div>
+
+    <div class="sticky top-0 z-10 mb-6 grid gap-4 md:grid-cols-[220px_1fr] bg-background-light/95 dark:bg-surface-dark/95 backdrop-blur-sm py-3">
+        <div>
+            <label for="boundaryFilter" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Planetary Boundary</label>
+            <select id="boundaryFilter"
+                class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                <option value="">All boundaries</option>
+            </select>
         </div>
-        <div class="md:hidden divide-y divide-gray-200 dark:divide-surface-highlight">
-            {% for doc in documents %}
-            <div id="doc-card-{{ forloop.counter }}" class="relative p-4 pl-5">
-                <span class="absolute left-0 top-3 h-[calc(100%-1.5rem)] w-[3px] rounded-full bg-primary/70"></span>
-                <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ doc.name }}</p>
-                        <div class="mt-2 flex flex-wrap gap-2">
-                            <span class="inline-flex items-center rounded-full border border-slate-200/70 dark:border-slate-700/70 bg-slate-50 dark:bg-surface-highlight px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                                {{ doc.size|filesizeformat }}
-                            </span>
-                            <span class="inline-flex items-center rounded-full border border-slate-200/70 dark:border-slate-700/70 bg-slate-50 dark:bg-surface-highlight px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                                {{ doc.timestamp|date:"Y-m-d H:i" }}
-                            </span>
-                        </div>
-                    </div>
-                    <button data-filename="{{ doc.name }}" data-row-id="doc-card-{{ forloop.counter }}" class="delete-doc-btn text-xs font-semibold text-red-600 hover:text-red-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                        Delete
-                    </button>
-                </div>
-            </div>
-            {% endfor %}
+        <div>
+            <label for="librarySearch" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Search</label>
+            <input id="librarySearch" type="text" placeholder="Search title, abstract, authors"
+                class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
         </div>
     </div>
-    {% else %}
-    <div class="flex flex-col items-center justify-center p-8 text-center text-sm text-slate-500 dark:text-slate-400" id="document-table-container">
-        <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-4">description</span>
-        <p class="font-medium text-lg">Your library is feeling a bit lonely...</p>
-        <p class="text-md mt-2">Upload your research documents to build your personal knowledge hub!</p>
+
+    <div class="rounded-2xl border border-slate-200 dark:border-[#283039] bg-white/70 dark:bg-surface-dark/80 p-4 shadow-sm">
+        <div id="documentList" class="flex flex-col gap-3"></div>
+        <div id="documentEmptyState" class="hidden flex flex-col items-center justify-center py-12 text-center text-slate-500 dark:text-slate-400">
+            <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-4">description</span>
+            <p id="documentEmptyTitle" class="font-medium text-lg">No documents yet</p>
+            <p id="documentEmptyBody" class="text-sm mt-2">Upload your research documents to build your library.</p>
+        </div>
     </div>
-    {% endif %}
+
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500 dark:text-slate-400">
+        <button id="prevPage" type="button"
+            class="rounded-lg border border-slate-200 dark:border-[#334155] px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight disabled:cursor-not-allowed disabled:opacity-50">
+            Previous
+        </button>
+        <div id="pageNumbers" class="flex items-center gap-1"></div>
+        <button id="nextPage" type="button"
+            class="rounded-lg border border-slate-200 dark:border-[#334155] px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight disabled:cursor-not-allowed disabled:opacity-50">
+            Next
+        </button>
+    </div>
 </div>
 {% endblock %}
 
 {% block body_end %}
-<script>
-$(document).ready(function() {
-    const emptyMessageHtml = `
-        <div class="flex flex-col items-center justify-center p-8 text-center text-sm text-slate-500 dark:text-slate-400" id="document-table-container">
-            <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-4">description</span>
-            <p class="font-medium text-lg">Your library is feeling a bit lonely...</p>
-            <p class="text-md mt-2">Upload your research documents to build your personal knowledge hub!</p>
-        </div>
-    `;
-
-    $('.delete-doc-btn').on('click', function() {
-        const btn = $(this);
-        const filename = btn.data('filename');
-        const rowId = btn.data('row-id');
-        const tableBody = btn.closest('tbody');
-        const documentTableContainer = $('#document-table-container'); // Get the container div
-        
-        showConfirmationModal(
-            'Delete Document',
-            `Are you sure you want to delete "${filename}"? This action cannot be undone.`,
-            'Delete',
-            function() {
-                $.ajax({
-                    url: "{% url 'delete_document' %}",
-                    type: 'DELETE',
-                    headers: { 'X-CSRFToken': csrftoken },
-                    contentType: 'application/json',
-                    data: JSON.stringify({ filename: filename }),
-                    success: function() {
-                        $('#' + rowId).remove();
-                        
-                        // Check if the table body is now empty
-                        if (tableBody.find('tr').length === 0) {
-                            documentTableContainer.replaceWith(emptyMessageHtml); // Replace the table container with the empty message
-                        }
-                    },
-                    error: function() {
-                        showError('Failed to delete the document.');
-                    }
-                });
-            }
-        );
-    });
-});
-</script>
+<script src="{% static 'website/assets/js/main.knowledge.js' %}?v={% now "U" %}" type="text/javascript"></script>
 {% endblock %}
