@@ -101,11 +101,13 @@ html.dark .ollama-select {
 
 #leftSidebar .sidebar-header {
     position: relative;
+    height: 69px;
 }
 
 #leftSidebar .sidebar-header-collapsed {
     display: none;
     position: relative;
+    height: 69px;
 }
 
 #leftSidebar .sidebar-logo-collapsed {

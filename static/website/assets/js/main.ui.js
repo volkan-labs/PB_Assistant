@@ -159,7 +159,7 @@ $(document).ready(function () {
                 <button type="button" id="spotlightNewChat"
                     class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                     <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                        <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                        <span class="material-symbols-outlined text-[18px] text-slate-400">edit_document</span>
                         New chat
                     </div>
                 </button>
@@ -229,7 +229,7 @@ $(document).ready(function () {
             <button type="button" id="spotlightNewChat"
                 class="w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                 <div class="flex items-center gap-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                    <span class="material-symbols-outlined text-[18px] text-slate-400">add</span>
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">edit_document</span>
                     New chat
                 </div>
             </button>
