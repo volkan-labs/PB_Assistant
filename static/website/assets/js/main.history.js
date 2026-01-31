@@ -460,7 +460,7 @@ function loadPromptHistory() {
             if (!openMenuId) return;
             $(`#itemActionsMenu-${openMenuId}`).addClass('hidden');
             $(`#itemActionsButton-${openMenuId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-            $(`[data-history-id="${openMenuId}"]`).removeClass(menuItemSelectedClasses);
+            $('#sidebarScrollArea').find(`[data-history-id="${openMenuId}"]`).removeClass(menuItemSelectedClasses);
             restoreActionsMenu(openMenuId);
             if (openSubMenuId) {
                 $(`#folderMoveSubmenu-${openSubMenuId}`).addClass('hidden');
@@ -507,12 +507,12 @@ function loadPromptHistory() {
 
             if (menu.hasClass('hidden')) {
                 $(`#itemActionsButton-${itemId}`).removeClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-                $(`[data-history-id="${itemId}"]`).removeClass(menuItemSelectedClasses);
+                $('#sidebarScrollArea').find(`[data-history-id="${itemId}"]`).removeClass(menuItemSelectedClasses);
                 restoreActionsMenu(itemId);
                 openMenuId = null;
             } else {
                 $(`#itemActionsButton-${itemId}`).addClass('bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200');
-                $(`[data-history-id="${itemId}"]`).addClass(menuItemSelectedClasses);
+                $('#sidebarScrollArea').find(`[data-history-id="${itemId}"]`).addClass(menuItemSelectedClasses);
                 openMenuId = itemId;
                 floatActionsMenu(itemId);
             }
