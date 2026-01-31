@@ -134,7 +134,7 @@ function loadPromptHistory() {
                                         Move to folder
                                         <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-sm">chevron_right</span>
                                     </button>
-                                    <div id="folderMoveSubmenu-${value.id}"
+                                <div id="folderMoveSubmenu-${value.id}" data-current-folder-id="${value.folder_id || ''}"
                                         class="absolute left-full top-0 ml-1 z-[2001] hidden w-48 origin-top-left rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                         role="menu" aria-orientation="vertical" tabindex="-1">
                                         <div class="py-1" role="none">
@@ -711,9 +711,18 @@ function loadPromptHistory() {
 
                 availableFoldersContainer.empty(); // Clear previous folders
 
+                const rawFolderId = subMenu.data('current-folder-id');
+                const currentFolderId = rawFolderId !== undefined && rawFolderId !== '' ? parseInt(rawFolderId, 10) : null;
+
                 if (folders.length > 0) {
 
-                    folders.forEach(folder => {
+                    const available = folders.filter(folder => folder.id !== currentFolderId);
+
+                    if (available.length === 0) {
+                        availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No other folders available.</span>');
+                    }
+
+                    available.forEach(folder => {
 
                         const folderButtonHtml = `<button class="text-slate-700 dark:text-slate-200 block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-gray-700 move-to-folder-btn flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark" role="menuitem" data-folder-id="${folder.id}"><span class="w-3 h-3 rounded-full mr-2 shrink-0" style="background-color: ${folder.color};"></span>${folder.name}</button>`;
 
@@ -737,9 +746,7 @@ function loadPromptHistory() {
                     });
 
                 } else {
-
                     availableFoldersContainer.append('<span class="block w-full text-left px-4 py-2 text-xs italic text-slate-700 dark:text-slate-400">No folders available.</span>');
-
                 }
 
             }
