@@ -4,7 +4,7 @@
 <div class="flex min-h-[70vh] w-full items-center justify-center px-4 pb-20">
   <div class="w-full max-w-4xl">
     <div class="text-center mb-8">
-      <h1 class="text-xl font-black tracking-tight text-black dark:text-white sm:text-2xl md:text-3xl">
+      <h1 id="welcomeMessage" class="text-xl font-black tracking-tight text-black dark:text-white sm:text-2xl md:text-3xl">
         Good to see you. What are you curious about today?
       </h1>
     </div>
@@ -109,4 +109,50 @@
     </div> -->
 
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const messages = [
+      'Good to see you. What are you curious about today?',
+      'Welcome back. What would you like to explore?',
+      'Hello! What would you like to discover today?',
+      'What’s on your mind? Let’s explore it together.',
+      'Ready to dive in? What are you searching for?',
+      'Ask away—what can I help you find?',
+
+      'Welcome back! What’s on your mind today?',
+      'Good to see you. What would you like to explore?',
+      'Hello! What are you curious about today?',
+      'Ready when you are—what can I help with?',
+
+      'What question are we chasing today?',
+      'What would you like to investigate?',
+      'What problem are we thinking through today?',
+      'What data, idea, or hypothesis is calling your name?',
+
+      'Welcome! What part of the planet are we thinking about today?',
+      'What climate question are we unpacking today?',
+      'Let’s dig in—what’s the challenge you’re working on?',
+      'From models to meaning—what’s on the agenda today?',
+
+      'Back again? Excellent. What are we solving today?',
+      'Ready to think big (or very precisely)? What’s up?',
+      'Another day, another question—what’s yours?',
+      'Let’s turn curiosity into clarity. Where do we start?',
+
+      'Welcome! No small talk—what’s the big question today?',
+      'Let’s make complexity manageable. What’s first?',
+      'Thinking about the future again? Same. How can I help?',
+      'I’m ready when you are—equations optional.',
+
+      'What’s on your mind?',
+      'What are we working on today?',
+      'Where shall we begin?',
+      'What would you like to explore?'
+    ];
+    const el = document.getElementById('welcomeMessage');
+    if (!el) return;
+    const next = messages[Math.floor(Math.random() * messages.length)];
+    el.textContent = next;
+  });
+</script>
 {% endblock %}
