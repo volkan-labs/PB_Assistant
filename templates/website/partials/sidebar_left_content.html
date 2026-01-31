@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Sidebar Content -->
 <div id="sidebarScrollArea" class="flex flex-1 flex-col overflow-y-auto overflow-x-visible px-2">
 <!-- Sidebar Navigation -->
@@ -78,11 +79,15 @@
     <div class="group flex items-center gap-3 rounded-lg p-2 transition-colors">
         <button id="userAvatarButton" type="button" aria-label="User menu"
             class="relative h-9 w-9 rounded-full overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-            <img alt="User Avatar Profile Picture"
+            <div id="userAvatarInitials"
+                class="hidden h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white" style="background-color: #FF7F11;">
+                AS
+            </div>
+            <img id="userAvatarImage" alt="User Avatar Profile Picture"
                 class="h-9 w-9 rounded-full object-cover ring-2 ring-transparent transition-all"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxD8eY8Yj9hBWf4Yuc9vpxIfiH08pduBNtZUOS6DY5IWbmNMlzetL8lGUUWodtz3scX3iaGbuN0HMcC2tH1Ckcjje7FXyoZaNm5huJ4_UDqjzOmRRj6z0Wb6QdurVAuPe8-RQ4yHG6r2BoYwQYs9XWjSEu-x97JTqvxXlIqpuT-DTsqFbeMOm4ow29XWoBV0q5vx-Wk-2U5HNonZ4hTnSgJXqJAJbX1RsX03zgHaHINFnXCrKdifjOWP4Q3qZjvheRPZ1OvVsO96z">
+                src="{% static '/website/assets/images/profile.svg' %}">
         </button>
-        <div class="flex flex-1 flex-col overflow-hidden user-meta">
+        <div class="flex flex-1 flex-col overflow-hidden user-meta" data-user-name="Alexander Smith">
             <span class="truncate text-sm font-medium text-slate-900 dark:text-white">Alexander Smith</span>
         </div>
         <div class="relative">

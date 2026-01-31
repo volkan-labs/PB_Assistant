@@ -150,6 +150,28 @@ $(document).ready(function () {
     const spotlightFilterButtons = $('[data-spotlight-filter]');
     let spotlightItems = [];
     let spotlightIndex = -1;
+
+    function initUserAvatarInitials() {
+        const avatarName = $('.user-meta').data('user-name');
+        const avatarInitials = $('#userAvatarInitials');
+        const avatarImage = $('#userAvatarImage');
+        if (!avatarInitials.length || !avatarImage.length) return;
+        if (!avatarName || typeof avatarName !== 'string') {
+            avatarInitials.addClass('hidden');
+            avatarImage.removeClass('hidden');
+            return;
+        }
+        const parts = avatarName.trim().split(/\s+/).filter(Boolean);
+        const initials = parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join('');
+        if (!initials) {
+            avatarInitials.addClass('hidden');
+            avatarImage.removeClass('hidden');
+            return;
+        }
+        avatarInitials.text(initials);
+        avatarInitials.removeClass('hidden').addClass('flex');
+        avatarImage.addClass('hidden');
+    }
     let spotlightFilter = 'all';
 
     function renderSpotlight(items, showNewChat) {
@@ -294,6 +316,8 @@ $(document).ready(function () {
             closeSpotlight();
         });
     }
+
+    initUserAvatarInitials();
 
     function setSpotlightFilter(filter) {
         spotlightFilter = filter;
