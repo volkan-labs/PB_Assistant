@@ -128,12 +128,14 @@ $(document).ready(function () {
         const isCollapsed = $(this).is(':checked');
         localStorage.setItem('uiCollapseInsights', isCollapsed);
         setRightSidebarCollapsed(isCollapsed);
+        persistSetting('/api/settings/ui/', { ui_collapse_insights: isCollapsed });
     });
 
     $('#uiCollapseNavigationToggle').on('change', function () {
         const isCollapsed = $(this).is(':checked');
         localStorage.setItem('uiCollapseNavigation', isCollapsed);
         setSidebarCollapsed(isCollapsed);
+        persistSetting('/api/settings/ui/', { ui_collapse_navigation: isCollapsed });
     });
 
     $('#uiSyncLayoutToggle').on('change', function () {
@@ -153,6 +155,60 @@ $(document).ready(function () {
     const spotlightFilterButtons = $('[data-spotlight-filter]');
     let spotlightItems = [];
     let spotlightIndex = -1;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    function persistSetting(url, payload) {
+        return fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+            },
+            body: JSON.stringify(payload)
+        }).catch(() => {});
+    }
+
+    function applyTheme(choice) {
+        if (choice === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else if (choice === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    }
+
+    function syncSettingsFromServer() {
+        fetch('/api/settings/')
+            .then(res => res.json())
+            .then(data => {
+                if (!data) return;
+                if (data.theme) {
+                    localStorage.setItem('theme', data.theme);
+                    applyThemeChoice(data.theme);
+                    applyTheme(data.theme);
+                }
+                if (data.default_llm_model !== undefined) {
+                    localStorage.setItem('defaultLlmModel', data.default_llm_model || '');
+                }
+                if (data.ui_collapse_navigation !== undefined) {
+                    localStorage.setItem('uiCollapseNavigation', data.ui_collapse_navigation ? 'true' : 'false');
+                    setSidebarCollapsed(Boolean(data.ui_collapse_navigation));
+                }
+                if (data.ui_collapse_insights !== undefined) {
+                    localStorage.setItem('uiCollapseInsights', data.ui_collapse_insights ? 'true' : 'false');
+                    setRightSidebarCollapsed(Boolean(data.ui_collapse_insights));
+                }
+                if (Array.isArray(data.planetary_boundaries)) {
+                    localStorage.setItem('planetaryBoundaryPreferences', JSON.stringify(data.planetary_boundaries));
+                }
+            })
+            .catch(() => {});
+    }
 
     function initUserAvatarInitials() {
         const avatarName = $('.user-meta').data('user-name');
@@ -403,17 +459,8 @@ $(document).ready(function () {
             const choice = $(this).data('theme-choice');
             localStorage.setItem('theme', choice);
             applyThemeChoice(choice);
-            if (choice === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else if (choice === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            }
+            applyTheme(choice);
+            persistSetting('/api/settings/theme/', { theme: choice });
         });
     }
 
@@ -443,6 +490,7 @@ $(document).ready(function () {
         defaultModelSelect.on('change', function () {
             const val = $(this).val();
             localStorage.setItem('defaultLlmModel', val);
+            persistSetting('/api/settings/model/', { default_llm_model: val });
             const mainSelect = $('#ollamaModels');
             if (mainSelect.length) {
                 mainSelect.val(val);
@@ -496,24 +544,19 @@ $(document).ready(function () {
             .then(({ ok, data }) => {
                 if (!ok || !Array.isArray(data)) throw new Error('Failed to load boundaries');
                 modalInterestsGrid.html(data.map(createBoundaryChip).join(''));
+                try {
+                    const selectedIds = JSON.parse(localStorage.getItem('planetaryBoundaryPreferences') || '[]');
+                    if (Array.isArray(selectedIds)) {
+                        selectedIds.forEach((id) => {
+                            modalInterestsGrid.find(`input[data-boundary-id="${id}"]`).prop('checked', true);
+                        });
+                    }
+                } catch (e) {}
                 modalInterestsGrid.on('change', 'input[name="interest_boundary"]', async function () {
                     const selected = modalInterestsGrid.find('input[name="interest_boundary"]:checked')
                         .map((_, cb) => cb.dataset.boundaryId).get();
-                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-                    try {
-                        await fetch('/api/preferences/save/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
-                            },
-                            body: JSON.stringify({
-                                default_llm: localStorage.getItem('defaultLlmModel'),
-                                interface_theme: localStorage.getItem('theme'),
-                                planetary_boundary_interests: selected
-                            })
-                        });
-                    } catch (e) {}
+                    localStorage.setItem('planetaryBoundaryPreferences', JSON.stringify(selected));
+                    persistSetting('/api/settings/boundaries/', { boundary_ids: selected });
                 });
             })
             .catch(() => {
@@ -932,5 +975,6 @@ $(document).ready(function () {
 
     });
 
+    syncSettingsFromServer();
     // Folder header toggles are bound after folder list is built (see loadPromptHistory)
 });

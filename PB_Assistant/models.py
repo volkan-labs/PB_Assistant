@@ -15,6 +15,20 @@ class PlanetaryBoundary(models.Model):
     def __str__(self):
         return self.name
 
+from django.contrib.auth.models import User
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='settings')
+    theme = models.CharField(max_length=20, default='system')
+    default_llm_model = models.CharField(max_length=255, blank=True, default='')
+    ui_collapse_navigation = models.BooleanField(default=False)
+    ui_collapse_insights = models.BooleanField(default=False)
+    planetary_boundaries = models.ManyToManyField(PlanetaryBoundary, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"UserSettings(user_id={self.user_id})"
+
 class SearchFolder(models.Model):
     name = models.CharField(max_length=255)
     user_id = models.IntegerField()
