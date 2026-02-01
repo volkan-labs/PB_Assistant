@@ -420,3 +420,11 @@ html.dark body.sidebar-collapsed #leftSidebar .nav-item:focus-visible .nav-toolt
     color: #e5e7eb;
     border: 1px solid #2b2f36;
 }
+
+.history-actions-menu {
+    background: #ffffff;
+}
+
+html.dark .history-actions-menu {
+    background: #1f2937;
+}
