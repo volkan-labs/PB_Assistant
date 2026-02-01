@@ -6,6 +6,8 @@ $(document).ready(function () {
 
     const boundaryFilter = $('#boundaryFilter');
     const librarySearch = $('#librarySearch');
+    const librarySearchButton = $('#librarySearchButton');
+    const librarySearchClear = $('#librarySearchClear');
     const documentList = $('#documentList');
     const emptyState = $('#documentEmptyState');
     const emptyTitle = $('#documentEmptyTitle');
@@ -347,7 +349,29 @@ $(document).ready(function () {
         renderDocuments();
     });
 
+    function updateClearButton() {
+        if (librarySearch.val().trim()) {
+            librarySearchClear.removeClass('hidden');
+        } else {
+            librarySearchClear.addClass('hidden');
+        }
+    }
+
     librarySearch.on('input', function () {
+        currentPage = 1;
+        updateClearButton();
+        renderDocuments();
+    });
+
+    librarySearchClear.on('click', function () {
+        librarySearch.val('');
+        updateClearButton();
+        currentPage = 1;
+        renderDocuments();
+        librarySearch.focus();
+    });
+
+    librarySearchButton.on('click', function () {
         currentPage = 1;
         renderDocuments();
     });
@@ -366,5 +390,6 @@ $(document).ready(function () {
 
     loadDocuments();
     loadBoundaries();
+    updateClearButton();
     renderDocuments();
 });

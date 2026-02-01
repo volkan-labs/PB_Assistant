@@ -8,17 +8,25 @@
         <p class="text-base text-slate-600 dark:text-slate-300 sm:text-lg">Browse and filter your research documents.</p>
     </div>
 
-    <div class="sticky top-0 z-10 mb-6 grid items-end gap-4 md:grid-cols-[220px_1fr] bg-white/95 dark:bg-surface-dark/95 border border-slate-200/80 dark:border-[#283039] backdrop-blur-sm py-3 px-3 rounded-2xl shadow-sm mx-auto max-w-4xl">
+    <div class="sticky top-0 z-10 mb-6 grid items-end gap-4 md:grid-cols-[220px_1fr_auto] bg-white/95 dark:bg-surface-dark/95 border border-slate-200/80 dark:border-[#283039] backdrop-blur-sm py-3 px-3 rounded-2xl shadow-sm w-full">
         <div class="flex flex-col justify-end">
             <select id="boundaryFilter"
                 class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
                 <option value="">All boundaries</option>
             </select>
         </div>
-        <div class="flex flex-col justify-end">
+        <div class="relative flex flex-col justify-end">
             <input id="librarySearch" type="text" placeholder="Search title, abstract, authors"
-                class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
+                class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark py-2 pl-3 pr-9 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
+            <button id="librarySearchClear" type="button" aria-label="Clear search"
+                class="absolute right-2 top-1/2 hidden -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
         </div>
+        <button id="librarySearchButton" type="button" aria-label="Search"
+            class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-sm hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <span class="material-symbols-outlined text-[18px]">search</span>
+        </button>
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-[#283039] bg-white/70 dark:bg-surface-dark/80 p-4 shadow-sm">
