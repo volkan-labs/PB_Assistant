@@ -8,18 +8,16 @@
         <p class="text-base text-slate-600 dark:text-slate-300 sm:text-lg">Browse and filter your research documents.</p>
     </div>
 
-    <div class="sticky top-0 z-10 mb-6 grid gap-4 md:grid-cols-[220px_1fr] bg-background-light/95 dark:bg-surface-dark/95 backdrop-blur-sm py-3">
-        <div>
-            <label for="boundaryFilter" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Planetary Boundary</label>
+    <div class="sticky top-0 z-10 mb-6 grid items-end gap-4 md:grid-cols-[220px_1fr] bg-white/95 dark:bg-surface-dark/95 border border-slate-200/80 dark:border-[#283039] backdrop-blur-sm py-3 px-3 rounded-2xl shadow-sm mx-auto max-w-4xl">
+        <div class="flex flex-col justify-end">
             <select id="boundaryFilter"
-                class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
                 <option value="">All boundaries</option>
             </select>
         </div>
-        <div>
-            <label for="librarySearch" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Search</label>
+        <div class="flex flex-col justify-end">
             <input id="librarySearch" type="text" placeholder="Search title, abstract, authors"
-                class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
+                class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" />
         </div>
     </div>
 
