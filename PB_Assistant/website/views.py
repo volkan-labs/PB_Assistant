@@ -9,6 +9,7 @@ from django.conf import settings
 import json
 from django.shortcuts import render, redirect
 from django.db.models import Count
+from django.contrib.auth.models import User
 
 from .services.databasehandler import DatabaseHandler
 from .services.articlerenderer import ArticleRenderer
@@ -133,21 +134,137 @@ def save_preferences(request):
         print(f"Received interface_theme: {interface_theme}")
         print(f"Selected Planetary Boundaries: {planetary_boundary_interests}")
 
-        # In a real application, you would save these preferences to the user's profile
-        # For now, we just log and return a success message.
+        user = _resolve_user(request)
+        settings_obj = _get_or_create_settings(user)
+        if settings_obj:
+            if interface_theme in ('light', 'dark', 'system'):
+                settings_obj.theme = interface_theme
+            if default_llm is not None:
+                settings_obj.default_llm_model = default_llm
+            if isinstance(planetary_boundary_interests, list):
+                boundaries = PlanetaryBoundary.objects.filter(id__in=planetary_boundary_interests)
+                settings_obj.planetary_boundaries.set(boundaries)
+            settings_obj.save()
 
-        return JsonResponse({"message": "Preferences received successfully (not actually saved yet)."})
+        return JsonResponse({"message": "Preferences saved successfully."})
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary
+from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary, UserSettings
+
+def _resolve_user(request):
+    if request.user and request.user.is_authenticated:
+        return request.user
+    try:
+        return User.objects.get(pk=1)
+    except User.DoesNotExist:
+        user = User.objects.first()
+        if user:
+            return user
+        return User.objects.create(username='local-user')
+
+def _get_or_create_settings(user):
+    if not user:
+        return None
+    settings_obj, _ = UserSettings.objects.get_or_create(user=user)
+    return settings_obj
 
 @require_GET
 def get_planetary_boundaries(request):
     boundaries = PlanetaryBoundary.objects.all().values('id', 'name', 'short_name')
     return JsonResponse(list(boundaries), safe=False)
+
+@require_GET
+def get_user_settings(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({
+            'theme': 'system',
+            'default_llm_model': '',
+            'ui_collapse_navigation': False,
+            'ui_collapse_insights': False,
+            'planetary_boundaries': []
+        })
+    return JsonResponse({
+        'theme': settings_obj.theme,
+        'default_llm_model': settings_obj.default_llm_model,
+        'ui_collapse_navigation': settings_obj.ui_collapse_navigation,
+        'ui_collapse_insights': settings_obj.ui_collapse_insights,
+        'planetary_boundaries': list(settings_obj.planetary_boundaries.values_list('id', flat=True)),
+    })
+
+@require_http_methods(['PUT'])
+def update_theme(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        theme = data.get('theme')
+        if theme not in ('light', 'dark', 'system'):
+            return JsonResponse({'error': 'Invalid theme'}, status=400)
+        settings_obj.theme = theme
+        settings_obj.save()
+        return JsonResponse({'theme': settings_obj.theme})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_http_methods(['PUT'])
+def update_default_llm(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        model = data.get('default_llm_model', '')
+        settings_obj.default_llm_model = model
+        settings_obj.save()
+        return JsonResponse({'default_llm_model': settings_obj.default_llm_model})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_http_methods(['PUT'])
+def update_ui_behavior(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        if 'ui_collapse_navigation' in data:
+            settings_obj.ui_collapse_navigation = bool(data.get('ui_collapse_navigation'))
+        if 'ui_collapse_insights' in data:
+            settings_obj.ui_collapse_insights = bool(data.get('ui_collapse_insights'))
+        settings_obj.save()
+        return JsonResponse({
+            'ui_collapse_navigation': settings_obj.ui_collapse_navigation,
+            'ui_collapse_insights': settings_obj.ui_collapse_insights
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_http_methods(['PUT'])
+def update_boundary_preferences(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        boundary_ids = data.get('boundary_ids', [])
+        if not isinstance(boundary_ids, list):
+            return JsonResponse({'error': 'boundary_ids must be a list'}, status=400)
+        boundaries = PlanetaryBoundary.objects.filter(id__in=boundary_ids)
+        settings_obj.planetary_boundaries.set(boundaries)
+        settings_obj.save()
+        return JsonResponse({'planetary_boundaries': list(settings_obj.planetary_boundaries.values_list('id', flat=True))})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
 @require_POST
 def upload_documents(request):
