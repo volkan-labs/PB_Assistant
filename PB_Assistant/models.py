@@ -105,3 +105,41 @@ class AcademicPaperTextEmbedding(models.Model):
 class AcademicPaperPlanetaryBoundary(models.Model):
     academicpaper = models.ForeignKey(AcademicPaper, on_delete=models.CASCADE)
     planetary_boundary = models.ForeignKey(PlanetaryBoundary, on_delete=models.CASCADE)
+
+class NotificationCategory(models.Model):
+    name = models.CharField(max_length=120, unique=True)
+    slug = models.SlugField(max_length=160, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class SystemNotification(models.Model):
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('normal', 'Normal'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ]
+
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    category = models.ForeignKey(NotificationCategory, on_delete=models.PROTECT, related_name='notifications')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='normal')
+    published_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class NotificationUserState(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    notification = models.ForeignKey(SystemNotification, on_delete=models.CASCADE, related_name='user_states')
+    read_at = models.DateTimeField(null=True, blank=True)
+    dismissed_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('user', 'notification'),)

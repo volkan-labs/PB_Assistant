@@ -18,6 +18,8 @@ urlpatterns = [
     path('api/settings/model/', views.update_default_llm, name='update_default_llm'),
     path('api/settings/ui/', views.update_ui_behavior, name='update_ui_behavior'),
     path('api/settings/boundaries/', views.update_boundary_preferences, name='update_boundary_preferences'),
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/<int:notification_id>/state/', views.update_notification_state, name='update_notification_state'),
     path("api/documents/upload/", views.upload_documents, name="upload_documents"),
     path("api/documents/delete/", views.delete_document, name='delete_document'),
     path('api/folders/', views.get_folders, name='get_folders'),
@@ -29,4 +31,5 @@ urlpatterns = [
     path('knowledge-library/', views.knowledge_library_view, name='knowledge_library'),
     path('settings/', views.settings_view, name='settings'),
     path('alerts/', views.alerts_view, name='alerts'),
+    path('notifications/', views.notifications_view, name='notifications'),
 ]
