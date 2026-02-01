@@ -7,7 +7,7 @@
         Navigation
     </h3>
     <div class="mt-2 flex flex-col gap-1">
-        <a id="newChatLink" href="/index" aria-label="New chat" class="nav-item group relative flex items-center justify-start gap-2 rounded-md px-3 py-2 pr-10 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+        <a id="newChatLink" href="/index" aria-label="New chat" class="nav-item group relative flex items-center justify-start gap-2 rounded-md px-3 py-2 pr-10 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'index' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>
             <span class="material-symbols-outlined text-base nav-icon">edit_document</span>
             <span class="flex-1 text-left nav-label">New chat</span>
             <span id="newChatHint" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:inline-flex group-focus-visible:inline-flex items-center gap-1">
@@ -23,15 +23,20 @@
             </span>
             <span class="nav-tooltip" data-tooltip="Search your chats" data-shortcut-mac="⌘ K" data-shortcut-win="Ctrl + K"></span>
         </button>
-        <a href="{% url 'knowledge_library' %}" aria-label="Knowledge Library" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+        <a href="{% url 'knowledge_library' %}" aria-label="Knowledge Library" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'knowledge_library' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'knowledge_library' %}aria-current="page"{% endif %}>
             <span class="material-symbols-outlined text-base nav-icon">library_books</span>
             <span class="nav-label">Knowledge Library</span>
             <span class="nav-tooltip" data-tooltip="Manage your documents"></span>
         </a>
-        <a href="{% url 'alerts' %}" aria-label="Alerts" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+        <a href="{% url 'alerts' %}" aria-label="Alerts" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'alerts' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'alerts' %}aria-current="page"{% endif %}>
             <span class="material-symbols-outlined text-base nav-icon">notifications_active</span>
             <span class="nav-label">Alerts</span>
             <span class="nav-tooltip" data-tooltip="Manage your alerts"></span>
+        </a>
+        <a href="{% url 'notifications' %}" aria-label="Notifications" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'notifications' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'notifications' %}aria-current="page"{% endif %}>
+            <span class="material-symbols-outlined text-base nav-icon">campaign</span>
+            <span class="nav-label">Notifications</span>
+            <span class="nav-tooltip" data-tooltip="System announcements"></span>
         </a>
     </div>
 </div>

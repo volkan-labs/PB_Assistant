@@ -7,8 +7,11 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
 from django.conf import settings
 import json
+from django.utils import timezone
+from datetime import timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Count
+from django.db import models
 from django.contrib.auth.models import User
 
 from .services.databasehandler import DatabaseHandler
@@ -121,6 +124,10 @@ def settings_view(request):
 def alerts_view(request):
     return render(request, 'website/alerts.html')
 
+@require_GET
+def notifications_view(request):
+    return render(request, 'website/notifications.html')
+
 @require_POST
 def save_preferences(request):
     try:
@@ -152,7 +159,7 @@ def save_preferences(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary, UserSettings
+from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary, UserSettings, NotificationCategory, SystemNotification, NotificationUserState
 
 def _resolve_user(request):
     if request.user and request.user.is_authenticated:
@@ -263,6 +270,104 @@ def update_boundary_preferences(request):
         settings_obj.planetary_boundaries.set(boundaries)
         settings_obj.save()
         return JsonResponse({'planetary_boundaries': list(settings_obj.planetary_boundaries.values_list('id', flat=True))})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_GET
+def get_notifications(request):
+    user = _resolve_user(request)
+    settings_user = user
+    days = request.GET.get('days', '7')
+    page = int(request.GET.get('page', '1'))
+    page_size = int(request.GET.get('page_size', '10'))
+    try:
+        days_int = min(30, max(1, int(days)))
+    except ValueError:
+        days_int = 7
+
+    now = timezone.now()
+    since = now - timedelta(days=days_int)
+
+    notifications = SystemNotification.objects.filter(
+        published_at__gte=since,
+        published_at__lte=now
+    ).filter(
+        models.Q(expires_at__isnull=True) | models.Q(expires_at__gte=now)
+    ).select_related('category').order_by('-published_at')
+
+    total = notifications.count()
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    page = max(1, min(page, total_pages))
+    start = (page - 1) * page_size
+    items = notifications[start:start + page_size]
+
+    states = {}
+    if settings_user:
+        states = {
+            s.notification_id: s
+            for s in NotificationUserState.objects.filter(user=settings_user, notification__in=items)
+        }
+
+    payload = []
+    for n in items:
+        state = states.get(n.id)
+        payload.append({
+            'id': n.id,
+            'title': n.title,
+            'body': n.body,
+            'category': {
+                'id': n.category_id,
+                'name': n.category.name,
+                'slug': n.category.slug
+            },
+            'priority': n.priority,
+            'published_at': n.published_at.isoformat(),
+            'expires_at': n.expires_at.isoformat() if n.expires_at else None,
+            'read': bool(state and state.read_at),
+            'dismissed': bool(state and state.dismissed_at),
+        })
+
+    categories = list(NotificationCategory.objects.all().values('id', 'name', 'slug'))
+
+    return JsonResponse({
+        'categories': categories,
+        'notifications': payload,
+        'pagination': {
+            'page': page,
+            'page_size': page_size,
+            'total': total,
+            'total_pages': total_pages
+        }
+    })
+
+@require_http_methods(['PUT'])
+def update_notification_state(request, notification_id):
+    user = _resolve_user(request)
+    if not user:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        mark_read = data.get('read')
+        dismiss = data.get('dismiss')
+        notification = SystemNotification.objects.get(pk=notification_id)
+        state, _ = NotificationUserState.objects.get_or_create(user=user, notification=notification)
+        now = timezone.now()
+        if mark_read is True:
+            state.read_at = now
+        if mark_read is False:
+            state.read_at = None
+        if dismiss is True:
+            state.dismissed_at = now
+        if dismiss is False:
+            state.dismissed_at = None
+        state.save()
+        return JsonResponse({
+            'id': notification_id,
+            'read': bool(state.read_at),
+            'dismissed': bool(state.dismissed_at)
+        })
+    except SystemNotification.DoesNotExist:
+        return JsonResponse({'error': 'Notification not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
