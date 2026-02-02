@@ -5,10 +5,12 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
 
     if (selectedRowId != '') {
         $("#row-" + selectedRowId).removeClass('article-selected');
+        $("#row-" + selectedRowId).find('.selected-badge').addClass('hidden');
     }
     selectedRowId = id;
 
     $("#row-" + id).addClass('article-selected');
+    $("#row-" + id).find('.selected-badge').removeClass('hidden');
 
     clearDocumentContent();
 
@@ -36,6 +38,7 @@ function hideContentPanel(id) {
     $('#documentContentsPanel').addClass('hidden');
     document.body.classList.remove('overflow-hidden');
     $('#row-' + id).removeClass("article-selected");
+    $('#row-' + id).find('.selected-badge').addClass('hidden');
 }
 
 function clearDocumentContent() {
