@@ -4,17 +4,18 @@ let errorToastTimeout; // Global variable for the timeout
 function display_contents(id, title, page_contents, page_contents_not_used_by_llm) {
 
     if (selectedRowId != '') {
-        $("#row-" + selectedRowId).removeClass('bg-primary/20');
+        $("#row-" + selectedRowId).removeClass('article-selected');
     }
     selectedRowId = id;
 
-    $("#row-" + id).addClass('bg-primary/20');
+    $("#row-" + id).addClass('article-selected');
 
     clearDocumentContent();
 
     if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm))) {
 
         $('#documentContentsPanel').removeClass('hidden');
+        document.body.classList.add('overflow-hidden');
         let formattedTitle = title.length > 80 ? `${title.substring(0, 77)}...` : title;
         $('#documentContentsTitle').html(formattedTitle);
 
@@ -33,7 +34,8 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
 function hideContentPanel(id) {
     clearDocumentContent();
     $('#documentContentsPanel').addClass('hidden');
-    $('#row-' + id).removeClass("bg-primary/20");
+    document.body.classList.remove('overflow-hidden');
+    $('#row-' + id).removeClass("article-selected");
 }
 
 function clearDocumentContent() {
@@ -94,3 +96,39 @@ function timeAgo(isoString) {
     if (months < 12) return `${months}mo ago`;
     return `${years}y ago`;
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const closeBtn = document.getElementById('closePanelIcon');
+    const panel = document.getElementById('documentContentsPanel');
+    const backdrop = document.querySelector('.document-panel-backdrop');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+            if (selectedRowId) {
+                hideContentPanel(selectedRowId);
+            } else {
+                $('#documentContentsPanel').addClass('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+    }
+    if (backdrop) {
+        backdrop.addEventListener('click', function () {
+            if (selectedRowId) {
+                hideContentPanel(selectedRowId);
+            } else if (panel) {
+                panel.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        });
+    }
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && panel && !panel.classList.contains('hidden')) {
+            if (selectedRowId) {
+                hideContentPanel(selectedRowId);
+            } else {
+                panel.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+    });
+});

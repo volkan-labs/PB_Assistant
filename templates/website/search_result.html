@@ -117,99 +117,262 @@
 
                 <!-- Results Table -->
                 {% if articles %}
-                <div class="mb-6">
-                    <h1 class="text-gray-900 dark:text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
-                        Relevant Papers
-                    </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-base">The documents retrieved from the literature collection are
-                        below. The bold content is selected by LLM to generate the answer.</p>
-                </div>
-                <div class="@container w-full">
-                    <div class="flex overflow-hidden rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 shadow-xl">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754]">
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[30%]">
-                                        Title</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[15%]">
-                                        Authors</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
-                                        Year</th>
-                                    <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
-                                        Source</th>
-                                    <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
-                                        Homepage</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
-                                        Content</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-[#3b4754]">
-                                {% for article in articles %}
-                                <tr class="group hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors focus-within:ring-2 focus-within:ring-primary/40 focus-within:ring-offset-2 focus-within:ring-offset-background-light dark:focus-within:ring-offset-background-dark"
-                                    id="row-{{ article.id }}">
-                                    <td class="px-4 py-4">
-                                        <p class="text-gray-900 dark:text-white text-sm font-semibold leading-normal transition-colors">
-                                            {{ article.title }}
-                                        </p>
-                                    </td>
-                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">{{ article.authors_display }}</td>
-                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">{{ article.year|default:"N/A" }}
-                                    </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">
-                                        {{ article.journal|default:"N/A" }}
-                                    </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">
-                                        {% if article.url_source %}
-                                        <a href="{{ article.url_source }}" target="_blank" class="icon focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-                                            </svg>
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                    <td class="px-4 py-4">
-                                        <button title="Show content"
-                                            onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
-                                            class="flex items-center justify-center rounded-md h-8 px-3 bg-gray-200 dark:bg-slate-800 border border-gray-200 dark:border-[#3b4754] hover:bg-gray-200 dark:hover:bg-[#3b4754] text-gray-900 dark:text-white text-xs font-medium w-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <h1 class="text-gray-900 dark:text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
+                            Relevant Papers
+                        </h1>
+                        <p class="text-gray-600 dark:text-gray-400 text-base">The documents retrieved from the literature collection are
+                            below. The bold content is selected by LLM to generate the answer.</p>
                     </div>
+                    <span class="inline-flex items-center rounded-full border border-gray-200 dark:border-[#3b4754] bg-white/70 dark:bg-slate-800/70 px-3 py-1 text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        {{ articles|length }} results
+                    </span>
+                </div>
+                <div class="sticky top-0 z-10 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/90 dark:bg-slate-800/90 px-3 py-2 backdrop-blur">
+                    <div class="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        <span class="material-symbols-outlined text-[18px]">tune</span>
+                        Refine results
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="sr-only" for="resultSort">Sort results</label>
+                        <select id="resultSort"
+                            class="rounded-full border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 pl-3 pr-8 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                            <option selected>Relevance</option>
+                            <option>Newest first</option>
+                            <option>Oldest first</option>
+                            <option>Author A–Z</option>
+                            <option>Title A–Z</option>
+                            <option>Source A–Z</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="@container w-full flex flex-col gap-3 search-results-list">
+                    {% for article in articles %}
+                    <div class="group rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-4 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/70"
+                        id="row-{{ article.id }}"
+                        data-index="{{ forloop.counter0 }}"
+                        data-year="{{ article.year|default:'' }}"
+                        data-author="{{ article.authors_display|default:'' }}"
+                        data-title="{{ article.title|default:'' }}"
+                        data-source="{{ article.journal|default:'' }}">
+                        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                            <div class="min-w-0 space-y-2">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white leading-snug">
+                                        {{ article.title }}
+                                    </h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        <span class="article-authors" data-authors="{{ article.authors_full|default:'' }}">
+                                            {{ article.authors_full|default:"Unknown authors" }}
+                                        </span>
+                                    </p>
+                                </div>
+                                {% if article.abstract %}
+                                <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                    {{ article.abstract }}
+                                </p>
+                                {% endif %}
+                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-medium">
+                                    <span class="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-[#3b4754] bg-gray-50 dark:bg-[#1c2127] px-2 py-0.5 text-gray-600 dark:text-gray-300">
+                                        <span class="material-symbols-outlined text-[14px]">event</span>
+                                        {{ article.year|default:"N/A" }}
+                                    </span>
+                                    {% if article.journal %}
+                                    <a href="{{ article.url_source|default:'#' }}" {% if article.url_source %}target="_blank"{% endif %}
+                                        class="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-[#3b4754] bg-gray-50 dark:bg-[#1c2127] px-2 py-0.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                        <span class="material-symbols-outlined text-[14px]">source</span>
+                                        {{ article.journal }}
+                                    </a>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-[#3b4754] bg-gray-50 dark:bg-[#1c2127] px-2 py-0.5 text-gray-600 dark:text-gray-300">
+                                        <span class="material-symbols-outlined text-[14px]">source</span>
+                                        Source N/A
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 md:flex-col md:items-end">
+                                {% if article.url_source %}
+                                <a href="{{ article.url_source }}" target="_blank"
+                                    class="inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 px-3 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+                                </a>
+                                {% endif %}
+                                <button title="Show content"
+                                    onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
+                                    class="inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 dark:border-[#3b4754] bg-gray-100 dark:bg-slate-800 px-3 text-xs font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    <span class="material-symbols-outlined text-[18px]">article</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
                 
                 <!-- Document Contents Panel -->
-                <div id="documentContentsPanel" class="hidden mt-8">
-                    <div class="flex rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 shadow-xl flex-col">
-                        <div class="p-4 bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754] flex justify-between items-center">
-                            <h2 id="documentContentsTitle" class="text-lg font-bold text-gray-900 dark:text-white"></h2>
-                        <button id="closePanelIcon" class="text-black dark:text-white hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                <span class="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div id="documentContents" class="p-6 text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
-                            <!-- Content will be injected here -->
-                        </div>
+                <div id="documentContentsPanel" class="hidden fixed inset-0 z-[3400]">
+                    <div class="document-panel-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+                    <div class="absolute inset-y-0 right-0 w-full max-w-2xl border-l border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-900 shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
+                        <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                        <button id="closePanelIcon"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                            <span class="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                    </div>
+                    <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
+                        <!-- Content will be injected here -->
+                    </div>
                     </div>
                 </div>
 
             </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block body_end %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sortSelect = document.getElementById('resultSort');
+        const list = document.querySelector('.search-results-list');
+        if (!sortSelect || !list) return;
+
+        const items = Array.from(list.children);
+
+        function getYear(el) {
+            const value = parseInt(el.dataset.year, 10);
+            return Number.isFinite(value) ? value : null;
+        }
+
+        function getAuthor(el) {
+            return (el.dataset.author || '').toLowerCase();
+        }
+
+        function getTitle(el) {
+            return (el.dataset.title || '').toLowerCase();
+        }
+
+        function getSource(el) {
+            return (el.dataset.source || '').toLowerCase();
+        }
+
+        function getIndex(el) {
+            return parseInt(el.dataset.index, 10) || 0;
+        }
+
+        function sortItems(compareFn) {
+            const sorted = items.slice().sort(compareFn);
+            sorted.forEach((el) => list.appendChild(el));
+        }
+
+        function sortByRelevance() {
+            sortItems((a, b) => getIndex(a) - getIndex(b));
+        }
+
+        function sortByNewest() {
+            sortItems((a, b) => {
+                const ay = getYear(a);
+                const by = getYear(b);
+                if (ay === null && by === null) return getIndex(a) - getIndex(b);
+                if (ay === null) return 1;
+                if (by === null) return -1;
+                if (by !== ay) return by - ay;
+                return getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByOldest() {
+            sortItems((a, b) => {
+                const ay = getYear(a);
+                const by = getYear(b);
+                if (ay === null && by === null) return getIndex(a) - getIndex(b);
+                if (ay === null) return 1;
+                if (by === null) return -1;
+                if (ay !== by) return ay - by;
+                return getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByAuthor() {
+            sortItems((a, b) => {
+                const aa = getAuthor(a);
+                const ba = getAuthor(b);
+                if (!aa && !ba) return getIndex(a) - getIndex(b);
+                if (!aa) return 1;
+                if (!ba) return -1;
+                const diff = aa.localeCompare(ba);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByTitle() {
+            sortItems((a, b) => {
+                const at = getTitle(a);
+                const bt = getTitle(b);
+                if (!at && !bt) return getIndex(a) - getIndex(b);
+                if (!at) return 1;
+                if (!bt) return -1;
+                const diff = at.localeCompare(bt);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortBySource() {
+            sortItems((a, b) => {
+                const as = getSource(a);
+                const bs = getSource(b);
+                if (!as && !bs) return getIndex(a) - getIndex(b);
+                if (!as) return 1;
+                if (!bs) return -1;
+                const diff = as.localeCompare(bs);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        const storedSort = localStorage.getItem('searchResultSort');
+        if (storedSort) {
+            sortSelect.value = storedSort;
+        }
+
+        function applySort(value) {
+            if (value === 'Newest first') {
+                sortByNewest();
+            } else if (value === 'Oldest first') {
+                sortByOldest();
+            } else if (value === 'Author A–Z') {
+                sortByAuthor();
+            } else if (value === 'Title A–Z') {
+                sortByTitle();
+            } else if (value === 'Source A–Z') {
+                sortBySource();
+            } else {
+                sortByRelevance();
+            }
+        }
+
+        applySort(sortSelect.value);
+
+        sortSelect.addEventListener('change', function () {
+            localStorage.setItem('searchResultSort', sortSelect.value);
+            applySort(sortSelect.value);
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.article-authors').forEach((el) => {
+            const raw = el.getAttribute('data-authors') || '';
+            if (!raw) return;
+            const parts = raw.split(',').map((item) => item.trim()).filter(Boolean);
+            if (parts.length <= 4) return;
+            const remaining = parts.length - 4;
+            el.textContent = `${parts.slice(0, 4).join(', ')} +${remaining} more`;
+        });
+    });
+</script>
 {% endblock %}
