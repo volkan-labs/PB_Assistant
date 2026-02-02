@@ -160,6 +160,7 @@ def save_preferences(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 from PB_Assistant.models import SearchFolder, SearchHistory, PlanetaryBoundary, UserSettings, NotificationCategory, SystemNotification, NotificationUserState
+from PB_Assistant.models import AcademicPaperText, AcademicPaperPlanetaryBoundary
 
 def _resolve_user(request):
     if request.user and request.user.is_authenticated:
@@ -370,6 +371,90 @@ def update_notification_state(request, notification_id):
         return JsonResponse({'error': 'Notification not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_GET
+def get_knowledge_documents(request):
+    query = (request.GET.get('q') or '').strip()
+    boundary = (request.GET.get('boundary') or '').strip()
+    if boundary == 'all':
+        boundary = ''
+    page = int(request.GET.get('page', '1'))
+    page_size = int(request.GET.get('page_size', '10'))
+
+    papers = (
+        AcademicPaperText.objects
+        .select_related('academicpaper')
+        .prefetch_related('academicpaper__planetary_boundary')
+        .all()
+    )
+
+    if boundary:
+        if boundary.isdigit():
+            papers = papers.filter(academicpaper__planetary_boundary__id=int(boundary))
+        else:
+            papers = papers.filter(academicpaper__planetary_boundary__name=boundary)
+
+    if query:
+        papers = papers.filter(
+            models.Q(academicpaper__title__icontains=query) |
+            models.Q(text__icontains=query) |
+            models.Q(academicpaper__author_list__icontains=query)
+        )
+
+    papers = papers.distinct()
+
+    total = papers.count()
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    page = max(1, min(page, total_pages))
+    start = (page - 1) * page_size
+    items = list(papers[start:start + page_size])
+
+    results = []
+    for paper_text in items:
+        paper = paper_text.academicpaper
+        if not paper:
+            continue
+        boundaries = list(paper.planetary_boundary.values_list('name', flat=True))
+        boundary_label = ', '.join(boundaries) if boundaries else ''
+        authors_list = []
+        if isinstance(paper.author_list, list):
+            for author in paper.author_list:
+                if isinstance(author, dict):
+                    name = author.get('name') or author.get('full_name') or author.get('author') or ''
+                    if name:
+                        authors_list.append(name)
+                elif isinstance(author, str):
+                    authors_list.append(author)
+        if query:
+            q = query.lower()
+            title_match = (paper.title or '').lower().find(q) != -1
+            abstract_match = (paper_text.text or '').lower().find(q) != -1
+            author_match = any(q in (a or '').lower() for a in authors_list)
+            if not (title_match or abstract_match or author_match):
+                continue
+        if len(authors_list) > 4:
+            authors_short = ', '.join(authors_list[:4]) + f" +{len(authors_list) - 4} more"
+        else:
+            authors_short = ', '.join(authors_list)
+        results.append({
+            'id': str(paper_text.id),
+            'title': paper.title or '',
+            'abstract': paper_text.text or '',
+            'authors': authors_short,
+            'authors_full': ', '.join(authors_list),
+            'planetaryBoundary': boundary_label,
+            'source': paper.source or 'fetched',
+        })
+
+    return JsonResponse({
+        'documents': results,
+        'pagination': {
+            'page': page,
+            'page_size': page_size,
+            'total': total,
+            'total_pages': total_pages
+        }
+    })
 
 @require_POST
 def upload_documents(request):

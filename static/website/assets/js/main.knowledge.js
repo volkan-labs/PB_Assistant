@@ -1,8 +1,8 @@
 $(document).ready(function () {
-    const STORAGE_KEY = 'knowledgeDocuments';
     const PAGE_SIZE = 10;
     let currentPage = 1;
     let documents = [];
+    let totalPages = 1;
 
     const boundaryFilter = $('#boundaryFilter');
     const librarySearch = $('#librarySearch');
@@ -15,181 +15,39 @@ $(document).ready(function () {
     const prevPage = $('#prevPage');
     const nextPage = $('#nextPage');
     const pageNumbers = $('#pageNumbers');
+    const loadingOverlay = $('#knowledgeLoadingOverlay');
+    const paginationContainer = $('#knowledgePagination');
 
     function loadDocuments() {
-        try {
-            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            documents = Array.isArray(stored) ? stored : [];
-        } catch (e) {
-            documents = [];
-        }
-        const sampleDocs = [
-                {
-                    id: 'sample-1',
-                    title: 'Safe and just Earth system boundaries',
-                    abstract: 'A synthesis of Earth system boundaries that defines a safe and just operating space for humanity.',
-                    authors: 'Rockström, J.; Gupta, J.; et al.',
-                    planetaryBoundary: 'Climate Change',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-2',
-                    title: 'A planetary boundary for green water',
-                    abstract: 'Explores the role of green water in regulating Earth system stability and proposes a boundary.',
-                    authors: 'Wang-Erlandsson, L.; et al.',
-                    planetaryBoundary: 'Freshwater Change',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-3',
-                    title: 'Novel entities and the safe operating space',
-                    abstract: 'Assesses chemical pollution and novel entities against planetary boundary criteria.',
-                    authors: 'Persson, L.; et al.',
-                    planetaryBoundary: 'Novel Entities',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-4',
-                    title: 'Biosphere integrity and functional diversity',
-                    abstract: 'Evaluates biosphere integrity by measuring functional diversity and resilience.',
-                    authors: 'Steffen, W.; et al.',
-                    planetaryBoundary: 'Biosphere Integrity',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-5',
-                    title: 'Land-system change in the Anthropocene',
-                    abstract: 'Reviews land-system change impacts and the thresholds for Earth system stability.',
-                    authors: 'Pimm, S.; et al.',
-                    planetaryBoundary: 'Land-system Change',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-6',
-                    title: 'Biogeochemical flows of nitrogen and phosphorus',
-                    abstract: 'A review of nutrient flows and their planetary boundary implications.',
-                    authors: 'Galloway, J.; et al.',
-                    planetaryBoundary: 'Biogeochemical Flows',
-                    source: 'fetched'
-                }
-                ,
-                {
-                    id: 'sample-7',
-                    title: 'Ocean acidification thresholds and resilience',
-                    abstract: 'Examines ocean acidification signals and early warning indicators for ecosystem collapse.',
-                    authors: 'Doney, S.; et al.',
-                    planetaryBoundary: 'Ocean Acidification',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-8',
-                    title: 'Atmospheric aerosol loading and climate impacts',
-                    abstract: 'A synthesis of aerosol loading impacts on monsoons and regional climate stability.',
-                    authors: 'Ramanathan, V.; et al.',
-                    planetaryBoundary: 'Atmospheric Aerosol Loading',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-9',
-                    title: 'Stratospheric ozone recovery trajectories',
-                    abstract: 'Evaluates ozone recovery under multiple emissions scenarios and policy responses.',
-                    authors: 'Solomon, S.; et al.',
-                    planetaryBoundary: 'Stratospheric Ozone Depletion',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-10',
-                    title: 'Greenhouse forcing and climate feedbacks',
-                    abstract: 'Quantifies feedback strengths and implications for Earth system sensitivity.',
-                    authors: 'Hansen, J.; et al.',
-                    planetaryBoundary: 'Climate Change',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-11',
-                    title: 'Regional freshwater availability under warming',
-                    abstract: 'Assesses freshwater stress and regional tipping points under warming trajectories.',
-                    authors: 'Gleeson, T.; et al.',
-                    planetaryBoundary: 'Freshwater Change',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-12',
-                    title: 'Land degradation and biosphere stability',
-                    abstract: 'Links land degradation hotspots to biosphere resilience metrics.',
-                    authors: 'Foley, J.; et al.',
-                    planetaryBoundary: 'Land-system Change',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-13',
-                    title: 'The emerging boundary for novel entities',
-                    abstract: 'Maps chemical footprints and outlines governance gaps for novel entities.',
-                    authors: 'Wang, Z.; et al.',
-                    planetaryBoundary: 'Novel Entities',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-14',
-                    title: 'Nitrogen fixation and ecosystem tipping points',
-                    abstract: 'Explores nitrogen fixation rates and ecological thresholds.',
-                    authors: 'Vitousek, P.; et al.',
-                    planetaryBoundary: 'Biogeochemical Flows',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-15',
-                    title: 'Biodiversity loss and ecosystem function',
-                    abstract: 'Evaluates biodiversity loss and impacts on ecosystem function across biomes.',
-                    authors: 'Cardinale, B.; et al.',
-                    planetaryBoundary: 'Biosphere Integrity',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-16',
-                    title: 'Arctic amplification and climate extremes',
-                    abstract: 'Analyzes polar amplification and mid-latitude extreme weather connections.',
-                    authors: 'Serreze, M.; et al.',
-                    planetaryBoundary: 'Climate Change',
-                    source: 'fetched'
-                },
-                {
-                    id: 'sample-17',
-                    title: 'Aerosols and regional precipitation shifts',
-                    abstract: 'Investigates aerosol impacts on precipitation patterns in Asia and Africa.',
-                    authors: 'Giorgi, F.; et al.',
-                    planetaryBoundary: 'Atmospheric Aerosol Loading',
-                    source: 'uploaded'
-                },
-                {
-                    id: 'sample-18',
-                    title: 'Phosphorus loading in freshwater systems',
-                    abstract: 'Tracks phosphorus loading trends and lake eutrophication risk.',
-                    authors: 'Carpenter, S.; et al.',
-                    planetaryBoundary: 'Biogeochemical Flows',
-                    source: 'fetched'
-                }
-            ];
-        if (!documents.length) {
-            documents = sampleDocs;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-            return;
-        }
-        if (documents.length < 12) {
-            const existingIds = new Set(documents.map((doc) => doc.id));
-            const merged = [...documents];
-            sampleDocs.forEach((doc) => {
-                if (!existingIds.has(doc.id)) merged.push(doc);
+        loadingOverlay.removeClass('hidden');
+        const q = librarySearch.val().trim();
+        const boundary = boundaryFilter.val();
+        const boundaryId = boundaryFilter.find('option:selected').data('id');
+        const boundaryParam = boundary && boundary !== 'all' ? (boundaryId || boundary) : '';
+        const params = new URLSearchParams({
+            page: String(currentPage),
+            page_size: String(PAGE_SIZE),
+        });
+        if (q) params.set('q', q);
+        if (boundaryParam) params.set('boundary', boundaryParam);
+        return fetch(`/api/knowledge-documents/?${params.toString()}`)
+            .then((res) => res.json())
+            .then((data) => {
+                documents = Array.isArray(data.documents) ? data.documents : [];
+                totalPages = data.pagination?.total_pages || 1;
+                loadingOverlay.addClass('hidden');
+            })
+            .catch(() => {
+                documents = [];
+                totalPages = 1;
+                loadingOverlay.addClass('hidden');
             });
-            documents = merged;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-        }
     }
 
     function renderBoundaryOptions(boundaries) {
         boundaryFilter.find('option:not(:first)').remove();
         boundaries.forEach((boundary) => {
-            boundaryFilter.append(`<option value="${escapeHtml(boundary)}">${escapeHtml(boundary)}</option>`);
+            boundaryFilter.append(`<option value="${escapeHtml(boundary.name)}" data-id="${escapeHtml(boundary.id)}">${escapeHtml(boundary.name)}</option>`);
         });
     }
 
@@ -198,14 +56,14 @@ $(document).ready(function () {
             .then((response) => response.json())
             .then((data) => {
                 const boundaries = Array.isArray(data)
-                    ? data.map((item) => item.name || item.short_name).filter(Boolean)
+                    ? data.map((item) => ({ id: item.id, name: item.name || item.short_name })).filter((item) => item.id && item.name)
                     : [];
                 renderBoundaryOptions(boundaries);
             })
             .catch(() => {
                 // Fallback to document-derived boundaries if API is unavailable.
                 const fallback = Array.from(new Set(documents.map((doc) => doc.planetaryBoundary).filter(Boolean))).sort();
-                renderBoundaryOptions(fallback);
+                renderBoundaryOptions(fallback.map((name) => ({ id: name, name })));
             });
     }
 
@@ -213,36 +71,8 @@ $(document).ready(function () {
         return $('<div>').text(value ?? '').html();
     }
 
-    function matchesSearch(doc, query) {
-        const haystack = [
-            doc.title,
-            doc.abstract,
-            doc.authors
-        ].join(' ').toLowerCase();
-        return haystack.includes(query);
-    }
-
-    function applyFilters() {
-        const selectedBoundary = boundaryFilter.val();
-        const searchQuery = librarySearch.val().trim().toLowerCase();
-        let filtered = documents;
-
-        if (selectedBoundary) {
-            filtered = filtered.filter((doc) => doc.planetaryBoundary === selectedBoundary);
-        }
-        if (searchQuery) {
-            filtered = filtered.filter((doc) => matchesSearch(doc, searchQuery));
-        }
-
-        return filtered;
-    }
-
-    function paginate(items) {
-        const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
-        currentPage = Math.min(currentPage, totalPages);
-        const start = (currentPage - 1) * PAGE_SIZE;
-        const pageItems = items.slice(start, start + PAGE_SIZE);
-        return { pageItems, totalPages };
+    function hasFilters() {
+        return Boolean(boundaryFilter.val() || librarySearch.val().trim());
     }
 
     function renderPageNumbers(totalPages) {
@@ -303,16 +133,14 @@ $(document).ready(function () {
     }
 
     function renderDocuments() {
-        const filtered = applyFilters();
-        const hasFilters = Boolean(boundaryFilter.val() || librarySearch.val().trim());
-        const { pageItems, totalPages } = paginate(filtered);
+        const activeFilters = hasFilters();
 
         documentList.empty();
-        if (!documents.length || !filtered.length) {
-            renderEmptyState(documents.length > 0, hasFilters);
+        if (!documents.length) {
+            renderEmptyState(false, activeFilters);
         } else {
             emptyState.addClass('hidden');
-            pageItems.forEach((doc) => {
+            documents.forEach((doc) => {
                 const card = $(`
                     <div class="rounded-xl border border-slate-200 dark:border-[#283039] bg-white dark:bg-surface-dark px-4 py-4 shadow-sm transition-colors hover:border-primary/40 dark:hover:border-primary/30">
                         <div class="flex flex-wrap items-start justify-between gap-3">
@@ -339,14 +167,18 @@ $(document).ready(function () {
             });
         }
 
-        renderPageNumbers(totalPages);
-        prevPage.prop('disabled', currentPage <= 1);
-        nextPage.prop('disabled', currentPage >= totalPages);
+        if (totalPages <= 1) {
+            paginationContainer.addClass('hidden');
+        } else {
+            paginationContainer.removeClass('hidden');
+            renderPageNumbers(totalPages);
+            prevPage.prop('disabled', currentPage <= 1);
+            nextPage.prop('disabled', currentPage >= totalPages);
+        }
     }
 
     boundaryFilter.on('change', function () {
-        currentPage = 1;
-        renderDocuments();
+        // Wait for explicit search action
     });
 
     function updateClearButton() {
@@ -358,38 +190,44 @@ $(document).ready(function () {
     }
 
     librarySearch.on('input', function () {
-        currentPage = 1;
         updateClearButton();
-        renderDocuments();
+    });
+
+    librarySearch.on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            currentPage = 1;
+            loadDocuments().then(renderDocuments);
+        }
     });
 
     librarySearchClear.on('click', function () {
         librarySearch.val('');
         updateClearButton();
-        currentPage = 1;
-        renderDocuments();
         librarySearch.focus();
     });
 
     librarySearchButton.on('click', function () {
         currentPage = 1;
-        renderDocuments();
+        updateClearButton();
+        loadDocuments().then(renderDocuments);
     });
 
     prevPage.on('click', function () {
         if (currentPage > 1) {
             currentPage -= 1;
-            renderDocuments();
+            loadDocuments().then(renderDocuments);
         }
     });
 
     nextPage.on('click', function () {
         currentPage += 1;
-        renderDocuments();
+        loadDocuments().then(renderDocuments);
     });
 
-    loadDocuments();
-    loadBoundaries();
-    updateClearButton();
-    renderDocuments();
+    loadDocuments().then(() => {
+        loadBoundaries();
+        updateClearButton();
+        renderDocuments();
+    });
 });

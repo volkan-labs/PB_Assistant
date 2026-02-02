@@ -12,7 +12,7 @@
         <div class="flex flex-col justify-end">
             <select id="boundaryFilter"
                 class="w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                <option value="">All boundaries</option>
+                <option value="all">All boundaries</option>
             </select>
         </div>
         <div class="relative flex flex-col justify-end">
@@ -29,16 +29,22 @@
         </button>
     </div>
 
-    <div class="rounded-2xl border border-slate-200 dark:border-[#283039] bg-white/70 dark:bg-surface-dark/80 p-4 shadow-sm">
+    <div class="relative rounded-2xl border border-slate-200 dark:border-[#283039] bg-white/70 dark:bg-surface-dark/80 p-4 shadow-sm">
         <div id="documentList" class="flex flex-col gap-3"></div>
         <div id="documentEmptyState" class="hidden flex flex-col items-center justify-center py-12 text-center text-slate-500 dark:text-slate-400">
             <span class="material-symbols-outlined text-slate-400 text-[64px] opacity-50 mb-4">description</span>
             <p id="documentEmptyTitle" class="font-medium text-lg">No documents yet</p>
             <p id="documentEmptyBody" class="text-sm mt-2">Upload your research documents to build your library.</p>
         </div>
+        <div id="knowledgeLoadingOverlay" class="hidden absolute inset-0 rounded-2xl bg-white/70 dark:bg-surface-dark/70 backdrop-blur-sm flex items-center justify-center">
+            <div class="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-200">
+                <span class="inline-block h-4 w-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin"></span>
+                Searching…
+            </div>
+        </div>
     </div>
 
-    <div class="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500 dark:text-slate-400">
+    <div id="knowledgePagination" class="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500 dark:text-slate-400">
         <button id="prevPage" type="button"
             class="rounded-lg border border-slate-200 dark:border-[#334155] px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight disabled:cursor-not-allowed disabled:opacity-50">
             Previous
