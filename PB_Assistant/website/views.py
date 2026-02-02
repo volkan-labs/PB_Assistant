@@ -64,6 +64,11 @@ def search(request):
     search_service = SearchService()
     search_context = search_service.perform_search(user_query, selected_model, request.user)
 
+    if 'query_timestamp' not in search_context:
+        search_context['query_timestamp'] = timezone.now()
+    if 'answer_timestamp' not in search_context:
+        search_context['answer_timestamp'] = search_context['query_timestamp']
+
     return render(request, 'website/search_result.html', {
         **search_context,
         'history_id': None,

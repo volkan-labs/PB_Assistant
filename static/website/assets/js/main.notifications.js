@@ -9,6 +9,7 @@ $(document).ready(function () {
     const prevBtn = $('#notifPrev');
     const nextBtn = $('#notifNext');
     const pages = $('#notifPages');
+    const retryBtn = $('#notificationRetry');
     const adminModal = $('#notificationAdminModal');
     const adminOpenBtn = $('#openNotificationAdmin');
     const adminCloseBtn = $('#notificationAdminClose');
@@ -66,6 +67,7 @@ $(document).ready(function () {
             .catch(() => {
                 loading.addClass('hidden');
                 error.removeClass('hidden');
+                console.error('Failed to load notifications');
             });
     }
 
@@ -245,6 +247,10 @@ $(document).ready(function () {
 
     includeDismissed.on('change', function () {
         currentPage = 1;
+        fetchNotifications();
+    });
+
+    retryBtn.on('click', function () {
         fetchNotifications();
     });
 
