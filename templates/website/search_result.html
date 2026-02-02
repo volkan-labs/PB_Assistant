@@ -11,16 +11,16 @@
         <!-- User Query Block -->
         <div class="flex gap-4 justify-end">
             <div class="max-w-[80%]">
-                <div class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <div class="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     <span>User</span>
                     <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 user-name-label"></span>
                 </div>
-                <div class="bg-[#F3F6FA] dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm shadow-sm border border-slate-200/70 dark:border-[#3b4754]">
+                <div class="bg-[#F3F6FA] dark:bg-slate-800 p-3 rounded-2xl rounded-tr-sm shadow-sm border border-slate-200/70 dark:border-[#3b4754]">
                     <p class="text-black dark:text-white text-base leading-relaxed">
                     {{ query }}
                     </p>
-                    <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ query_timestamp|date:"c" }}">
-                        Just now
+                    <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ query_timestamp|date:'c' }}">
+                        {{ query_timestamp|date:"M j, Y · H:i"|default:"Just now" }}
                     </div>
                 </div>
             </div>
@@ -35,8 +35,8 @@
             </div>
 
             <div class="max-w-full mb-6">
-                <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assistant</div>
-                <div class="relative bg-[#E8F3F5] dark:bg-primary/10 p-4 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
+                <div class="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assistant</div>
+                <div class="relative bg-[#E8F3F5] dark:bg-primary/10 p-3 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
                     <div class="absolute left-0 top-4 h-10 w-1 rounded-full bg-primary/60"></div>
                 {% if answer %}
                 <div class="text-black dark:text-white text-base leading-relaxed mb-6">{{ answer }}</div>
@@ -51,10 +51,10 @@
                         </h1>
                         <p class="text-gray-600 dark:text-gray-400 text-base">The documents retrieved from the literature collection are
                             below. The bold content is selected by LLM to generate the answer.</p>
+                        <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            Result set • {{ articles|length }} sources
+                        </p>
                     </div>
-                    <span class="inline-flex items-center rounded-full border border-gray-200 dark:border-[#3b4754] bg-white/70 dark:bg-slate-800/70 px-3 py-1 text-xs font-semibold text-gray-600 dark:text-gray-300">
-                        {{ articles|length }} results
-                    </span>
                 </div>
                 <div class="sticky top-0 z-10 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/90 dark:bg-slate-800/90 px-3 py-2 backdrop-blur {% if articles|length <= 1 %}hidden{% endif %}">
                     <div class="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
@@ -74,8 +74,13 @@
                         </select>
                     </div>
                 </div>
+                {% if articles|length > 50 %}
+                <div class="mb-4 rounded-lg border border-amber-200/70 bg-amber-50/80 px-3 py-2 text-xs text-amber-700">
+                    Showing top 50 results. Refine your query to see more specific matches.
+                </div>
+                {% endif %}
                 <div class="@container w-full flex flex-col gap-3 search-results-list">
-                    {% for article in articles %}
+                    {% for article in articles|slice:":50" %}
                     <div class="result-card group rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-4 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/70"
                         id="row-{{ article.id }}"
                         data-index="{{ forloop.counter0 }}"
@@ -122,18 +127,26 @@
                                     </span>
                                     {% endif %}
                                 </div>
+                                {% if article.page_contents and article.page_contents|length > 0 %}
+                                <div class="mt-2 rounded-lg border border-slate-200/70 dark:border-[#3b4754] bg-slate-50/80 dark:bg-slate-800/80 px-3 py-2">
+                                    <div class="mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Key snippet</div>
+                                    <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                                        ... {{ article.page_contents.0 }} ...
+                                    </p>
+                                </div>
+                                {% endif %}
                             </div>
                             <div class="flex items-center gap-2 md:items-end">
                                 {% if article.url_source %}
-                                <a href="{{ article.url_source }}" target="_blank"
-                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                <a href="{{ article.url_source }}" target="_blank" aria-label="Open source in new tab"
+                                    class="icon-action inline-flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                                     <span class="material-symbols-outlined text-[16px]">open_in_new</span>
                                     <span class="action-tooltip">Open source</span>
                                 </a>
                                 {% endif %}
-                                <button title="Show content"
+                                <button title="Show content" aria-label="Show source excerpts"
                                     onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
-                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-primary/40 bg-primary/15 text-primary hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    class="icon-action inline-flex h-7 w-7 items-center justify-center rounded-md border border-primary/40 bg-primary/15 text-primary hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
                                     <span class="material-symbols-outlined text-[16px]">description</span>
                                     <span class="action-tooltip">Show content</span>
                                 </button>
@@ -142,23 +155,30 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="rounded-xl border border-slate-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                    No strong matches found. Try a broader or simpler query.
+                </div>
                 {% endif %}
-                <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ answer_timestamp|date:"c" }}">
-                    Just now
+                <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ answer_timestamp|date:'c' }}">
+                    {{ answer_timestamp|date:"M j, Y · H:i"|default:"Just now" }}
                 </div>
                 </div>
 
                 <!-- Document Contents Panel -->
                 <div id="documentContentsPanel" class="hidden fixed inset-0 z-[3400]">
-                    <div class="document-panel-backdrop absolute inset-0 bg-black/70"></div>
+                    <div class="document-panel-backdrop absolute inset-0 bg-black/30"></div>
                     <div class="absolute inset-y-0 right-0 w-full max-w-2xl border-l border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-900 shadow-2xl">
                         <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
                             <div class="flex items-center gap-3 min-w-0">
-                                <button id="documentContentsBack" type="button"
-                                    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                <button id="documentContentsBack" type="button" aria-label="Back to results"
+                                    class="icon-action inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
                                     <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                                    <span class="action-tooltip action-tooltip--down">Back to results</span>
                                 </button>
-                                <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                                <div class="min-w-0">
+                                    <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                                </div>
                             </div>
                         </div>
                         <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
@@ -175,176 +195,5 @@
 
 {% block body_end %}
 {{ block.super }}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sortSelect = document.getElementById('resultSort');
-        const list = document.querySelector('.search-results-list');
-        if (!sortSelect || !list) return;
-
-        const items = Array.from(list.children);
-
-        function getYear(el) {
-            const value = parseInt(el.dataset.year, 10);
-            return Number.isFinite(value) ? value : null;
-        }
-
-        function getAuthor(el) {
-            return (el.dataset.author || '').toLowerCase();
-        }
-
-        function getTitle(el) {
-            return (el.dataset.title || '').toLowerCase();
-        }
-
-        function getSource(el) {
-            return (el.dataset.source || '').toLowerCase();
-        }
-
-        function getIndex(el) {
-            return parseInt(el.dataset.index, 10) || 0;
-        }
-
-        function sortItems(compareFn) {
-            const sorted = items.slice().sort(compareFn);
-            sorted.forEach((el) => list.appendChild(el));
-        }
-
-        function sortByRelevance() {
-            sortItems((a, b) => getIndex(a) - getIndex(b));
-        }
-
-        function sortByNewest() {
-            sortItems((a, b) => {
-                const ay = getYear(a);
-                const by = getYear(b);
-                if (ay === null && by === null) return getIndex(a) - getIndex(b);
-                if (ay === null) return 1;
-                if (by === null) return -1;
-                if (by !== ay) return by - ay;
-                return getIndex(a) - getIndex(b);
-            });
-        }
-
-        function sortByOldest() {
-            sortItems((a, b) => {
-                const ay = getYear(a);
-                const by = getYear(b);
-                if (ay === null && by === null) return getIndex(a) - getIndex(b);
-                if (ay === null) return 1;
-                if (by === null) return -1;
-                if (ay !== by) return ay - by;
-                return getIndex(a) - getIndex(b);
-            });
-        }
-
-        function sortByAuthor() {
-            sortItems((a, b) => {
-                const aa = getAuthor(a);
-                const ba = getAuthor(b);
-                if (!aa && !ba) return getIndex(a) - getIndex(b);
-                if (!aa) return 1;
-                if (!ba) return -1;
-                const diff = aa.localeCompare(ba);
-                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
-            });
-        }
-
-        function sortByTitle() {
-            sortItems((a, b) => {
-                const at = getTitle(a);
-                const bt = getTitle(b);
-                if (!at && !bt) return getIndex(a) - getIndex(b);
-                if (!at) return 1;
-                if (!bt) return -1;
-                const diff = at.localeCompare(bt);
-                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
-            });
-        }
-
-        function sortBySource() {
-            sortItems((a, b) => {
-                const as = getSource(a);
-                const bs = getSource(b);
-                if (!as && !bs) return getIndex(a) - getIndex(b);
-                if (!as) return 1;
-                if (!bs) return -1;
-                const diff = as.localeCompare(bs);
-                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
-            });
-        }
-
-        const storedSort = localStorage.getItem('searchResultSort');
-        if (storedSort) {
-            sortSelect.value = storedSort;
-        }
-
-        function applySort(value) {
-            if (value === 'Newest first') {
-                sortByNewest();
-            } else if (value === 'Oldest first') {
-                sortByOldest();
-            } else if (value === 'Author A–Z') {
-                sortByAuthor();
-            } else if (value === 'Title A–Z') {
-                sortByTitle();
-            } else if (value === 'Source A–Z') {
-                sortBySource();
-            } else {
-                sortByRelevance();
-            }
-        }
-
-        applySort(sortSelect.value);
-
-        sortSelect.addEventListener('change', function () {
-            localStorage.setItem('searchResultSort', sortSelect.value);
-            applySort(sortSelect.value);
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const avatar = document.querySelector('.user-avatar-mini');
-        if (!avatar) return;
-        const userMeta = document.querySelector('.user-meta');
-        const name = userMeta?.dataset?.userName || 'User';
-        const parts = name.trim().split(/\s+/);
-        const initials = parts.length >= 2
-            ? `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase()
-            : `${parts[0][0] || ''}`.toUpperCase();
-        const storedColor = localStorage.getItem('avatarColor');
-        if (storedColor) {
-            avatar.style.backgroundColor = storedColor;
-        }
-        avatar.textContent = initials || 'U';
-
-        const label = document.querySelector('.user-name-label');
-        if (label) {
-            const formatted = parts.length >= 2
-                ? `${parts[0]} ${parts[1][0] || ''}.`
-                : name;
-            label.textContent = formatted;
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.timestamp-local').forEach((el) => {
-            const raw = el.getAttribute('data-timestamp');
-            if (!raw) return;
-            const parsed = new Date(raw);
-            if (Number.isNaN(parsed.getTime())) return;
-            const datePart = parsed.toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-            const timePart = parsed.toLocaleTimeString(undefined, {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            el.textContent = `${datePart} · ${timePart}`;
-        });
-    });
-
-</script>
+<script src="{% static 'website/assets/js/main.search_results.js' %}?v={% now "U" %}" type="text/javascript"></script>
 {% endblock %}

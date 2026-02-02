@@ -64,6 +64,16 @@ def search(request):
     search_service = SearchService()
     search_context = search_service.perform_search(user_query, selected_model, request.user)
 
+    if 'query_timestamp' not in search_context:
+        search_context['query_timestamp'] = timezone.now()
+    if 'answer_timestamp' not in search_context:
+        search_context['answer_timestamp'] = search_context['query_timestamp']
+
+    articles = search_context.get('articles') or []
+    answer = search_context.get('answer') or ''
+    if not articles and 'answer is not available in the documents' in answer.lower():
+        search_context['answer'] = ''
+
     return render(request, 'website/search_result.html', {
         **search_context,
         'history_id': None,
@@ -97,6 +107,9 @@ def load_history_item(request, id):
         articles, source_documents, chunk_ids
     )
     
+    if not articles_as_dict and answer and 'answer is not available in the documents' in answer.lower():
+        answer = ''
+
     return render(request, 'website/search_result.html', {
         'query': user_query,
         'answer': answer,

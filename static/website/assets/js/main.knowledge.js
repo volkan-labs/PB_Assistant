@@ -12,6 +12,8 @@ $(document).ready(function () {
     const emptyState = $('#documentEmptyState');
     const emptyTitle = $('#documentEmptyTitle');
     const emptyBody = $('#documentEmptyBody');
+    const errorState = $('#documentErrorState');
+    const retryBtn = $('#documentRetry');
     const prevPage = $('#prevPage');
     const nextPage = $('#nextPage');
     const pageNumbers = $('#pageNumbers');
@@ -20,6 +22,7 @@ $(document).ready(function () {
 
     function loadDocuments() {
         loadingOverlay.removeClass('hidden');
+        errorState.addClass('hidden');
         const q = librarySearch.val().trim();
         const boundary = boundaryFilter.val();
         const boundaryId = boundaryFilter.find('option:selected').data('id');
@@ -41,6 +44,8 @@ $(document).ready(function () {
                 documents = [];
                 totalPages = 1;
                 loadingOverlay.addClass('hidden');
+                errorState.removeClass('hidden');
+                console.error('Failed to load knowledge documents');
             });
     }
 
@@ -136,6 +141,11 @@ $(document).ready(function () {
         const activeFilters = hasFilters();
 
         documentList.empty();
+        if (!errorState.hasClass('hidden')) {
+            emptyState.addClass('hidden');
+            paginationContainer.addClass('hidden');
+            return;
+        }
         if (!documents.length) {
             renderEmptyState(false, activeFilters);
         } else {
@@ -210,6 +220,10 @@ $(document).ready(function () {
     librarySearchButton.on('click', function () {
         currentPage = 1;
         updateClearButton();
+        loadDocuments().then(renderDocuments);
+    });
+
+    retryBtn.on('click', function () {
         loadDocuments().then(renderDocuments);
     });
 

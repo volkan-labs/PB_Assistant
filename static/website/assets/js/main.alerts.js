@@ -40,6 +40,23 @@ $(document).ready(function () {
         localStorage.setItem(ALERTS_KEY, JSON.stringify(alerts));
     }
 
+    function showToast(message) {
+        let toast = $('#alertsToast');
+        if (!toast.length) {
+            toast = $(`
+                <div id="alertsToast" class="fixed top-6 right-6 z-[6000] hidden rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-lg">
+                    <span></span>
+                </div>
+            `);
+            $('body').append(toast);
+        }
+        toast.find('span').text(message);
+        toast.removeClass('hidden');
+        setTimeout(() => {
+            toast.addClass('hidden');
+        }, 2000);
+    }
+
     function renderAlerts() {
         alertsList.empty();
         if (!alerts.length) {
@@ -211,11 +228,48 @@ $(document).ready(function () {
     }
 
     function handleDelete(id) {
-        const confirmed = window.confirm('Delete this alert? This action cannot be undone.');
-        if (!confirmed) return;
-        alerts = alerts.filter((alert) => alert.id !== id);
-        saveAlerts();
-        renderAlerts();
+        const targetId = String(id);
+        const alertItem = alerts.find((item) => item.id === targetId);
+        const name = alertItem?.name || 'this alert';
+        const onConfirm = () => {
+            alerts = alerts.filter((alert) => alert.id !== targetId);
+            saveAlerts();
+            renderAlerts();
+            showToast('Alert deleted.');
+        };
+
+        if (typeof window.showConfirmationModal === 'function') {
+            window.showConfirmationModal(
+                'Delete alert?',
+                `Delete "${name}"? This action cannot be undone.`,
+                'Delete',
+                onConfirm
+            );
+            return;
+        }
+
+        const modal = $('#confirmationModal');
+        const title = $('#modalTitle');
+        const body = $('#modalBody');
+        const confirmBtn = $('#modalConfirmButton');
+        const cancelBtn = $('#modalCancelButton');
+        if (!modal.length || !confirmBtn.length) {
+            if (window.confirm(`Delete "${name}"? This action cannot be undone.`)) {
+                onConfirm();
+            }
+            return;
+        }
+        title.text('Delete alert?');
+        body.text(`Delete "${name}"? This action cannot be undone.`);
+        confirmBtn.text('Delete');
+        confirmBtn.off('click').on('click', function () {
+            onConfirm();
+            modal.addClass('hidden');
+        });
+        cancelBtn.off('click').on('click', function () {
+            modal.addClass('hidden');
+        });
+        modal.removeClass('hidden');
     }
 
     function bindRowEvents() {
@@ -227,7 +281,7 @@ $(document).ready(function () {
         });
 
         alertsList.on('click', '.alert-toggle', function () {
-            const id = $(this).data('id');
+            const id = String($(this).data('id'));
             alerts = alerts.map((alert) =>
                 alert.id === id ? { ...alert, isActive: !alert.isActive } : alert
             );
@@ -236,13 +290,14 @@ $(document).ready(function () {
         });
 
         alertsList.on('click', '.alert-edit', function () {
-            const id = $(this).data('id');
+            const id = String($(this).data('id'));
             const alert = alerts.find((item) => item.id === id);
             if (alert) openModal('edit', alert);
         });
 
         alertsList.on('click', '.alert-delete', function () {
-            const id = $(this).data('id');
+            if (!alertsModal.hasClass('hidden')) return;
+            const id = String($(this).data('id'));
             handleDelete(id);
         });
     }
