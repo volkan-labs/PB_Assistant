@@ -28,17 +28,19 @@
             <span class="nav-label">Knowledge Library</span>
             <span class="nav-tooltip" data-tooltip="Manage your documents"></span>
         </a>
-        <div class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-400 dark:text-slate-500 cursor-not-allowed">
-            <span class="material-symbols-outlined text-base nav-icon">notifications_active</span>
-            <span class="nav-label">Alerts</span>
-            <span class="alert-coming-soon ml-auto rounded-full border border-slate-200 dark:border-[#3b4754] bg-slate-50 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500">Coming soon</span>
-            <span class="nav-tooltip" data-tooltip="Alerts are coming soon"></span>
-        </div>
-        <a href="{% url 'notifications' %}" aria-label="Notifications" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'notifications' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'notifications' %}aria-current="page"{% endif %}>
-            <span class="material-symbols-outlined text-base nav-icon">campaign</span>
-            <span class="nav-label">Notifications</span>
-            <span class="nav-tooltip" data-tooltip="System announcements"></span>
-        </a>
+        {# Alerts hidden for now #}
+        {# <div class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-400 dark:text-slate-500 cursor-not-allowed"> #}
+            {# <span class="material-symbols-outlined text-base nav-icon">notifications_active</span> #}
+            {# <span class="nav-label">Alerts</span> #}
+            {# <span class="alert-coming-soon ml-auto rounded-full border border-slate-200 dark:border-[#3b4754] bg-slate-50 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500">Coming soon</span> #}
+            {# <span class="nav-tooltip" data-tooltip="Alerts are coming soon"></span> #}
+        {# </div> #}
+        {# Notifications hidden for now #}
+        {# <a href="{% url 'notifications' %}" aria-label="Notifications" class="nav-item flex items-center justify-start gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark {% if request.resolver_match.url_name == 'notifications' %}bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white{% endif %}" {% if request.resolver_match.url_name == 'notifications' %}aria-current="page"{% endif %}> #}
+           {#  <span class="material-symbols-outlined text-base nav-icon">campaign</span> #}
+           {# <span class="nav-label">Notifications</span> #}
+           {# <span class="nav-tooltip" data-tooltip="System announcements"></span> #}
+        {# </a> #}
     </div>
 </div>
 <!-- Section: Folders -->
