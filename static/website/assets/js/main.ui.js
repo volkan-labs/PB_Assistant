@@ -206,6 +206,10 @@ $(document).ready(function () {
                 if (Array.isArray(data.planetary_boundaries)) {
                     localStorage.setItem('planetaryBoundaryPreferences', JSON.stringify(data.planetary_boundaries));
                 }
+                if (data.avatar_color) {
+                    applyAvatarColor(data.avatar_color);
+                    updateAvatarDropdown(data.avatar_color);
+                }
             })
             .catch(() => {});
     }
@@ -230,6 +234,27 @@ $(document).ready(function () {
         avatarInitials.text(initials);
         avatarInitials.removeClass('hidden').addClass('flex');
         avatarImage.addClass('hidden');
+    }
+
+    function applyAvatarColor(color) {
+        if (!color) return;
+        $('#userAvatarInitials').css('background-color', color);
+        localStorage.setItem('avatarColor', color);
+    }
+
+    function updateAvatarDropdown(color) {
+        if (!color) return;
+        if (avatarColorSwatch.length) {
+            avatarColorSwatch.css('background-color', color);
+        }
+        if (avatarColorOptions.length) {
+            const option = avatarColorOptions.filter(`[data-color="${color}"]`);
+            if (option.length && avatarColorLabel.length) {
+                avatarColorLabel.text(option.data('label'));
+                avatarColorOptions.find('.avatar-color-check').addClass('hidden');
+                option.find('.avatar-color-check').removeClass('hidden');
+            }
+        }
     }
     let spotlightFilter = 'all';
 
@@ -525,6 +550,11 @@ $(document).ready(function () {
     }
 
     const modalInterestsGrid = $('#modal-interests-planetary-boundaries-grid');
+    const avatarColorTrigger = $('#avatarColorTrigger');
+    const avatarColorMenu = $('#avatarColorMenu');
+    const avatarColorSwatch = $('#avatarColorSwatch');
+    const avatarColorLabel = $('#avatarColorLabel');
+    const avatarColorOptions = $('.avatar-color-option');
 
     function createBoundaryChip(boundary) {
         return `
@@ -562,6 +592,40 @@ $(document).ready(function () {
             .catch(() => {
                 modalInterestsGrid.html('<p class="text-sm text-red-500 mt-2 col-span-full">Error loading planetary boundaries.</p>');
             });
+    }
+
+    if (avatarColorTrigger.length) {
+        const savedColor = localStorage.getItem('avatarColor') || '#FF7F11';
+        applyAvatarColor(savedColor);
+        const savedOption = avatarColorOptions.filter(`[data-color="${savedColor}"]`);
+        if (savedOption.length) {
+            avatarColorSwatch.css('background-color', savedColor);
+            avatarColorLabel.text(savedOption.data('label'));
+            avatarColorOptions.find('.avatar-color-check').addClass('hidden');
+            savedOption.find('.avatar-color-check').removeClass('hidden');
+        }
+
+        avatarColorTrigger.on('click', function (e) {
+            e.stopPropagation();
+            avatarColorMenu.toggleClass('hidden');
+        });
+
+        avatarColorOptions.on('click', function (e) {
+            e.stopPropagation();
+            const color = $(this).data('color');
+            const label = $(this).data('label');
+            applyAvatarColor(color);
+            avatarColorSwatch.css('background-color', color);
+            avatarColorLabel.text(label);
+            avatarColorOptions.find('.avatar-color-check').addClass('hidden');
+            $(this).find('.avatar-color-check').removeClass('hidden');
+            avatarColorMenu.addClass('hidden');
+            persistSetting('/api/settings/avatar-color/', { avatar_color: color });
+        });
+
+        $(document).on('click', function () {
+            avatarColorMenu.addClass('hidden');
+        });
     }
 
     settingsModal.on('click', function (e) {

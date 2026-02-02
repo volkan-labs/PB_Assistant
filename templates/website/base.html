@@ -286,6 +286,48 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="flex items-center justify-between rounded-xl border border-slate-200 dark:border-[#283039] bg-slate-50 dark:bg-surface-highlight px-4 py-3">
+                                <div>
+                                    <p class="font-medium">Profile color</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Used for your initials avatar.</p>
+                                </div>
+                                <div class="relative" id="avatarColorDropdown">
+                                    <button id="avatarColorTrigger" type="button"
+                                        class="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-surface-highlight focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                        <span id="avatarColorSwatch" class="h-3 w-3 rounded-full" style="background-color:#FF7F11;"></span>
+                                        <span id="avatarColorLabel">Sunset</span>
+                                        <span class="material-symbols-outlined text-[16px] text-slate-400">keyboard_arrow_down</span>
+                                    </button>
+                                    <div id="avatarColorMenu"
+                                        class="absolute right-0 mt-2 hidden w-44 rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-[3000]">
+                                        <button type="button" class="avatar-color-option flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-700" data-color="#FF7F11" data-label="Sunset">
+                                            <span class="h-3 w-3 rounded-full" style="background-color:#FF7F11;"></span>
+                                            Sunset
+                                            <span class="avatar-color-check material-symbols-outlined text-[16px] text-primary ml-auto hidden">check</span>
+                                        </button>
+                                        <button type="button" class="avatar-color-option flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-700" data-color="#2F80ED" data-label="Ocean">
+                                            <span class="h-3 w-3 rounded-full" style="background-color:#2F80ED;"></span>
+                                            Ocean
+                                            <span class="avatar-color-check material-symbols-outlined text-[16px] text-primary ml-auto hidden">check</span>
+                                        </button>
+                                        <button type="button" class="avatar-color-option flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-700" data-color="#27AE60" data-label="Forest">
+                                            <span class="h-3 w-3 rounded-full" style="background-color:#27AE60;"></span>
+                                            Forest
+                                            <span class="avatar-color-check material-symbols-outlined text-[16px] text-primary ml-auto hidden">check</span>
+                                        </button>
+                                        <button type="button" class="avatar-color-option flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-700" data-color="#9B51E0" data-label="Violet">
+                                            <span class="h-3 w-3 rounded-full" style="background-color:#9B51E0;"></span>
+                                            Violet
+                                            <span class="avatar-color-check material-symbols-outlined text-[16px] text-primary ml-auto hidden">check</span>
+                                        </button>
+                                        <button type="button" class="avatar-color-option flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-gray-700" data-color="#F2994A" data-label="Amber">
+                                            <span class="h-3 w-3 rounded-full" style="background-color:#F2994A;"></span>
+                                            Amber
+                                            <span class="avatar-color-check material-symbols-outlined text-[16px] text-primary ml-auto hidden">check</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="flex items-center justify-between rounded-xl border border-dashed border-slate-300 dark:border-[#334155] bg-slate-50/60 dark:bg-surface-highlight/60 px-4 py-3 opacity-70">
                                 <div>
                                     <div class="flex items-center gap-2">

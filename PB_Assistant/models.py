@@ -24,6 +24,7 @@ class UserSettings(models.Model):
     ui_collapse_navigation = models.BooleanField(default=False)
     ui_collapse_insights = models.BooleanField(default=False)
     planetary_boundaries = models.ManyToManyField(PlanetaryBoundary, blank=True)
+    avatar_color = models.CharField(max_length=16, default='#FF7F11')
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
