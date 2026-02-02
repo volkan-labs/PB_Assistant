@@ -26,15 +26,15 @@ class ArticleRenderer:
                 "year": article["publication_year"] or "N/A", ##
                 "url_source": "https://doi.org/"+ article["doi"] if article["doi"] else "",
                 "authors_display": (
-                    ', '.join([a.strip() for a in article['authors_string'].split(',')[:3]]) +
-                    ('...' if len(article['authors_string'].split(',')) > 3 else '')
+                    ', '.join([a.strip() for a in article['authors_string'].split(',')[:4]]) +
+                    (f" +{len([a for a in article['authors_string'].split(',') if a.strip()]) - 4} more"
+                     if len([a for a in article['authors_string'].split(',') if a.strip()]) > 4 else '')
                     if article.get('authors_string') else 'N/A'
                 ),
+                "authors_full": article.get('authors_string') or '',
                 "journal": article["source"] or "N/A",
                 "page_contents": [(doc["page_content"]).replace('\"', '\'') for doc in retrieved_docs if doc["metadata"]["id"] == article["academicpaper_text_id"] and doc["metadata"]["chunk_id"] in list(chunk_ids)],
                 "page_contents_not_used_by_llm": [(doc["page_content"]).replace('\"', '\'') for doc in retrieved_docs if doc["metadata"]["id"] == article["academicpaper_text_id"] and doc["metadata"]["chunk_id"] not in list(chunk_ids)]
             }
             for article in articles
         ]
-
-

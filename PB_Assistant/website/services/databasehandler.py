@@ -29,7 +29,7 @@ class DatabaseHandler:
                 chunk_ids=chunk_ids
             )
             logger.info("Search history saved successfully.")
-            return history.id
+            return history
         except Exception as e:
             logger.error(f"Error saving search history: {e}")
             raise
@@ -76,5 +76,4 @@ class DatabaseHandler:
             .values_list("id", "paper_id")
         )
         return [mapping[tid] for tid in text_ids if tid in mapping]
-
 

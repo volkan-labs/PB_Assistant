@@ -1,5 +1,6 @@
 import time
 import logging
+from django.utils import timezone
 from .databasehandler import DatabaseHandler
 from .articlerenderer import ArticleRenderer
 from .qa_chain import build_llm_chain, build_custom_retrieval_qa_chain, process_qa_response, serialize_documents
@@ -32,7 +33,7 @@ class SearchService:
         serialized_docs = serialize_documents(retrieved_documents)
 
         user_id = user.id if user.is_authenticated else 1
-        self.db_handler.save_search_history(user_id, user_query, answer, chunk_ids, serialized_docs)
+        history_record = self.db_handler.save_search_history(user_id, user_query, answer, chunk_ids, serialized_docs)
 
         retrieved_doc_ids = [doc.metadata['id'] for doc in retrieved_documents]
         articles = self.db_handler.retrieve_articles_by_doc_ids(retrieved_doc_ids)
@@ -44,4 +45,6 @@ class SearchService:
             'query': user_query,
             'answer': answer,
             'articles': articles_as_dict,
+            'query_timestamp': history_record.timestamp if history_record else timezone.now(),
+            'answer_timestamp': history_record.timestamp if history_record else timezone.now(),
         }

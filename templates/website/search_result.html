@@ -1,4 +1,5 @@
 {% extends "website/base.html" %}
+{% load static %}
 {% load json_filters %}
 
 {% block body_attributes %}{% if history_id %}data-history-id="{{ history_id }}"{% endif %}{% endblock %}
@@ -9,201 +10,158 @@
     <div class="max-w-[1000px] mx-auto px-4 py-8 pb-32 flex flex-col gap-8">
         <!-- User Query Block -->
         <div class="flex gap-4 justify-end">
-            <div class="bg-gray-200 dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm max-w-[80%]">
-                <p class="text-black dark:text-white text-base leading-relaxed">
+            <div class="max-w-[80%]">
+                <div class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span>User</span>
+                    <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 user-name-label"></span>
+                </div>
+                <div class="bg-[#F3F6FA] dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm shadow-sm border border-slate-200/70 dark:border-[#3b4754]">
+                    <p class="text-black dark:text-white text-base leading-relaxed">
                     {{ query }}
-                </p>
+                    </p>
+                    <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ query_timestamp|date:"c" }}">
+                        Just now
+                    </div>
+                </div>
             </div>
-            <div class="bg-center bg-no-repeat bg-cover rounded-xl size-10 shrink-0 self-start mt-1 overflow-hidden"
-                data-alt="User profile avatar image small">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
-                    width="40" height="40">
-                    <metadata xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
-                        <rdf:rdf>
-                            <rdf:description>
-                                <dc:title>Bottts</dc:title>
-                                <dc:creator>Pablo Stanley</dc:creator>
-                                <dc:source xsi:type="dcterms:URI">https://bottts.com/</dc:source>
-                                <dcterms:license xsi:type="dcterms:URI">https://bottts.com/</dcterms:license>
-                                <dc:rights>Remix of „Bottts” (https://bottts.com/) by „Pablo Stanley”, licensed
-                                    under „Free for personal and commercial use” (https://bottts.com/)
-                                </dc:rights>
-                            </rdf:description>
-                        </rdf:rdf>
-                    </metadata>
-                    <mask id="viewboxMask">
-                        <rect width="120" height="120" rx="0" ry="0" x="0" y="0" fill="#fff"></rect>
-                    </mask>
-                    <g mask="url(#viewboxMask)">
-                        <rect fill="#e53935" width="120" height="120" x="0" y="0"></rect>
-                        <g transform="translate(22 68)">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M18 10.22C18 21.78 24.47 28 38 28c13.52 0 20-6.34 20-17.78C58 9.5 57.17 8 55 8H21c-2.05 0-3 1.38-3 2.22Z"
-                                fill="#000" fill-opacity=".8"></path>
-                            <mask id="mouthSmile02-a" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="18"
-                                y="8" width="40" height="20">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M18 10.22C18 21.78 24.47 28 38 28c13.52 0 20-6.34 20-17.78C58 9.5 57.17 8 55 8H21c-2.05 0-3 1.38-3 2.22Z"
-                                    fill="#fff"></path>
-                            </mask>
-                            <g mask="url(#mouthSmile02-a)">
-                                <rect x="30" y="2" width="16" height="14" rx="2" fill="#fff"></rect>
-                            </g>
-                        </g>
-                        <g transform="translate(8 20)">
-                            <circle cx="28" cy="24" r="18" fill="#000" fill-opacity=".2"></circle>
-                            <circle cx="74" cy="24" r="18" fill="#000" fill-opacity=".2"></circle>
-                            <circle cx="28" cy="24" r="15" fill="#F1EEDA"></circle>
-                            <circle cx="74" cy="24" r="15" fill="#F1EEDA"></circle>
-                            <rect x="26" y="15" width="10" height="10" rx="2" fill="#000" fill-opacity=".8"></rect>
-                            <rect x="74" y="15" width="10" height="10" rx="2" fill="#000" fill-opacity=".8"></rect>
-                        </g>
-                    </g>
-                </svg>
+            <div class="rounded-xl size-10 shrink-0 self-start mt-1 overflow-hidden">
+                <div class="user-avatar-mini flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold text-white">JD</div>
             </div>
         </div>
         <!-- AI Response Block -->
         <div class="flex gap-4">
-            <div class="size-10 rounded-xl bg-transparent flex items-center justify-center shrink-0 self-start mt-1 overflow-hidden">
-                <!-- <span class="material-symbols-outlined text-white">smart_toy</span> -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" shape-rendering="auto"
-                    width="512" height="512">
-                    <metadata xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
-                        <rdf:rdf>
-                            <rdf:description>
-                                <dc:title>Bottts</dc:title>
-                                <dc:creator>Pablo Stanley</dc:creator>
-                                <dc:source xsi:type="dcterms:URI">https://bottts.com/</dc:source>
-                                <dcterms:license xsi:type="dcterms:URI">https://bottts.com/</dcterms:license>
-                                <dc:rights>Remix of „Bottts” (https://bottts.com/) by „Pablo Stanley”, licensed
-                                    under „Free for personal and commercial use” (https://bottts.com/)
-                                </dc:rights>
-                            </rdf:description>
-                        </rdf:rdf>
-                    </metadata>
-                    <mask id="viewboxMask">
-                        <rect width="120" height="120" rx="0" ry="0" x="0" y="0" fill="#fff"></rect>
-                    </mask>
-                    <g mask="url(#viewboxMask)">
-                        <rect fill="#fdd835" width="120" height="120" x="0" y="0"></rect>
-                        <g transform="translate(22 68)">
-                            <path
-                                d="M27.05 8.44a2 2 0 1 1 3.9-.88C31.72 10.96 34.4 13 38 13c3.6 0 6.28-2.04 7.05-5.44a2 2 0 1 1 3.9.88C47.75 13.7 43.43 17 38 17s-9.76-3.3-10.95-8.56Z"
-                                fill="#000" fill-opacity=".6"></path>
-                        </g>
-                        <g transform="translate(8 20)">
-                            <rect x="7" y="16" width="91" height="16" rx="4" fill="#000" fill-opacity=".8"></rect>
-                            <mask id="eyesRobocop-a" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="7" y="16"
-                                width="91" height="16">
-                                <rect x="7" y="16" width="91" height="16" rx="4" fill="#fff"></rect>
-                            </mask>
-                            <g mask="url(#eyesRobocop-a)" fill-rule="evenodd" clip-rule="evenodd" fill="#fff"
-                                fill-opacity=".8">
-                                <path d="M76 7h18L82 37H64L76 7ZM52 7h9L49 37h-9L52 7Z"></path>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
+            <div class="size-10 rounded-xl bg-primary/10 dark:bg-primary/15 flex items-center justify-center shrink-0 self-start mt-1 overflow-hidden border border-primary/20">
+                <span class="material-symbols-outlined text-[22px] text-primary">smart_toy</span>
             </div>
 
-            <div class="bg-gray-200 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-sm max-w-full mb-6">
+            <div class="max-w-full mb-6">
+                <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assistant</div>
+                <div class="relative bg-[#E8F3F5] dark:bg-primary/10 p-4 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
+                    <div class="absolute left-0 top-4 h-10 w-1 rounded-full bg-primary/60"></div>
                 {% if answer %}
                 <div class="text-black dark:text-white text-base leading-relaxed mb-6">{{ answer }}</div>
                 {% endif %}
 
                 <!-- Results Table -->
                 {% if articles %}
-                <div class="mb-6">
-                    <h1 class="text-gray-900 dark:text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
-                        Relevant Papers
-                    </h1>
-                    <p class="text-gray-600 dark:text-gray-400 text-base">The documents retrieved from the literature collection are
-                        below. The bold content is selected by LLM to generate the answer.</p>
+                <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <h1 class="text-gray-900 dark:text-white tracking-tight text-xl md:text-2xl font-bold leading-tight pb-2">
+                            Relevant Papers
+                        </h1>
+                        <p class="text-gray-600 dark:text-gray-400 text-base">The documents retrieved from the literature collection are
+                            below. The bold content is selected by LLM to generate the answer.</p>
+                    </div>
+                    <span class="inline-flex items-center rounded-full border border-gray-200 dark:border-[#3b4754] bg-white/70 dark:bg-slate-800/70 px-3 py-1 text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        {{ articles|length }} results
+                    </span>
                 </div>
-                <div class="@container w-full">
-                    <div class="flex overflow-hidden rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 shadow-xl">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754]">
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[30%]">
-                                        Title</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[15%]">
-                                        Authors</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
-                                        Year</th>
-                                    <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
-                                        Source</th>
-                                    <th
-                                        class="hidden md:table-cell px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[35%]">
-                                        Homepage</th>
-                                    <th
-                                        class="px-4 py-4 text-left text-gray-900 dark:text-white text-xs uppercase tracking-wider font-bold w-[10%]">
-                                        Content</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-[#3b4754]">
-                                {% for article in articles %}
-                                <tr class="group hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors focus-within:ring-2 focus-within:ring-primary/40 focus-within:ring-offset-2 focus-within:ring-offset-background-light dark:focus-within:ring-offset-background-dark"
-                                    id="row-{{ article.id }}">
-                                    <td class="px-4 py-4">
-                                        <p class="text-gray-900 dark:text-white text-sm font-semibold leading-normal transition-colors">
-                                            {{ article.title }}
-                                        </p>
-                                    </td>
-                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">{{ article.authors_display }}</td>
-                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">{{ article.year|default:"N/A" }}
-                                    </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">
-                                        {{ article.journal|default:"N/A" }}
-                                    </td>
-                                    <td class="hidden md:table-cell px-4 py-4 text-gray-600 dark:text-gray-400 text-sm">
-                                        {% if article.url_source %}
-                                        <a href="{{ article.url_source }}" target="_blank" class="icon focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-                                            </svg>
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                    <td class="px-4 py-4">
-                                        <button title="Show content"
-                                            onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
-                                            class="flex items-center justify-center rounded-md h-8 px-3 bg-gray-200 dark:bg-slate-800 border border-gray-200 dark:border-[#3b4754] hover:bg-gray-200 dark:hover:bg-[#3b4754] text-gray-900 dark:text-white text-xs font-medium w-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div class="sticky top-0 z-10 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/90 dark:bg-slate-800/90 px-3 py-2 backdrop-blur {% if articles|length <= 1 %}hidden{% endif %}">
+                    <div class="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        <span class="material-symbols-outlined text-[18px]">tune</span>
+                        Refine results
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="sr-only" for="resultSort">Sort results</label>
+                        <select id="resultSort"
+                            class="rounded-full border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 pl-3 pr-8 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                            <option selected>Relevance</option>
+                            <option>Newest first</option>
+                            <option>Oldest first</option>
+                            <option>Author A–Z</option>
+                            <option>Title A–Z</option>
+                            <option>Source A–Z</option>
+                        </select>
                     </div>
                 </div>
-                {% endif %}
-                
-                <!-- Document Contents Panel -->
-                <div id="documentContentsPanel" class="hidden mt-8">
-                    <div class="flex rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 shadow-xl flex-col">
-                        <div class="p-4 bg-gray-50 dark:bg-[#1c2127] border-b border-gray-200 dark:border-[#3b4754] flex justify-between items-center">
-                            <h2 id="documentContentsTitle" class="text-lg font-bold text-gray-900 dark:text-white"></h2>
-                        <button id="closePanelIcon" class="text-black dark:text-white hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                <span class="material-symbols-outlined">close</span>
-                            </button>
+                <div class="@container w-full flex flex-col gap-3 search-results-list">
+                    {% for article in articles %}
+                    <div class="result-card group rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-4 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/70"
+                        id="row-{{ article.id }}"
+                        data-index="{{ forloop.counter0 }}"
+                        data-year="{{ article.year|default:'' }}"
+                        data-author="{{ article.authors_display|default:'' }}"
+                        data-title="{{ article.title|default:'' }}"
+                        data-source="{{ article.journal|default:'' }}">
+                        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                            <div class="min-w-0 space-y-2">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-start gap-2">
+                                        <span class="selected-badge hidden inline-flex items-center text-primary">
+                                            <span class="material-symbols-outlined text-[16px]">radio_button_checked</span>
+                                        </span>
+                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white leading-snug">
+                                            {{ article.title }}
+                                        </h3>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ article.authors_display|default:"Unknown authors" }}
+                                    </p>
+                                </div>
+                                {% if article.abstract %}
+                                <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
+                                    {{ article.abstract }}
+                                </p>
+                                {% endif %}
+                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-medium text-gray-600 dark:text-gray-300 max-w-full truncate">
+                                    <span class="inline-flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">event</span>
+                                        {{ article.year|default:"N/A" }}
+                                    </span>
+                                    <span class="hidden sm:inline text-gray-400 dark:text-gray-500">•</span>
+                                    {% if article.journal %}
+                                    <a href="{{ article.url_source|default:'#' }}" {% if article.url_source %}target="_blank"{% endif %}
+                                        class="inline-flex items-center gap-1 hover:text-gray-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded">
+                                        <span class="material-symbols-outlined text-[14px]">source</span>
+                                        {{ article.journal }}
+                                    </a>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                        <span class="material-symbols-outlined text-[14px]">source</span>
+                                        Source N/A
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 md:items-end">
+                                {% if article.url_source %}
+                                <a href="{{ article.url_source }}" target="_blank"
+                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                                    <span class="action-tooltip">Open source</span>
+                                </a>
+                                {% endif %}
+                                <button title="Show content"
+                                    onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
+                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-primary/40 bg-primary/15 text-primary hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    <span class="material-symbols-outlined text-[16px]">description</span>
+                                    <span class="action-tooltip">Show content</span>
+                                </button>
+                            </div>
                         </div>
-                        <div id="documentContents" class="p-6 text-gray-600 dark:text-gray-400 leading-relaxed space-y-4">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ answer_timestamp|date:"c" }}">
+                    Just now
+                </div>
+                </div>
+
+                <!-- Document Contents Panel -->
+                <div id="documentContentsPanel" class="hidden fixed inset-0 z-[3400]">
+                    <div class="document-panel-backdrop absolute inset-0 bg-black/70"></div>
+                    <div class="absolute inset-y-0 right-0 w-full max-w-2xl border-l border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-900 shadow-2xl">
+                        <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <button id="documentContentsBack" type="button"
+                                    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                    <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                                </button>
+                                <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                            </div>
+                        </div>
+                        <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
                             <!-- Content will be injected here -->
                         </div>
                     </div>
@@ -212,4 +170,181 @@
             </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block body_end %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sortSelect = document.getElementById('resultSort');
+        const list = document.querySelector('.search-results-list');
+        if (!sortSelect || !list) return;
+
+        const items = Array.from(list.children);
+
+        function getYear(el) {
+            const value = parseInt(el.dataset.year, 10);
+            return Number.isFinite(value) ? value : null;
+        }
+
+        function getAuthor(el) {
+            return (el.dataset.author || '').toLowerCase();
+        }
+
+        function getTitle(el) {
+            return (el.dataset.title || '').toLowerCase();
+        }
+
+        function getSource(el) {
+            return (el.dataset.source || '').toLowerCase();
+        }
+
+        function getIndex(el) {
+            return parseInt(el.dataset.index, 10) || 0;
+        }
+
+        function sortItems(compareFn) {
+            const sorted = items.slice().sort(compareFn);
+            sorted.forEach((el) => list.appendChild(el));
+        }
+
+        function sortByRelevance() {
+            sortItems((a, b) => getIndex(a) - getIndex(b));
+        }
+
+        function sortByNewest() {
+            sortItems((a, b) => {
+                const ay = getYear(a);
+                const by = getYear(b);
+                if (ay === null && by === null) return getIndex(a) - getIndex(b);
+                if (ay === null) return 1;
+                if (by === null) return -1;
+                if (by !== ay) return by - ay;
+                return getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByOldest() {
+            sortItems((a, b) => {
+                const ay = getYear(a);
+                const by = getYear(b);
+                if (ay === null && by === null) return getIndex(a) - getIndex(b);
+                if (ay === null) return 1;
+                if (by === null) return -1;
+                if (ay !== by) return ay - by;
+                return getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByAuthor() {
+            sortItems((a, b) => {
+                const aa = getAuthor(a);
+                const ba = getAuthor(b);
+                if (!aa && !ba) return getIndex(a) - getIndex(b);
+                if (!aa) return 1;
+                if (!ba) return -1;
+                const diff = aa.localeCompare(ba);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortByTitle() {
+            sortItems((a, b) => {
+                const at = getTitle(a);
+                const bt = getTitle(b);
+                if (!at && !bt) return getIndex(a) - getIndex(b);
+                if (!at) return 1;
+                if (!bt) return -1;
+                const diff = at.localeCompare(bt);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        function sortBySource() {
+            sortItems((a, b) => {
+                const as = getSource(a);
+                const bs = getSource(b);
+                if (!as && !bs) return getIndex(a) - getIndex(b);
+                if (!as) return 1;
+                if (!bs) return -1;
+                const diff = as.localeCompare(bs);
+                return diff !== 0 ? diff : getIndex(a) - getIndex(b);
+            });
+        }
+
+        const storedSort = localStorage.getItem('searchResultSort');
+        if (storedSort) {
+            sortSelect.value = storedSort;
+        }
+
+        function applySort(value) {
+            if (value === 'Newest first') {
+                sortByNewest();
+            } else if (value === 'Oldest first') {
+                sortByOldest();
+            } else if (value === 'Author A–Z') {
+                sortByAuthor();
+            } else if (value === 'Title A–Z') {
+                sortByTitle();
+            } else if (value === 'Source A–Z') {
+                sortBySource();
+            } else {
+                sortByRelevance();
+            }
+        }
+
+        applySort(sortSelect.value);
+
+        sortSelect.addEventListener('change', function () {
+            localStorage.setItem('searchResultSort', sortSelect.value);
+            applySort(sortSelect.value);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const avatar = document.querySelector('.user-avatar-mini');
+        if (!avatar) return;
+        const userMeta = document.querySelector('.user-meta');
+        const name = userMeta?.dataset?.userName || 'User';
+        const parts = name.trim().split(/\s+/);
+        const initials = parts.length >= 2
+            ? `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase()
+            : `${parts[0][0] || ''}`.toUpperCase();
+        const storedColor = localStorage.getItem('avatarColor');
+        if (storedColor) {
+            avatar.style.backgroundColor = storedColor;
+        }
+        avatar.textContent = initials || 'U';
+
+        const label = document.querySelector('.user-name-label');
+        if (label) {
+            const formatted = parts.length >= 2
+                ? `${parts[0]} ${parts[1][0] || ''}.`
+                : name;
+            label.textContent = formatted;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.timestamp-local').forEach((el) => {
+            const raw = el.getAttribute('data-timestamp');
+            if (!raw) return;
+            const parsed = new Date(raw);
+            if (Number.isNaN(parsed.getTime())) return;
+            const datePart = parsed.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            const timePart = parsed.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            el.textContent = `${datePart} · ${timePart}`;
+        });
+    });
+
+</script>
 {% endblock %}
