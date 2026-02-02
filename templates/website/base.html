@@ -160,9 +160,9 @@
             </footer>
         </main>
 
-        <aside id="rightSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0">
-            {% include "website/partials/sidebar_right_content.html" %}
-        </aside>
+        {# <aside id="rightSidebar" class="w-[280px] bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-[#283039] flex flex-col h-screen shrink-0 max-md:hidden sticky top-0"> #}
+            {# {% include "website/partials/sidebar_right_content.html" %} #}
+        {# </aside> #}
     </div>
 
     <div id="sidebarBackdrop" class="fixed inset-0 bg-black/40 hidden z-[2990] md:hidden" aria-hidden="true"></div>
@@ -349,17 +349,17 @@
                                     <p class="text-xs text-slate-500 dark:text-slate-400">Control default layout behavior.</p>
                                 </div>
                                 <div class="grid gap-3">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-sm font-medium">Collapse Insights by default</p>
-                                            <p class="text-xs text-slate-500 dark:text-slate-400">Hide the right panel on load.</p>
-                                        </div>
-                                        <label class="relative inline-flex cursor-pointer items-center">
-                                            <input id="uiCollapseInsightsToggle" type="checkbox" class="peer sr-only" />
-                                            <span class="h-5 w-9 rounded-full bg-slate-300 peer-checked:bg-primary/70 dark:bg-slate-600 transition-colors"></span>
-                                            <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span>
-                                        </label>
-                                    </div>
+                                    {# <div class="flex items-center justify-between"> #}
+                                    {#     <div> #}
+                                    {#         <p class="text-sm font-medium">Collapse Insights by default</p> #}
+                                    {#         <p class="text-xs text-slate-500 dark:text-slate-400">Hide the right panel on load.</p> #}
+                                    {#     </div> #}
+                                    {#     <label class="relative inline-flex cursor-pointer items-center"> #}
+                                    {#         <input id="uiCollapseInsightsToggle" type="checkbox" class="peer sr-only" /> #}
+                                    {#         <span class="h-5 w-9 rounded-full bg-slate-300 peer-checked:bg-primary/70 dark:bg-slate-600 transition-colors"></span> #}
+                                    {#         <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span> #}
+                                    {#     </label> #}
+                                    {# </div> #}
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="text-sm font-medium">Collapse Navigation by default</p>
