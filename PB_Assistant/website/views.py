@@ -305,12 +305,19 @@ def get_notifications(request):
         days_int = 7
 
     now = timezone.now()
-    since = now - timedelta(days=days_int)
+    local_now = timezone.localtime(now)
+    if days_int == 1:
+        notifications = SystemNotification.objects.filter(
+            published_at__date=local_now.date()
+        )
+    else:
+        since = now - timedelta(days=days_int)
+        notifications = SystemNotification.objects.filter(
+            published_at__gte=since,
+            published_at__lte=now
+        )
 
-    notifications = SystemNotification.objects.filter(
-        published_at__gte=since,
-        published_at__lte=now
-    ).filter(
+    notifications = notifications.filter(
         models.Q(expires_at__isnull=True) | models.Q(expires_at__gte=now)
     ).select_related('category').order_by('-published_at')
 
@@ -387,6 +394,61 @@ def update_notification_state(request, notification_id):
         })
     except SystemNotification.DoesNotExist:
         return JsonResponse({'error': 'Notification not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_http_methods(['POST'])
+def create_notification(request):
+    user = _resolve_user(request)
+    # TODO: Restrict to superuser once auth is fully wired.
+    if not user:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+    try:
+        data = json.loads(request.body)
+        title = (data.get('title') or '').strip()
+        body = (data.get('body') or '').strip()
+        category_id = data.get('category_id')
+        priority = data.get('priority', 'normal')
+        published_at = data.get('published_at')
+        expires_at = data.get('expires_at')
+
+        if not title or not body or not category_id:
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        category = NotificationCategory.objects.get(pk=category_id)
+        if priority not in dict(SystemNotification.PRIORITY_CHOICES):
+            priority = 'normal'
+
+        published_dt = timezone.now()
+        if published_at:
+            try:
+                published_dt = timezone.datetime.fromisoformat(published_at)
+                if timezone.is_naive(published_dt):
+                    published_dt = timezone.make_aware(published_dt)
+            except ValueError:
+                return JsonResponse({'error': 'Invalid publish date'}, status=400)
+
+        expires_dt = None
+        if expires_at:
+            try:
+                expires_dt = timezone.datetime.fromisoformat(expires_at)
+                if timezone.is_naive(expires_dt):
+                    expires_dt = timezone.make_aware(expires_dt)
+            except ValueError:
+                return JsonResponse({'error': 'Invalid expiry date'}, status=400)
+
+        notif = SystemNotification.objects.create(
+            title=title,
+            body=body,
+            category=category,
+            priority=priority,
+            published_at=published_dt,
+            expires_at=expires_dt
+        )
+
+        return JsonResponse({'id': notif.id})
+    except NotificationCategory.DoesNotExist:
+        return JsonResponse({'error': 'Invalid category'}, status=400)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 

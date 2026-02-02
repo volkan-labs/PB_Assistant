@@ -9,10 +9,26 @@ $(document).ready(function () {
     const prevBtn = $('#notifPrev');
     const nextBtn = $('#notifNext');
     const pages = $('#notifPages');
+    const adminModal = $('#notificationAdminModal');
+    const adminOpenBtn = $('#openNotificationAdmin');
+    const adminCloseBtn = $('#notificationAdminClose');
+    const adminCancelBtn = $('#notifAdminCancel');
+    const adminSaveBtn = $('#notifAdminSave');
+    const adminTitle = $('#notifAdminTitle');
+    const adminBody = $('#notifAdminBody');
+    const adminCategory = $('#notifAdminCategory');
+    const adminPriority = $('#notifAdminPriority');
+    const adminPublish = $('#notifAdminPublish');
+    const adminExpiry = $('#notifAdminExpiry');
+    const adminError = $('#notifAdminError');
+    const adminLinkBtn = $('.notif-editor-link');
+    const adminCmdBtns = $('.notif-editor-btn');
 
     let currentPage = 1;
     let totalPages = 1;
     let selectedCategory = 'all';
+    let cachedCategories = [];
+    let editorRange = null;
 
     function escapeHtml(value) {
         return $('<div>').text(value ?? '').html();
@@ -29,7 +45,9 @@ $(document).ready(function () {
             .then((res) => res.json())
             .then((data) => {
                 loading.addClass('hidden');
-                renderCategories(data.categories || []);
+                cachedCategories = data.categories || [];
+                renderCategories(cachedCategories);
+                renderAdminCategories(cachedCategories);
                 const allItems = data.notifications || [];
                 const filteredDismissed = includeDismissed.is(':checked')
                     ? allItems
@@ -59,6 +77,79 @@ $(document).ready(function () {
             const active = selectedCategory === cat.slug ? 'bg-primary/15 text-primary border-primary/30' : '';
             categories.append(`<button class="notif-category-btn ${active} rounded-full border border-slate-200 dark:border-[#334155] px-3 py-1 text-xs font-semibold" data-category="${escapeHtml(cat.slug)}">${escapeHtml(cat.name)}</button>`);
         });
+    }
+
+    function renderAdminCategories(items) {
+        if (!adminCategory.length || !items.length) return;
+        adminCategory.empty();
+        items.forEach((cat) => {
+            adminCategory.append(`<option value="${escapeHtml(cat.id)}">${escapeHtml(cat.name)}</option>`);
+        });
+    }
+
+    function formatLocalDateTime(value) {
+        const date = value instanceof Date ? value : new Date();
+        const pad = (num) => String(num).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function openAdminModal() {
+        if (!adminModal.length) return;
+        adminError.addClass('hidden');
+        adminTitle.val('');
+        adminBody.html('');
+        adminPriority.val('normal');
+        if (cachedCategories.length) {
+            renderAdminCategories(cachedCategories);
+        }
+        adminPublish.val(formatLocalDateTime(new Date()));
+        adminExpiry.val('');
+        adminModal.removeClass('hidden');
+        adminTitle.trigger('focus');
+        $('body').addClass('overflow-hidden');
+    }
+
+    function closeAdminModal() {
+        if (!adminModal.length) return;
+        adminModal.addClass('hidden');
+        $('body').removeClass('overflow-hidden');
+    }
+
+    function getEditorHtml() {
+        return (adminBody.html() || '').trim();
+    }
+
+    function focusEditorAtEnd() {
+        const el = adminBody[0];
+        if (!el) return;
+        el.focus();
+        const selection = window.getSelection();
+        if (!selection) return;
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    function saveEditorSelection() {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
+        const range = selection.getRangeAt(0);
+        if (adminBody[0] && adminBody[0].contains(range.commonAncestorContainer)) {
+            editorRange = range;
+        }
+    }
+
+    function restoreEditorSelection() {
+        const selection = window.getSelection();
+        if (!selection) return false;
+        if (editorRange) {
+            selection.removeAllRanges();
+            selection.addRange(editorRange);
+            return true;
+        }
+        return false;
     }
 
     function renderNotifications(items) {
@@ -99,6 +190,14 @@ $(document).ready(function () {
                     </div>
                 </div>
             `);
+            card.find('.prose a').each(function () {
+                const anchor = $(this);
+                anchor.addClass('notif-body-link');
+                if (!anchor.find('.notif-link-icon').length) {
+                    anchor.append(' <span class="material-symbols-outlined notif-link-icon" aria-hidden="true">link</span>');
+                }
+                anchor.attr('target', '_blank').attr('rel', 'noopener noreferrer');
+            });
             list.append(card);
         });
     }
@@ -180,6 +279,118 @@ $(document).ready(function () {
             body: JSON.stringify({ dismiss: next })
         }).then(() => fetchNotifications());
     });
+
+    if (adminModal.length) {
+        adminOpenBtn.on('click', openAdminModal);
+        adminCloseBtn.on('click', closeAdminModal);
+        adminCancelBtn.on('click', closeAdminModal);
+
+        adminModal.on('click', function (event) {
+            if (event.target === adminModal[0] || $(event.target).hasClass('absolute')) {
+                closeAdminModal();
+            }
+        });
+
+        $(document).on('keydown', function (event) {
+            if (event.key === 'Escape' && !adminModal.hasClass('hidden')) {
+                closeAdminModal();
+            }
+        });
+
+        adminBody.on('keyup mouseup', function () {
+            saveEditorSelection();
+        });
+
+        adminBody.on('focus', function () {
+            if (!restoreEditorSelection()) {
+                focusEditorAtEnd();
+            }
+        });
+
+        adminCmdBtns.on('mousedown', function (event) {
+            event.preventDefault();
+        });
+
+        adminCmdBtns.on('click', function (event) {
+            event.preventDefault();
+            const command = $(this).data('cmd');
+            if (!restoreEditorSelection()) {
+                focusEditorAtEnd();
+            }
+            document.execCommand(command, false, null);
+            saveEditorSelection();
+        });
+
+        adminLinkBtn.on('mousedown', function (event) {
+            event.preventDefault();
+        });
+
+        adminLinkBtn.on('click', function (event) {
+            event.preventDefault();
+            if (!restoreEditorSelection()) {
+                focusEditorAtEnd();
+            }
+            let url = prompt('Enter link URL');
+            if (url) {
+                url = url.trim();
+                if (!/^https?:\/\//i.test(url)) {
+                    url = `https://${url}`;
+                }
+                restoreEditorSelection();
+                const selection = window.getSelection();
+                const selectedText = selection && selection.toString() ? selection.toString() : '';
+                if (selectedText) {
+                    document.execCommand('createLink', false, url);
+                } else {
+                    const label = prompt('Link text', url);
+                    const safeLabel = label ? escapeHtml(label) : escapeHtml(url);
+                    document.execCommand('insertHTML', false, `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${safeLabel}</a>`);
+                }
+                const anchors = adminBody.find('a');
+                anchors.attr('target', '_blank').attr('rel', 'noopener noreferrer');
+                saveEditorSelection();
+            }
+        });
+
+        adminSaveBtn.on('click', function () {
+            const payload = {
+                title: (adminTitle.val() || '').trim(),
+                body: getEditorHtml(),
+                category_id: adminCategory.val(),
+                priority: adminPriority.val(),
+                published_at: adminPublish.val(),
+                expires_at: adminExpiry.val() || null
+            };
+
+            if (!payload.title || !payload.body || !payload.category_id) {
+                adminError.removeClass('hidden');
+                return;
+            }
+            adminError.addClass('hidden');
+
+            fetch('/api/notifications/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                },
+                body: JSON.stringify(payload)
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error('Failed');
+                    }
+                    return res.json();
+                })
+                .then(() => {
+                    closeAdminModal();
+                    fetchNotifications();
+                })
+                .catch(() => {
+                    adminError.text('Unable to publish announcement right now.').removeClass('hidden');
+                });
+        });
+    }
 
     fetchNotifications();
 });

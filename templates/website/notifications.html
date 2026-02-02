@@ -17,6 +17,13 @@
                 <option value="14">Last 14 days</option>
                 <option value="30">Last 30 days</option>
             </select>
+            {# TODO: Restrict to superuser once auth is fully wired. #}
+            {% if request.user %}
+            <button id="openNotificationAdmin" type="button"
+                class="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                New announcement
+            </button>
+            {% endif %}
         </div>
     </div>
 
@@ -47,6 +54,81 @@
         </button>
     </div>
 </div>
+
+{# TODO: Restrict to superuser once auth is fully wired. #}
+{% if request.user %}
+<div id="notificationAdminModal" class="fixed inset-0 z-[4700] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative mx-auto mt-[8vh] w-[92%] max-w-3xl rounded-2xl border border-slate-200 dark:border-[#283039] bg-background-light dark:bg-surface-dark shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-[#283039] px-6 py-4">
+            <div>
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Create announcement</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Publish a system-wide notification.</p>
+            </div>
+            <button id="notificationAdminClose" class="h-9 w-9 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-surface-highlight">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Title</label>
+                <input id="notifAdminTitle" type="text" class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Category</label>
+                    <select id="notifAdminCategory" class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"></select>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Priority</label>
+                    <select id="notifAdminPriority" class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                        <option value="low">Low</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Publish date</label>
+                    <input id="notifAdminPublish" type="datetime-local" class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Expiry (optional)</label>
+                    <input id="notifAdminExpiry" type="datetime-local" class="mt-2 w-full rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Body</label>
+                <div class="notif-editor-toolbar mt-2 flex flex-wrap items-center gap-2">
+                    <button type="button" class="notif-editor-btn" data-cmd="bold" aria-label="Bold">
+                        <span class="material-symbols-outlined text-[18px]">format_bold</span>
+                    </button>
+                    <button type="button" class="notif-editor-btn" data-cmd="italic" aria-label="Italic">
+                        <span class="material-symbols-outlined text-[18px]">format_italic</span>
+                    </button>
+                    <button type="button" class="notif-editor-btn" data-cmd="underline" aria-label="Underline">
+                        <span class="material-symbols-outlined text-[18px]">format_underlined</span>
+                    </button>
+                    <button type="button" class="notif-editor-btn" data-cmd="insertUnorderedList" aria-label="Bullet list">
+                        <span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+                    </button>
+                    <button type="button" class="notif-editor-link notif-editor-btn" aria-label="Insert link">
+                        <span class="material-symbols-outlined text-[18px]">link</span>
+                    </button>
+                </div>
+                <div id="notifAdminBody" contenteditable="true" data-placeholder="Write the announcement..." class="notif-editor mt-3 min-h-[180px] rounded-lg border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark px-3 py-2 text-sm text-slate-700 dark:text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"></div>
+                <p id="notifAdminError" class="hidden mt-2 text-sm text-red-500">Please fill title, category, and body.</p>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-[#283039] px-6 py-4">
+            <button id="notifAdminCancel" type="button" class="rounded-lg border border-slate-200 dark:border-[#334155] px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-surface-highlight">Cancel</button>
+            <button id="notifAdminSave" type="button" class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90">Publish</button>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block body_end %}

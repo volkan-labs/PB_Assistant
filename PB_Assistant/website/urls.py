@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/settings/boundaries/', views.update_boundary_preferences, name='update_boundary_preferences'),
     path('api/settings/avatar-color/', views.update_avatar_color, name='update_avatar_color'),
     path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/create/', views.create_notification, name='create_notification'),
     path('api/notifications/<int:notification_id>/state/', views.update_notification_state, name='update_notification_state'),
     path('api/knowledge-documents/', views.get_knowledge_documents, name='get_knowledge_documents'),
     path("api/documents/upload/", views.upload_documents, name="upload_documents"),
