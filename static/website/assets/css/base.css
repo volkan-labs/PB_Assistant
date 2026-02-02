@@ -559,6 +559,10 @@ body.content-panel-open .search-results-list .result-card.article-selected {
     opacity: 1;
 }
 
+body.sidebar-collapsed .alert-coming-soon {
+    display: none;
+}
+
 .notif-editor ul,
 .notif-editor ol {
     list-style: revert;
