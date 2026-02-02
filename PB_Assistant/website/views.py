@@ -202,6 +202,7 @@ def get_user_settings(request):
         'ui_collapse_navigation': settings_obj.ui_collapse_navigation,
         'ui_collapse_insights': settings_obj.ui_collapse_insights,
         'planetary_boundaries': list(settings_obj.planetary_boundaries.values_list('id', flat=True)),
+        'avatar_color': settings_obj.avatar_color,
     })
 
 @require_http_methods(['PUT'])
@@ -271,6 +272,23 @@ def update_boundary_preferences(request):
         settings_obj.planetary_boundaries.set(boundaries)
         settings_obj.save()
         return JsonResponse({'planetary_boundaries': list(settings_obj.planetary_boundaries.values_list('id', flat=True))})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+@require_http_methods(['PUT'])
+def update_avatar_color(request):
+    user = _resolve_user(request)
+    settings_obj = _get_or_create_settings(user)
+    if not settings_obj:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+        color = data.get('avatar_color')
+        if not color:
+            return JsonResponse({'error': 'avatar_color required'}, status=400)
+        settings_obj.avatar_color = color
+        settings_obj.save()
+        return JsonResponse({'avatar_color': settings_obj.avatar_color})
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
