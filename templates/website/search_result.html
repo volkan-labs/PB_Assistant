@@ -11,7 +11,10 @@
         <!-- User Query Block -->
         <div class="flex gap-4 justify-end">
             <div class="max-w-[80%]">
-                <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</div>
+                <div class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span>User</span>
+                    <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 user-name-label"></span>
+                </div>
                 <div class="bg-[#F3F6FA] dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm shadow-sm border border-slate-200/70 dark:border-[#3b4754]">
                     <p class="text-black dark:text-white text-base leading-relaxed">
                     {{ query }}
@@ -33,7 +36,8 @@
 
             <div class="max-w-full mb-6">
                 <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assistant</div>
-                <div class="bg-[#E8F3F5] dark:bg-primary/10 p-4 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
+                <div class="relative bg-[#E8F3F5] dark:bg-primary/10 p-4 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
+                    <div class="absolute left-0 top-4 h-10 w-1 rounded-full bg-primary/60"></div>
                 {% if answer %}
                 <div class="text-black dark:text-white text-base leading-relaxed mb-6">{{ answer }}</div>
                 {% endif %}
@@ -72,7 +76,7 @@
                 </div>
                 <div class="@container w-full flex flex-col gap-3 search-results-list">
                     {% for article in articles %}
-                    <div class="group rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-4 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/70"
+                    <div class="result-card group rounded-xl border border-gray-200 dark:border-[#3b4754] bg-white/80 dark:bg-slate-800/70 p-4 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/70"
                         id="row-{{ article.id }}"
                         data-index="{{ forloop.counter0 }}"
                         data-year="{{ article.year|default:'' }}"
@@ -99,7 +103,7 @@
                                     {{ article.abstract }}
                                 </p>
                                 {% endif %}
-                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-medium text-gray-600 dark:text-gray-300 max-w-full truncate">
                                     <span class="inline-flex items-center gap-1">
                                         <span class="material-symbols-outlined text-[14px]">event</span>
                                         {{ article.year|default:"N/A" }}
@@ -129,8 +133,8 @@
                                 {% endif %}
                                 <button title="Show content"
                                     onclick='display_contents(`{{ article.id }}`, `{{ article.title }}`, {{ article.page_contents | tojson }}, {{ article.page_contents_not_used_by_llm | tojson }});'
-                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#3b4754] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
-                                    <span class="material-symbols-outlined text-[16px]">article</span>
+                                    class="relative inline-flex h-7 w-7 items-center justify-center rounded-md border border-primary/40 bg-primary/15 text-primary hover:bg-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background-light dark:focus-visible:ring-offset-background-dark">
+                                    <span class="material-symbols-outlined text-[16px]">description</span>
                                     <span class="action-tooltip">Show content</span>
                                 </button>
                             </div>
@@ -149,11 +153,13 @@
                     <div class="document-panel-backdrop absolute inset-0 bg-black/70"></div>
                     <div class="absolute inset-y-0 right-0 w-full max-w-2xl border-l border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-900 shadow-2xl">
                         <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
-                            <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
-                            <button id="closePanelIcon"
-                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                                <span class="material-symbols-outlined text-[18px]">close</span>
-                            </button>
+                            <div class="flex items-center gap-3 min-w-0">
+                                <button id="documentContentsBack" type="button"
+                                    class="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                    <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                                </button>
+                                <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                            </div>
                         </div>
                         <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
                             <!-- Content will be injected here -->
@@ -310,6 +316,14 @@
             avatar.style.backgroundColor = storedColor;
         }
         avatar.textContent = initials || 'U';
+
+        const label = document.querySelector('.user-name-label');
+        if (label) {
+            const formatted = parts.length >= 2
+                ? `${parts[0]} ${parts[1][0] || ''}.`
+                : name;
+            label.textContent = formatted;
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function () {

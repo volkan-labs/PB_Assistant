@@ -17,6 +17,7 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
     if (!(jQuery.isEmptyObject(page_contents) && jQuery.isEmptyObject(page_contents_not_used_by_llm))) {
 
         $('#documentContentsPanel').removeClass('hidden');
+        document.body.classList.add('content-panel-open');
         document.body.classList.add('overflow-hidden');
         let formattedTitle = title.length > 80 ? `${title.substring(0, 77)}...` : title;
         $('#documentContentsTitle').html(formattedTitle);
@@ -36,6 +37,7 @@ function display_contents(id, title, page_contents, page_contents_not_used_by_ll
 function hideContentPanel(id) {
     clearDocumentContent();
     $('#documentContentsPanel').addClass('hidden');
+    document.body.classList.remove('content-panel-open');
     document.body.classList.remove('overflow-hidden');
     $('#row-' + id).removeClass("article-selected");
     $('#row-' + id).find('.selected-badge').addClass('hidden');
@@ -101,15 +103,16 @@ function timeAgo(isoString) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const closeBtn = document.getElementById('closePanelIcon');
     const panel = document.getElementById('documentContentsPanel');
     const backdrop = document.querySelector('.document-panel-backdrop');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function () {
+    const backBtn = document.getElementById('documentContentsBack');
+    if (backBtn) {
+        backBtn.addEventListener('click', function () {
             if (selectedRowId) {
                 hideContentPanel(selectedRowId);
-            } else {
-                $('#documentContentsPanel').addClass('hidden');
+            } else if (panel) {
+                panel.classList.add('hidden');
+                document.body.classList.remove('content-panel-open');
                 document.body.classList.remove('overflow-hidden');
             }
         });
@@ -130,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 hideContentPanel(selectedRowId);
             } else {
                 panel.classList.add('hidden');
+                document.body.classList.remove('content-panel-open');
                 document.body.classList.remove('overflow-hidden');
             }
         }

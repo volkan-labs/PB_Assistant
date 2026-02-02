@@ -528,6 +528,15 @@ html.dark .action-tooltip::after {
     border-color: #0d1117 transparent transparent transparent;
 }
 
+body.content-panel-open .result-card:not(.article-selected) {
+    opacity: 0.6;
+    filter: saturate(0.85);
+}
+
+body.content-panel-open .result-card.article-selected {
+    opacity: 1;
+}
+
 .notif-editor ul,
 .notif-editor ol {
     list-style: revert;
