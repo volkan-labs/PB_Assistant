@@ -233,10 +233,10 @@
                             <span class="material-symbols-outlined text-base">settings</span>
                             General
                         </button>
-                        <button type="button" data-settings-tab="notifications" class="settings-tab-btn flex items-center gap-2 rounded-md px-3 py-2 text-left font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                            <span class="material-symbols-outlined text-base">notifications</span>
-                            Notifications
-                        </button>
+                        {# <button type="button" data-settings-tab="notifications" class="settings-tab-btn flex items-center gap-2 rounded-md px-3 py-2 text-left font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"> #}
+                        {#     <span class="material-symbols-outlined text-base">notifications</span> #}
+                        {#     Notifications #}
+                        {# </button> #}
                         <button type="button" data-settings-tab="preferences" class="settings-tab-btn flex items-center gap-2 rounded-md px-3 py-2 text-left font-medium hover:bg-slate-100 dark:hover:bg-slate-800/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
                             <span class="material-symbols-outlined text-base">tune</span>
                             Preferences
@@ -390,28 +390,28 @@
                             </div>
                         </div>
                     </div>
-                    <div data-settings-panel="notifications" class="settings-panel hidden space-y-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Notifications</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage alerts and email preferences.</p>
-                        </div>
-                        <div class="grid gap-4">
-                            <div class="flex items-center justify-between rounded-xl border border-dashed border-slate-300 dark:border-[#334155] bg-slate-50/60 dark:bg-surface-highlight/60 px-4 py-3 opacity-70">
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-medium">RSS alerts</p>
-                                        <span class="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[10px] font-semibold">Coming soon</span>
-                                    </div>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">This feature is not available yet.</p>
-                                </div>
-                                <label class="relative inline-flex cursor-pointer items-center">
-                                    <input id="rssAlertsToggle" type="checkbox" class="peer sr-only" disabled />
-                                    <span class="h-5 w-9 rounded-full bg-slate-300 peer-checked:bg-primary/70 dark:bg-slate-600 transition-colors"></span>
-                                    <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    {# <div data-settings-panel="notifications" class="settings-panel hidden space-y-6"> #}
+                    {#     <div> #}
+                    {#         <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Notifications</h3> #}
+                    {#         <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage alerts and email preferences.</p> #}
+                    {#     </div> #}
+                    {#     <div class="grid gap-4"> #}
+                    {#         <div class="flex items-center justify-between rounded-xl border border-dashed border-slate-300 dark:border-[#334155] bg-slate-50/60 dark:bg-surface-highlight/60 px-4 py-3 opacity-70"> #}
+                    {#             <div> #}
+                    {#                 <div class="flex items-center gap-2"> #}
+                    {#                     <p class="font-medium">RSS alerts</p> #}
+                    {#                     <span class="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-[10px] font-semibold">Coming soon</span> #}
+                    {#                 </div> #}
+                    {#                 <p class="text-xs text-slate-500 dark:text-slate-400">This feature is not available yet.</p> #}
+                    {#             </div> #}
+                    {#             <label class="relative inline-flex cursor-pointer items-center"> #}
+                    {#                 <input id="rssAlertsToggle" type="checkbox" class="peer sr-only" disabled /> #}
+                    {#                 <span class="h-5 w-9 rounded-full bg-slate-300 peer-checked:bg-primary/70 dark:bg-slate-600 transition-colors"></span> #}
+                    {#                 <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4"></span> #}
+                    {#             </label> #}
+                    {#         </div> #}
+                    {#     </div> #}
+                    {# </div> #}
                     <div data-settings-panel="preferences" class="settings-panel hidden space-y-6">
                         <div>
                             <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Preferences</h3>
