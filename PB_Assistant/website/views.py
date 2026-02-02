@@ -102,6 +102,8 @@ def load_history_item(request, id):
         'answer': answer,
         'articles': articles_as_dict,
         'history_id': id,
+        'query_timestamp': history_item.get('timestamp'),
+        'answer_timestamp': history_item.get('timestamp'),
     })
 
 @require_http_methods(['DELETE'])

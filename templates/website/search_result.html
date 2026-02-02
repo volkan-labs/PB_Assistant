@@ -10,10 +10,16 @@
     <div class="max-w-[1000px] mx-auto px-4 py-8 pb-32 flex flex-col gap-8">
         <!-- User Query Block -->
         <div class="flex gap-4 justify-end">
-            <div class="bg-gray-200 dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm max-w-[80%]">
-                <p class="text-black dark:text-white text-base leading-relaxed">
+            <div class="max-w-[80%]">
+                <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">User</div>
+                <div class="bg-[#F3F6FA] dark:bg-slate-800 p-4 rounded-2xl rounded-tr-sm shadow-sm border border-slate-200/70 dark:border-[#3b4754]">
+                    <p class="text-black dark:text-white text-base leading-relaxed">
                     {{ query }}
-                </p>
+                    </p>
+                    <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ query_timestamp|date:"c" }}">
+                        Just now
+                    </div>
+                </div>
             </div>
             <div class="rounded-xl size-10 shrink-0 self-start mt-1 overflow-hidden">
                 <div class="user-avatar-mini flex h-10 w-10 items-center justify-center rounded-xl text-sm font-semibold text-white">JD</div>
@@ -25,7 +31,9 @@
                 <span class="material-symbols-outlined text-[22px] text-primary">smart_toy</span>
             </div>
 
-            <div class="bg-gray-200 dark:bg-slate-800 p-4 rounded-2xl rounded-tl-sm max-w-full mb-6">
+            <div class="max-w-full mb-6">
+                <div class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assistant</div>
+                <div class="bg-[#E8F3F5] dark:bg-primary/10 p-4 rounded-2xl rounded-tl-sm shadow-sm border border-sky-200/60 dark:border-[#3b4754]">
                 {% if answer %}
                 <div class="text-black dark:text-white text-base leading-relaxed mb-6">{{ answer }}</div>
                 {% endif %}
@@ -131,21 +139,25 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-                
+                <div class="mt-2 text-[10px] text-slate-500 dark:text-slate-400 text-right timestamp-local" data-timestamp="{{ answer_timestamp|date:"c" }}">
+                    Just now
+                </div>
+                </div>
+
                 <!-- Document Contents Panel -->
                 <div id="documentContentsPanel" class="hidden fixed inset-0 z-[3400]">
                     <div class="document-panel-backdrop absolute inset-0 bg-black/70"></div>
                     <div class="absolute inset-y-0 right-0 w-full max-w-2xl border-l border-gray-200 dark:border-[#3b4754] bg-white dark:bg-slate-900 shadow-2xl">
-                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
-                        <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
-                        <button id="closePanelIcon"
-                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                            <span class="material-symbols-outlined text-[18px]">close</span>
-                        </button>
-                    </div>
-                    <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
-                        <!-- Content will be injected here -->
-                    </div>
+                        <div class="flex items-center justify-between border-b border-gray-200 dark:border-[#3b4754] px-4 py-3">
+                            <h2 id="documentContentsTitle" class="truncate text-sm font-semibold text-gray-900 dark:text-white"></h2>
+                            <button id="closePanelIcon"
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
+                            </button>
+                        </div>
+                        <div id="documentContents" class="h-[calc(100%-56px)] overflow-y-auto px-5 py-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
+                            <!-- Content will be injected here -->
+                        </div>
                     </div>
                 </div>
 
@@ -298,6 +310,26 @@
             avatar.style.backgroundColor = storedColor;
         }
         avatar.textContent = initials || 'U';
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.timestamp-local').forEach((el) => {
+            const raw = el.getAttribute('data-timestamp');
+            if (!raw) return;
+            const parsed = new Date(raw);
+            if (Number.isNaN(parsed.getTime())) return;
+            const datePart = parsed.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            const timePart = parsed.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            el.textContent = `${datePart} · ${timePart}`;
+        });
     });
 
 </script>
