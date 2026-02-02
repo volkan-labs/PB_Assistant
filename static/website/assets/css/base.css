@@ -119,10 +119,17 @@ html.dark .ollama-select {
     height: 36px;
 }
 
-#leftSidebar .sidebar-toggle-icon,
-#leftSidebar .sidebar-collapsed-logo {
+#leftSidebar .sidebar-toggle-icon {
     width: 20px;
     height: 20px;
+    display: block;
+    margin: 0 auto;
+    object-position: center;
+}
+
+#leftSidebar .sidebar-collapsed-logo {
+    width: 32px;
+    height: 32px;
     display: block;
     margin: 0 auto;
     object-position: center;
@@ -561,6 +568,15 @@ body.content-panel-open .search-results-list .result-card.article-selected {
 
 body.sidebar-collapsed .alert-coming-soon {
     display: none;
+}
+
+.brand-title {
+    font-family: "Saira Stencil One", cursive;
+    letter-spacing: 0.5px;
+}
+
+.brand-title .brand-pb {
+    color: #e47627;
 }
 
 .notif-editor ul,
