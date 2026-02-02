@@ -539,6 +539,7 @@ def get_knowledge_documents(request):
             'authors_full': ', '.join(authors_list),
             'planetaryBoundary': boundary_label,
             'source': paper.source or 'fetched',
+            'source_url': f"https://doi.org/{paper.doi}" if paper.doi else '',
         })
 
     return JsonResponse({

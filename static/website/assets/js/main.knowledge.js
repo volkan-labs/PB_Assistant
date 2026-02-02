@@ -151,6 +151,16 @@ $(document).ready(function () {
         } else {
             emptyState.addClass('hidden');
             documents.forEach((doc) => {
+                const feedbackKey = 'knowledgeFeedback';
+                let feedback = null;
+                try {
+                    const storedFeedback = JSON.parse(localStorage.getItem(feedbackKey) || '{}');
+                    feedback = storedFeedback[doc.id];
+                } catch (e) {}
+
+                const likeActive = feedback === 'like' ? 'ring-2 ring-primary/40' : '';
+                const dislikeActive = feedback === 'dislike' ? 'ring-2 ring-primary/40' : '';
+
                 const card = $(`
                     <div class="rounded-xl border border-slate-200 dark:border-[#283039] bg-white dark:bg-surface-dark px-4 py-4 shadow-sm transition-colors hover:border-primary/40 dark:hover:border-primary/30">
                         <div class="flex flex-wrap items-start justify-between gap-3">
@@ -167,9 +177,27 @@ $(document).ready(function () {
                             </span>
                         </div>
                         <p class="mt-3 text-sm text-slate-600 dark:text-slate-300 line-clamp-3">${escapeHtml(doc.abstract || 'No abstract available.')}</p>
-                        <div class="mt-3 inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-2 py-0.5 text-[11px] font-medium">
-                            <span class="material-symbols-outlined text-[12px] text-amber-500">database</span>
-                            ${escapeHtml(doc.source || 'Unknown')}
+                        <div class="mt-3 flex items-center justify-between gap-3">
+                            ${doc.source_url ? `
+                                <a href="${escapeHtml(doc.source_url)}" target="_blank" rel="noopener"
+                                    class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-2 py-0.5 text-[11px] font-medium hover:bg-amber-100/80 dark:hover:bg-amber-500/20">
+                                    <span class="material-symbols-outlined text-[12px] text-amber-500">source</span>
+                                    ${escapeHtml(doc.source || 'Unknown')}
+                                </a>
+                            ` : `
+                                <div class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-2 py-0.5 text-[11px] font-medium">
+                                    <span class="material-symbols-outlined text-[12px] text-amber-500">source</span>
+                                    ${escapeHtml(doc.source || 'Unknown')}
+                                </div>
+                            `}
+                            <div class="flex items-center gap-1">
+                                <button type="button" class="doc-like icon-action flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark text-slate-500 hover:text-emerald-600 hover:border-emerald-300 dark:text-slate-300 dark:hover:text-emerald-300 ${likeActive}" data-doc-id="${escapeHtml(doc.id || '')}" data-feedback="like" aria-label="Like document">
+                                    <span class="material-symbols-outlined text-[16px]">thumb_up</span>
+                                </button>
+                                <button type="button" class="doc-dislike icon-action flex h-7 w-7 items-center justify-center rounded-md border border-slate-200 dark:border-[#334155] bg-white dark:bg-surface-dark text-slate-500 hover:text-rose-600 hover:border-rose-300 dark:text-slate-300 dark:hover:text-rose-300 ${dislikeActive}" data-doc-id="${escapeHtml(doc.id || '')}" data-feedback="dislike" aria-label="Dislike document">
+                                    <span class="material-symbols-outlined text-[16px]">thumb_down</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `);
@@ -221,6 +249,21 @@ $(document).ready(function () {
         currentPage = 1;
         updateClearButton();
         loadDocuments().then(renderDocuments);
+    });
+
+    documentList.on('click', '.doc-like, .doc-dislike', function () {
+        const docId = $(this).data('doc-id');
+        const feedback = $(this).data('feedback');
+        if (!docId) return;
+        try {
+            const key = 'knowledgeFeedback';
+            const stored = JSON.parse(localStorage.getItem(key) || '{}');
+            stored[docId] = feedback;
+            localStorage.setItem(key, JSON.stringify(stored));
+        } catch (e) {}
+        const parent = $(this).closest('.flex').parent();
+        parent.find('.doc-like, .doc-dislike').removeClass('ring-2 ring-primary/40');
+        $(this).addClass('ring-2 ring-primary/40');
     });
 
     retryBtn.on('click', function () {
